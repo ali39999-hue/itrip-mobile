@@ -1,0 +1,58 @@
+{
+  "name": "itrip-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "iTrip (Firuzo) Android app — digital travel vault & companion",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@op-engineering/op-sqlite": "^11.4.0",
+    "@react-native-community/netinfo": "^11.4.1",
+    "@tanstack/react-query": "^5.62.0",
+    "axios": "^1.7.9",
+    "decimal.js": "^10.4.3",
+    "expo": "~52.0.0",
+    "expo-constants": "~17.0.0",
+    "expo-dev-client": "~5.0.0",
+    "expo-font": "~13.0.0",
+    "expo-haptics": "~14.0.0",
+    "expo-linking": "~7.0.0",
+    "expo-local-authentication": "~15.0.0",
+    "expo-localization": "~16.0.0",
+    "expo-router": "~4.0.0",
+    "expo-secure-store": "~14.0.0",
+    "expo-sqlite": "~15.0.0",
+    "expo-status-bar": "~2.0.0",
+    "i18next": "^24.2.0",
+    "nativewind": "^4.1.23",
+    "react": "18.3.1",
+    "react-i18next": "^15.4.0",
+    "react-native": "0.77.0",
+    "react-native-gesture-handler": "~2.21.0",
+    "react-native-qrcode-svg": "^6.3.26",
+    "react-native-reanimated": "~3.16.0",
+    "react-native-safe-area-context": "~5.0.0",
+    "react-native-screens": "~4.5.0",
+    "react-native-svg": "~15.10.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "tailwindcss": "^3.4.17",
+    "zod": "^3.24.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@types/react": "~18.3.12",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
