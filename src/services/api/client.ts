@@ -73,15 +73,23 @@ export function createApiClient(config: ApiConfig): AxiosInstance {
       const original = error.config as InternalAxiosRequestConfig & { _retried?: boolean };
 
       // 401 Unauthorized handling: attempt single-flight token refresh
-      if (error.response?.status === 401 && original && !original._retried) {
-        original._retried = true;
-        const tokens = await refreshOnce(config);
-        if (tokens) {
-          original.headers.Authorization = `Bearer ${tokens.accessToken}`;
-          return client(original);
+      if (error.response?.status === 401 && original) {
+        // Do not attempt refresh on the refresh or logout endpoint itself
+        if (original.url?.includes('/auth/refresh') || original.url?.includes('/auth/logout')) {
+          await clearTokens();
+          return Promise.reject(error);
         }
-        // Refresh failed: session revoked on server; clear local credentials
-        await clearTokens();
+
+        if (!original._retried) {
+          original._retried = true;
+          const tokens = await refreshOnce(config);
+          if (tokens) {
+            original.headers.Authorization = `Bearer ${tokens.accessToken}`;
+            return client(original);
+          }
+          // Refresh failed: session revoked on server; clear local credentials
+          await clearTokens();
+        }
       }
 
       return Promise.reject(error);

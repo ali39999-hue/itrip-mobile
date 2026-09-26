@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   "eas.json": {
-    "mtime": 1790243227.4800322,
-    "seen": 1790426271.4886606,
-    "ast_hash": "d0c1bdcf96de762d6957927476bd83e7",
+    "mtime": 1790440269.567641,
+    "seen": 1790440851.78631,
+    "ast_hash": "d57476934e9820ffdcd92782520c8815",
     "semantic_hash": ""
   },
   "eslint.config.mjs": {
@@ -132,15 +132,15 @@
     "semantic_hash": ""
   },
   "src/app/(tabs)/search.tsx": {
-    "mtime": 1790435805.7462132,
-    "seen": 1790436271.1875355,
-    "ast_hash": "2999a7645c14e2572385fef641e83846",
+    "mtime": 1790440689.0667756,
+    "seen": 1790440851.7863424,
+    "ast_hash": "c372e3719656b7612343c7d08175f29e",
     "semantic_hash": ""
   },
   "src/app/(tabs)/wallet.tsx": {
-    "mtime": 1790435816.515566,
-    "seen": 1790436271.187538,
-    "ast_hash": "44ffd23f9672c70aa546c775f245bc49",
+    "mtime": 1790440374.2365851,
+    "seen": 1790440851.7863445,
+    "ast_hash": "a0cd1f9d7691a925b7ada2f01bb4c2c7",
     "semantic_hash": ""
   },
   "src/app/_layout.tsx": {
@@ -378,27 +378,27 @@
     "semantic_hash": ""
   },
   "src/services/api/client.ts": {
-    "mtime": 1790434792.2315977,
-    "seen": 1790436271.1876237,
-    "ast_hash": "d7f47e7f6d27730848950fa167001941",
+    "mtime": 1790440616.086109,
+    "seen": 1790440851.7864537,
+    "ast_hash": "fc00be697b31d29787d39c4ac968ab7e",
     "semantic_hash": ""
   },
   "src/services/api/config.ts": {
-    "mtime": 1790434775.6721826,
-    "seen": 1790436271.1876247,
-    "ast_hash": "4e91bc9eebd8748805d2551ed8bd79ad",
+    "mtime": 1790440280.640913,
+    "seen": 1790440851.786456,
+    "ast_hash": "579e21b9e54444fc53960cea1a809f0d",
     "semantic_hash": ""
   },
   "src/services/api/flights.ts": {
-    "mtime": 1790434540.3402593,
-    "seen": 1790436271.187626,
-    "ast_hash": "544aee97c290f4b215b051235d2cf7d1",
+    "mtime": 1790440225.748546,
+    "seen": 1790440851.7864592,
+    "ast_hash": "08d75a2083d2d42fb067d68deda48a46",
     "semantic_hash": ""
   },
   "src/services/api/hotels.ts": {
-    "mtime": 1790434549.3283997,
-    "seen": 1790436271.187627,
-    "ast_hash": "9ef9a59700d4e856e3e2731bac2ae3e0",
+    "mtime": 1790440237.6730454,
+    "seen": 1790440851.7864628,
+    "ast_hash": "f9081f5db2968793c1c3f3671e9c49e5",
     "semantic_hash": ""
   },
   "src/services/api/index.ts": {
@@ -498,15 +498,15 @@
     "semantic_hash": ""
   },
   "src/stores/walletStore.test.ts": {
-    "mtime": 1790233773.5398834,
-    "seen": 1790426271.4887357,
-    "ast_hash": "83ef4f563da20dd8b209de94919a3084",
+    "mtime": 1790440399.0683978,
+    "seen": 1790440851.7865164,
+    "ast_hash": "e095a00a055efca105f3c8c53c49ac03",
     "semantic_hash": ""
   },
   "src/stores/walletStore.ts": {
-    "mtime": 1790435357.9746962,
-    "seen": 1790436271.1876602,
-    "ast_hash": "4963c07fb1052f76a1479188c3c8d000",
+    "mtime": 1790440171.945177,
+    "seen": 1790440851.7865186,
+    "ast_hash": "5bbef8622baa1d0f78b173e1a626273f",
     "semantic_hash": ""
   },
   "src/styles/colors.ts": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1790426350.6325614,
-    "seen": 1790426562.1914911,
-    "ast_hash": "f372d235e0238b64cd19c92e8ac04e78",
+    "mtime": 1790440835.2388422,
+    "seen": 1790440851.7865326,
+    "ast_hash": "6959a55799a512cb2ac1926dc5fe38b1",
     "semantic_hash": ""
   },
   "AGENTS.md": {
@@ -780,15 +780,15 @@
     "semantic_hash": ""
   },
   "src/services/api/booking.ts": {
-    "mtime": 1790435854.13077,
-    "seen": 1790436271.1876223,
-    "ast_hash": "f065e434c6f341b58c62219e6ca1e5cf",
+    "mtime": 1790440744.2821257,
+    "seen": 1790440851.786452,
+    "ast_hash": "3a4f10ad973fcc1f9a1c92295496cc5e",
     "semantic_hash": ""
   },
   "src/services/api/wallet.ts": {
-    "mtime": 1790435871.078721,
-    "seen": 1790436271.1876295,
-    "ast_hash": "16bdf245b5072cf8de20ede3b24ac1ac",
+    "mtime": 1790440158.3144753,
+    "seen": 1790440851.7864685,
+    "ast_hash": "a0d9ce3efaf4d43b50d4c184f8281b42",
     "semantic_hash": ""
   },
   "src/services/sync/mutationQueue.test.ts": {
@@ -822,27 +822,45 @@
     "semantic_hash": ""
   },
   "src/services/api/booking.test.ts": {
-    "mtime": 1790437448.909699,
-    "seen": 1790437644.1758094,
-    "ast_hash": "4e0884425cd6119f5259799f2129ee96",
+    "mtime": 1790440473.5893388,
+    "seen": 1790440851.7864494,
+    "ast_hash": "5842c6f37e4046dd671c97cb3a20280b",
     "semantic_hash": ""
   },
   "src/services/api/flights.test.ts": {
-    "mtime": 1790437481.717862,
-    "seen": 1790437644.1758204,
-    "ast_hash": "df86f7f8ca4bc8edad2888ab81f3a9c2",
+    "mtime": 1790440433.5117195,
+    "seen": 1790440851.7864575,
+    "ast_hash": "33bd036e6e5dc45685da94645aef3e16",
     "semantic_hash": ""
   },
   "src/services/api/hotels.test.ts": {
-    "mtime": 1790437497.2299702,
-    "seen": 1790437644.1758254,
-    "ast_hash": "21a56662bff882f11f3e15e17518eeae",
+    "mtime": 1790440453.991795,
+    "seen": 1790440851.7864609,
+    "ast_hash": "38abc00245df3d96077ed18eb34963bb",
     "semantic_hash": ""
   },
   "src/services/api/wallet.test.ts": {
-    "mtime": 1790437464.3536992,
-    "seen": 1790437644.1758332,
-    "ast_hash": "964ca8b6aea7ee0fd12a3224848ff299",
+    "mtime": 1790440503.9682784,
+    "seen": 1790440851.7864668,
+    "ast_hash": "0f7a6e67d369832715bdbc4c7ddb429d",
+    "semantic_hash": ""
+  },
+  "src/services/sync/conflictResolver.test.ts": {
+    "mtime": 1790440594.6094306,
+    "seen": 1790440851.7864904,
+    "ast_hash": "498437eaf3e3683205108108082b87d7",
+    "semantic_hash": ""
+  },
+  "src/services/sync/conflictResolver.ts": {
+    "mtime": 1790440719.8536973,
+    "seen": 1790440851.7864926,
+    "ast_hash": "e0da21e090d987acd16cd48643e3fdcf",
+    "semantic_hash": ""
+  },
+  "src/test/e2e/flows.test.ts": {
+    "mtime": 1790440777.415496,
+    "seen": 1790440851.7865224,
+    "ast_hash": "80a002c39adef17983fc0eecfafd8f12",
     "semantic_hash": ""
   }
 }

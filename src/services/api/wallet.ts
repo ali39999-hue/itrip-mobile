@@ -4,10 +4,10 @@ import type { AxiosInstance } from 'axios';
 /**
  * Server-authoritative Wallet API Service.
  *
- * Financial Invariants:
- * - Balances are maintained on the backend double-entry financial ledger (ACCOUNTING_MODEL.md).
- * - Mobile never creates or decrements financial truth autonomously.
- * - Local wallet state serves as an encrypted, reactive offline cache.
+ * Financial Invariants (Phase 2 — P0 Wallet & Ledger Integrity):
+ * - Balances are maintained strictly on the backend double-entry financial ledger (ACCOUNTING_MODEL.md).
+ * - Mobile NEVER fabricates synthetic balances or fake seed transactions.
+ * - Local wallet state serves as an encrypted, reactive offline cache of the authoritative server state.
  */
 
 export const WalletBalancesSchema = z.object({
@@ -20,7 +20,7 @@ export const WalletBalancesSchema = z.object({
   usdIrrRate: z.string().default('600000'),
   loyaltyPoints: z.number().int().default(0),
   loyaltyTier: z.enum(['BRONZE', 'SILVER', 'GOLD', 'PLATINUM']).default('BRONZE'),
-  lastSyncedAt: z.string().default(() => new Date().toISOString()),
+  lastSyncedAt: z.string(),
 });
 export type WalletBalances = z.infer<typeof WalletBalancesSchema>;
 
@@ -46,7 +46,7 @@ export type TopUpIntentParams = z.infer<typeof TopUpIntentParamsSchema>;
 
 export const TopUpIntentResponseSchema = z.object({
   success: z.boolean(),
-  intentId: z.string(),
+  intentId: z.string().min(1),
   redirectUrl: z.string().optional(),
   gatewayReference: z.string().optional(),
   error: z.string().optional(),
@@ -56,46 +56,27 @@ export type TopUpIntentResponse = z.infer<typeof TopUpIntentResponseSchema>;
 export function createWalletService(client: AxiosInstance) {
   return {
     /**
-     * Fetches authoritative wallet balances and FX rates from the server.
+     * Fetches authoritative wallet balances and FX rates from the server ledger.
+     * Strictly throws on network failure — never returns a synthetic $1450 balance.
      */
     async getBalances(): Promise<WalletBalances> {
-      try {
-        const res = await client.get('/wallet/balances');
-        return WalletBalancesSchema.parse(res.data);
-      } catch {
-        // Fallback for offline / unseeded state
-        return {
-          USD: '1450.00',
-          IRR: '0',
-          EUR: '0.00',
-          AED: '0.00',
-          CNY: '0.00',
-          RUB: '0.00',
-          usdIrrRate: '600000',
-          loyaltyPoints: 120,
-          loyaltyTier: 'BRONZE',
-          lastSyncedAt: new Date().toISOString(),
-        };
-      }
+      const res = await client.get('/wallet/balances');
+      return WalletBalancesSchema.parse(res.data);
     },
 
     /**
      * Fetches transaction history from the server-side double-entry ledger.
      */
     async getTransactions(): Promise<ServerTransaction[]> {
-      try {
-        const res = await client.get('/wallet/transactions');
-        const data = res.data;
-        if (Array.isArray(data?.transactions)) {
-          return z.array(ServerTransactionSchema).parse(data.transactions);
-        }
-        if (Array.isArray(data)) {
-          return z.array(ServerTransactionSchema).parse(data);
-        }
-        return [];
-      } catch {
-        return [];
+      const res = await client.get('/wallet/transactions');
+      const data = res.data;
+      if (Array.isArray(data?.transactions)) {
+        return z.array(ServerTransactionSchema).parse(data.transactions);
       }
+      if (Array.isArray(data)) {
+        return z.array(ServerTransactionSchema).parse(data);
+      }
+      return [];
     },
 
     /**
@@ -121,15 +102,14 @@ export function createWalletService(client: AxiosInstance) {
      * Fetches live market FX rates (USD, EUR, AED, CNY, RUB vs IRR).
      */
     async getFxRates(): Promise<Record<string, string>> {
-      try {
-        const res = await client.get('/fx/rates');
-        if (res.data?.rates && typeof res.data.rates === 'object') {
-          return res.data.rates as Record<string, string>;
-        }
-        return { USD_IRR: '600000', EUR_IRR: '650000', AED_IRR: '163000' };
-      } catch {
-        return { USD_IRR: '600000', EUR_IRR: '650000', AED_IRR: '163000' };
+      const res = await client.get('/fx/rates');
+      if (res.data?.rates && typeof res.data.rates === 'object') {
+        return res.data.rates as Record<string, string>;
       }
+      if (res.data && typeof res.data === 'object') {
+        return res.data as Record<string, string>;
+      }
+      throw new Error('Invalid FX rates response from server');
     },
   };
 }

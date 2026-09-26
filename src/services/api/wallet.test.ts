@@ -80,22 +80,12 @@ describe('Wallet API Service (Double-Entry Ledger Integration)', () => {
     expect(res.intentId).toBe('intent_9918');
   });
 
-  it('fetches live FX rates', async () => {
+  it('strictly throws on network failure — never returns a synthetic $1450 balance', async () => {
     const mockAxios = {
-      get: vi.fn().mockResolvedValue({
-        data: {
-          rates: {
-            USD_IRR: '610000',
-            EUR_IRR: '660000',
-          },
-        },
-      }),
+      get: vi.fn().mockRejectedValue(new Error('Financial ledger unreachable')),
     } as unknown as AxiosInstance;
 
     const service = createWalletService(mockAxios);
-    const rates = await service.getFxRates();
-
-    expect(rates.USD_IRR).toBe('610000');
-    expect(rates.EUR_IRR).toBe('660000');
+    await expect(service.getBalances()).rejects.toThrow(/Financial ledger unreachable/);
   });
 });

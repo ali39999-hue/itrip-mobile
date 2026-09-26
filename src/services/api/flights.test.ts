@@ -93,21 +93,20 @@ describe('Flight Service Web-to-Mobile Contract Convergence', () => {
     expect(res.searchId).toBe('s-123');
   });
 
-  it('falls back gracefully to offline mock catalog when network fails', async () => {
+  it('strictly throws on network failure instead of fabricating fake flights', async () => {
     const mockAxios = {
       get: vi.fn().mockRejectedValue(new Error('Network error')),
     } as unknown as AxiosInstance;
 
     const service = createFlightService(mockAxios);
-    const res = await service.searchFlights({
-      origin: 'IKA',
-      destination: 'SYZ',
-      departDate: '2026-11-01',
-      adults: 1,
-      cabinClass: 'ECONOMY',
-    });
-
-    expect(res.offers.length).toBeGreaterThan(0);
-    expect(res.searchId).toMatch(/^search-fallback-/);
+    await expect(
+      service.searchFlights({
+        origin: 'IKA',
+        destination: 'SYZ',
+        departDate: '2026-11-01',
+        adults: 1,
+        cabinClass: 'ECONOMY',
+      }),
+    ).rejects.toThrow(/Flight search error/);
   });
 });

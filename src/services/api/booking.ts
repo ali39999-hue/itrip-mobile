@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import type { AxiosInstance } from 'axios';
-import { BookingStatus, PaymentStatus } from '@/domains/booking/state';
 
 /**
  * Server-authoritative Booking API Service.
  *
- * Implements the canonical iTRIP booking lifecycle (BOOK-002, BOOK-003, BOOK-101, PAY-001):
- * - Checkout initiates with server price validation and hold creation.
- * - Client NEVER confirms financial transactions or generates booking references locally.
+ * Strict Production Invariants (Phase 1 — P0 Financial & Booking Integrity):
+ * - NO SILENT SUCCESS: When the server is unreachable or fails, operations fail fast with clean errors.
+ * - NO FAKE DRAFTS: Booking IDs and references originate exclusively from the authoritative server.
+ * - NO FAKE CAPTURE: Payment confirmation and PNR generation require server-side financial capture.
  * - Idempotency keys protect against double-charging and duplicate bookings.
  */
 
@@ -48,8 +48,8 @@ export type CreateDraftParams = z.infer<typeof CreateDraftParamsSchema>;
 
 export const CreateDraftResponseSchema = z.object({
   success: z.boolean(),
-  bookingId: z.string(),
-  reference: z.string(),
+  bookingId: z.string().min(1),
+  reference: z.string().min(1),
   totalAmount: z.number(),
   discountAmount: z.number().optional(),
   currency: z.string(),
@@ -68,7 +68,7 @@ export type QuoteValidationParams = z.infer<typeof QuoteValidationParamsSchema>;
 
 export const QuoteValidationResponseSchema = z.object({
   valid: z.boolean(),
-  quoteId: z.string(),
+  quoteId: z.string().min(1),
   serverAmount: z.string(),
   serverCurrency: z.string(),
   expiresAt: z.string(),
@@ -101,29 +101,27 @@ export function createBookingService(client: AxiosInstance) {
   return {
     /**
      * Validates live pricing with the server before checkout (detects stale quotes).
+     * Strictly fails if the server is unreachable — never silently approves unverified prices.
      */
     async validateQuote(params: QuoteValidationParams): Promise<QuoteValidationResponse> {
+      const query = QuoteValidationParamsSchema.parse(params);
       try {
-        const query = QuoteValidationParamsSchema.parse(params);
         const res = await client.post('/bookings/quote/validate', query);
         return QuoteValidationResponseSchema.parse(res.data);
-      } catch {
-        // Fallback for resilient dev/offline or mock backend:
-        // Validates locally if server is unreachable
-        return {
-          valid: true,
-          quoteId: `quote-${Date.now()}`,
-          serverAmount: params.expectedAmount,
-          serverCurrency: params.expectedCurrency,
-          expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-          priceMismatch: false,
-        };
+      } catch (err: unknown) {
+        const axiosErr = err as { response?: { data?: unknown }; message?: string };
+        const serverMsg =
+          (axiosErr.response?.data as { error?: string })?.error ||
+          axiosErr.message ||
+          'Quote validation server unavailable';
+        throw new Error(`Quote verification error: ${serverMsg}. Server verification is mandatory before payment.`);
       }
     },
 
     /**
      * Creates an authoritative booking draft on the server.
-     * Soft-locks allotment inventory for 15 minutes.
+     * Soft-locks allotment inventory on the backend.
+     * Strictly fails if the server is unreachable — never creates fake local booking references.
      */
     async createDraft(params: CreateDraftParams): Promise<CreateDraftResponse> {
       const payload = CreateDraftParamsSchema.parse(params);
@@ -131,28 +129,18 @@ export function createBookingService(client: AxiosInstance) {
         const res = await client.post('/bookings/draft', payload);
         return CreateDraftResponseSchema.parse(res.data);
       } catch (err: unknown) {
-        // In local/demo mode or if server endpoint is pending, provide authoritative fallback
-        const axiosErr = err as { response?: { data?: unknown } };
-        if (axiosErr.response?.data && typeof axiosErr.response.data === 'object' && 'error' in axiosErr.response.data) {
-          throw new Error(String(axiosErr.response.data.error));
-        }
-        // Deterministic fallback for disconnected environment
-        const baseRef = `ITR-${payload.type.slice(0, 2)}-${Date.now().toString(36).toUpperCase()}`;
-        return {
-          success: true,
-          bookingId: `bk_${Date.now()}`,
-          reference: baseRef,
-          totalAmount: 1,
-          currency: 'USD',
-          status: BookingStatus.HELD,
-        };
+        const axiosErr = err as { response?: { data?: unknown }; message?: string };
+        const serverMsg =
+          (axiosErr.response?.data as { error?: string })?.error ||
+          axiosErr.message ||
+          'Server reservation endpoint unavailable';
+        throw new Error(`Booking draft creation failed: ${serverMsg}. Please check network connection and retry.`);
       }
     },
 
     /**
      * Executes server payment confirmation.
-     * Supports NewCash Wallet debit (server-side ledger verification),
-     * Shetab gateway intent, and eCardo international corridor.
+     * Strictly requires authoritative server capture — never fabricates CAPTURED status on network failure.
      */
     async confirmPayment(params: ConfirmPaymentParams): Promise<ConfirmPaymentResponse> {
       const payload = ConfirmPaymentParamsSchema.parse(params);
@@ -160,17 +148,14 @@ export function createBookingService(client: AxiosInstance) {
         const res = await client.post('/bookings/pay', payload);
         return ConfirmPaymentResponseSchema.parse(res.data);
       } catch (err: unknown) {
-        const axiosErr = err as { response?: { data?: unknown } };
-        if (axiosErr.response?.data && typeof axiosErr.response.data === 'object' && 'error' in axiosErr.response.data) {
-          throw new Error(String(axiosErr.response.data.error));
-        }
-        // Development / offline simulation fallback
+        const axiosErr = err as { response?: { data?: unknown }; message?: string };
+        const serverMsg =
+          (axiosErr.response?.data as { error?: string })?.error ||
+          axiosErr.message ||
+          'Payment processing failed or server unreachable';
         return {
-          success: true,
-          bookingId: payload.bookingId,
-          bookingStatus: BookingStatus.CONFIRMED,
-          paymentStatus: PaymentStatus.CAPTURED,
-          pnr: `PNR-${Date.now().toString(36).toUpperCase()}`,
+          success: false,
+          error: serverMsg,
         };
       }
     },

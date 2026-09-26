@@ -4,6 +4,10 @@ import type { AxiosInstance } from 'axios';
 /**
  * Flight search API — Zod contracts mirrored from the web platform
  * with bidirectional adapters for the Next.js API route format.
+ *
+ * Strict Production Invariants:
+ * - Real API integration with the authoritative flight catalog.
+ * - No fabricated fallback flights on network failure.
  */
 
 export const AirportSchema = z.object({
@@ -63,55 +67,6 @@ function parseDurationMinutes(duration?: string): number {
   const mins = parseInt(match[2] || '0', 10);
   const total = hours * 60 + mins;
   return total > 0 ? total : 90;
-}
-
-/**
- * Standard catalog fallback when the remote backend is unreachable.
- * Ensures an offline user or disconnected test runner can still exercise the search UI.
- */
-function getFallbackOffers(params: SearchFlightsParams): FlightOffer[] {
-  const depTime = `${params.departDate}T08:30:00Z`;
-  const arrTime = `${params.departDate}T10:00:00Z`;
-  return [
-    {
-      id: `fl-mock-1-${params.origin}-${params.destination}`,
-      segments: [
-        {
-          airlineCode: 'W5',
-          flightNumber: 'W51082',
-          departureTime: depTime,
-          arrivalTime: arrTime,
-          durationMinutes: 90,
-          cabinClass: params.cabinClass,
-          aircraft: 'Airbus A320',
-        },
-      ],
-      priceAmount: '45.00',
-      priceCurrency: 'USD',
-      seatsLeft: 7,
-      refundable: true,
-      baggageKg: 20,
-    },
-    {
-      id: `fl-mock-2-${params.origin}-${params.destination}`,
-      segments: [
-        {
-          airlineCode: 'IR',
-          flightNumber: 'IR452',
-          departureTime: `${params.departDate}T14:15:00Z`,
-          arrivalTime: `${params.departDate}T15:45:00Z`,
-          durationMinutes: 90,
-          cabinClass: params.cabinClass,
-          aircraft: 'ATR 72-600',
-        },
-      ],
-      priceAmount: '38.00',
-      priceCurrency: 'USD',
-      seatsLeft: 3,
-      refundable: true,
-      baggageKg: 20,
-    },
-  ];
 }
 
 export function createFlightService(client: AxiosInstance) {
@@ -179,44 +134,20 @@ export function createFlightService(client: AxiosInstance) {
         }
 
         return {
-          offers: getFallbackOffers(query),
-          searchId: `search-fallback-${Date.now()}`,
+          offers: [],
+          searchId: `search-empty-${Date.now()}`,
           priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
         };
-      } catch {
-        // Fallback for resilient offline/dev mode
-        return {
-          offers: getFallbackOffers(query),
-          searchId: `search-fallback-${Date.now()}`,
-          priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        };
+      } catch (err: unknown) {
+        const axiosErr = err as { response?: { data?: unknown }; message?: string };
+        const msg = (axiosErr.response?.data as { error?: string })?.error || axiosErr.message || 'Flight search failed';
+        throw new Error(`Flight search error: ${msg}. Please check your connection or retry.`);
       }
     },
 
     async getOffer(offerId: string): Promise<FlightOffer> {
-      try {
-        const res = await client.get(`/flights/offers/${encodeURIComponent(offerId)}`);
-        return FlightOfferSchema.parse(res.data);
-      } catch {
-        return {
-          id: offerId,
-          segments: [
-            {
-              airlineCode: 'W5',
-              flightNumber: 'W51082',
-              departureTime: '2026-11-01T08:30:00Z',
-              arrivalTime: '2026-11-01T10:00:00Z',
-              durationMinutes: 90,
-              cabinClass: 'ECONOMY',
-            },
-          ],
-          priceAmount: '45.00',
-          priceCurrency: 'USD',
-          seatsLeft: 5,
-          refundable: true,
-          baggageKg: 20,
-        };
-      }
+      const res = await client.get(`/flights/offers/${encodeURIComponent(offerId)}`);
+      return FlightOfferSchema.parse(res.data);
     },
   };
 }

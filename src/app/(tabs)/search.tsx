@@ -43,6 +43,11 @@ export default function SearchScreen() {
   });
   const [passengers, setPassengers] = useState(1);
   const [datePickerTarget, setDatePickerTarget] = useState<'depart' | 'return' | null>(null);
+  const [recentSearches, setRecentSearches] = useState<Array<{ from: string; to: string; tab: 'flights' | 'hotels' }>>([
+    { from: 'Tehran (IKA)', to: 'Shiraz (SYZ)', tab: 'flights' },
+    { from: 'Tehran (THR)', to: 'Isfahan (IFN)', tab: 'flights' },
+    { from: 'Tehran', to: 'Shiraz', tab: 'hotels' },
+  ]);
 
   const swapRoute = () => {
     const temp = from;
@@ -51,6 +56,12 @@ export default function SearchScreen() {
   };
 
   const handleSearch = () => {
+    // Record recent search
+    setRecentSearches((prev) => {
+      const filtered = prev.filter((r) => !(r.from === from && r.to === to && r.tab === tab));
+      return [{ from, to, tab }, ...filtered].slice(0, 5);
+    });
+
     if (tab === 'flights') {
       const originCode = extractIata(from, 'IKA');
       const destCode = extractIata(to, 'SYZ');
@@ -250,6 +261,47 @@ export default function SearchScreen() {
           />
         </Card>
       </View>
+
+      {/* Recent Searches */}
+      {recentSearches.length > 0 ? (
+        <View className="px-5 mb-6">
+          <Text className="text-base font-bold text-ink mb-3">{t('search.popularRoutes') || 'Recent Searches'}</Text>
+          <View className="gap-2">
+            {recentSearches.map((r, idx) => (
+              <Pressable
+                key={idx}
+                onPress={() => {
+                  setFrom(r.from);
+                  setTo(r.to);
+                  setTab(r.tab);
+                }}
+                className="p-3 rounded-xl bg-surface border border-slate-200 flex-row items-center justify-between"
+              >
+                <View className="flex-row items-center flex-1 mr-2">
+                  <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center mr-3">
+                    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
+                      {r.tab === 'flights' ? (
+                        <Path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                      ) : (
+                        <Path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
+                      )}
+                    </Svg>
+                  </View>
+                  <View>
+                    <Text className="text-sm font-semibold text-ink">
+                      {r.from} → {r.to}
+                    </Text>
+                    <Text className="text-[10px] text-sub uppercase">
+                      {r.tab}
+                    </Text>
+                  </View>
+                </View>
+                <Text className="text-xs text-brand font-bold">Use</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ) : null}
 
       {/* Date Picker Modal */}
       <DatePickerModal

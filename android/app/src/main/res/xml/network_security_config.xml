@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <!-- Base configuration: require TLS v1.2+ and system trusted CAs -->
+  <base-config cleartextTrafficPermitted="false">
+    <trust-anchors>
+      <certificates src="system" />
+    </trust-anchors>
+  </base-config>
+
+  <!-- Production Backend Domain Pinning (Phase 12 — Native Certificate Pinning) -->
+  <domain-config cleartextTrafficPermitted="false">
+    <domain includeSubdomains="true">itrip-platform.vercel.app</domain>
+    <domain includeSubdomains="true">vercel.app</domain>
+    <domain includeSubdomains="true">itrip.example.com</domain>
+
+    <pin-set expiration="2027-12-31">
+      <!-- Primary SPKI Pin (Vercel Edge Leaf Certificate) -->
+      <pin digest="SHA-256">kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=</pin>
+      <!-- Backup SPKI Pin (DigiCert / Let's Encrypt Intermediate CA) -->
+      <pin digest="SHA-256">18tkP1CuRPfqlmm52Y5SuL47Wbe5cTewl3/hSnoR5CY=</pin>
+      <!-- Backup SPKI Pin (GlobalSign Root CA) -->
+      <pin digest="SHA-256">iie7NsAn3H0BiHNIO596F1lV/vTTV7R3Jz7P7l1U7tI=</pin>
+    </pin-set>
+  </domain-config>
+
+  <!-- Debug overrides for local development and proxy inspection -->
+  <debug-overrides>
+    <trust-anchors>
+      <certificates src="system" />
+      <certificates src="user" />
+    </trust-anchors>
+  </debug-overrides>
+</network-security-config>

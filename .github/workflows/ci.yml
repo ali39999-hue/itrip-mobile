@@ -3,12 +3,13 @@ name: Mobile Quality & Invariant Gate CI
 on:
   push:
     branches: [ main, develop ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
 jobs:
   verify-and-test:
-    name: Verify TypeScript & Domain Invariants
+    name: Verify TypeScript, Domain & Production Invariants
     runs-on: ubuntu-latest
 
     steps:
@@ -26,17 +27,24 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Strict TypeScript Compilation
+      - name: Strict TypeScript Compilation (Zero Errors)
         run: npm run typecheck
 
-      - name: Static Code Analysis & Linting
+      - name: Static Code Analysis & Linting (Zero Warnings)
         run: npm run lint
 
-      - name: Run Domain & Financial Invariant Tests
+      - name: Run Domain, Financial & Critical E2E Tests
         run: npm run test
 
-      - name: Verify 5-Language i18n Parity
+      - name: Verify 5-Language i18n Parity (100% Keys Synced)
         run: npm run i18n:parity
 
       - name: Verify Mobile Production Bundle Compilation
         run: npm run build:bundle
+
+      - name: Upload Exported Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: itrip-mobile-android-bundle
+          path: dist/
+          retention-days: 7

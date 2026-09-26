@@ -93,21 +93,20 @@ describe('Hotel Service Web-to-Mobile Contract Convergence', () => {
     expect(res.offers[0]?.hotel.nameFa).toBe('هتل گرند');
   });
 
-  it('falls back gracefully to offline mock catalog when network fails', async () => {
+  it('strictly throws on network failure instead of fabricating fake hotels', async () => {
     const mockAxios = {
       get: vi.fn().mockRejectedValue(new Error('Network error')),
     } as unknown as AxiosInstance;
 
     const service = createHotelService(mockAxios);
-    const res = await service.searchHotels({
-      city: 'Shiraz',
-      checkIn: '2026-11-12',
-      checkOut: '2026-11-15',
-      guests: 2,
-      rooms: 1,
-    });
-
-    expect(res.offers.length).toBeGreaterThan(0);
-    expect(res.searchId).toMatch(/^hotel-fallback-/);
+    await expect(
+      service.searchHotels({
+        city: 'Shiraz',
+        checkIn: '2026-11-12',
+        checkOut: '2026-11-15',
+        guests: 2,
+        rooms: 1,
+      }),
+    ).rejects.toThrow(/Hotel search error/);
   });
 });

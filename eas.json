@@ -21,7 +21,7 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://staging-api.itrip.example.com/api"
+        "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api"
       }
     },
     "production": {
@@ -30,7 +30,7 @@
         "buildType": "aab"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.itrip.example.com/api"
+        "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api"
       }
     }
   },

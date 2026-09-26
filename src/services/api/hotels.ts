@@ -4,6 +4,10 @@ import type { AxiosInstance } from 'axios';
 /**
  * Hotel search API — Zod contracts mirrored from the web platform
  * with bidirectional adapters for the Next.js API route format.
+ *
+ * Strict Production Invariants:
+ * - Real API integration with the authoritative hotel catalog.
+ * - No fabricated fallback hotels on network failure.
  */
 
 export const HotelSchema = z.object({
@@ -48,49 +52,6 @@ const SearchHotelsResponseSchema = z.object({
   searchId: z.string().min(1),
   priceValidUntil: z.string(),
 });
-
-function getFallbackHotelOffers(params: SearchHotelsParams): RoomOffer[] {
-  return [
-    {
-      id: `rm-mock-1-${params.city}`,
-      hotel: {
-        id: 'ht-shiraz-grand',
-        name: 'Shiraz Grand Hotel',
-        nameFa: 'هتل بزرگ شیراز',
-        addressFa: 'شیراز، ورودی شمالی شیراز، جنب دروازه قرآن',
-        city: params.city,
-        phone: '+98 71 3227 4000',
-        stars: 5,
-      },
-      roomType: 'Deluxe Double Room',
-      board: 'BB',
-      freeCancellation: true,
-      maxGuests: params.guests,
-      nightlyRate: '65.00',
-      currency: 'USD',
-      roomsLeft: 4,
-    },
-    {
-      id: `rm-mock-2-${params.city}`,
-      hotel: {
-        id: 'ht-zandiyeh',
-        name: 'Zandiyeh Hotel',
-        nameFa: 'هتل زندیه شیراز',
-        addressFa: 'شیراز، خیابان هجرت، پشت ارگ کریم‌خان',
-        city: params.city,
-        phone: '+98 71 3223 4234',
-        stars: 5,
-      },
-      roomType: 'Traditional Suite',
-      board: 'BB',
-      freeCancellation: false,
-      maxGuests: params.guests,
-      nightlyRate: '55.00',
-      currency: 'USD',
-      roomsLeft: 2,
-    },
-  ];
-}
 
 export function createHotelService(client: AxiosInstance) {
   return {
@@ -150,54 +111,28 @@ export function createHotelService(client: AxiosInstance) {
             });
           }
 
-          if (offers.length > 0) {
-            return {
-              offers,
-              searchId: `hotel-search-${Date.now()}`,
-              priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-            };
-          }
+          return {
+            offers,
+            searchId: `hotel-search-${Date.now()}`,
+            priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+          };
         }
 
         return {
-          offers: getFallbackHotelOffers(query),
-          searchId: `hotel-fallback-${Date.now()}`,
+          offers: [],
+          searchId: `hotel-empty-${Date.now()}`,
           priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
         };
-      } catch {
-        return {
-          offers: getFallbackHotelOffers(query),
-          searchId: `hotel-fallback-${Date.now()}`,
-          priceValidUntil: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        };
+      } catch (err: unknown) {
+        const axiosErr = err as { response?: { data?: unknown }; message?: string };
+        const msg = (axiosErr.response?.data as { error?: string })?.error || axiosErr.message || 'Hotel search failed';
+        throw new Error(`Hotel search error: ${msg}. Please check your connection or retry.`);
       }
     },
 
     async getOffer(offerId: string): Promise<RoomOffer> {
-      try {
-        const res = await client.get(`/hotels/offers/${encodeURIComponent(offerId)}`);
-        return RoomOfferSchema.parse(res.data);
-      } catch {
-        return {
-          id: offerId,
-          hotel: {
-            id: 'ht-shiraz-grand',
-            name: 'Shiraz Grand Hotel',
-            nameFa: 'هتل بزرگ شیراز',
-            addressFa: 'شیراز، ورودی شمالی شیراز، جنب دروازه قرآن',
-            city: 'Shiraz',
-            phone: '+98 71 3227 4000',
-            stars: 5,
-          },
-          roomType: 'Deluxe Double Room',
-          board: 'BB',
-          freeCancellation: true,
-          maxGuests: 2,
-          nightlyRate: '65.00',
-          currency: 'USD',
-          roomsLeft: 3,
-        };
-      }
+      const res = await client.get(`/hotels/offers/${encodeURIComponent(offerId)}`);
+      return RoomOfferSchema.parse(res.data);
     },
   };
 }

@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { OfflineBanner } from '@/components/ui/OfflineBanner';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { useWalletStore } from '@/stores/walletStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useBiometrics } from '@/hooks/useBiometrics';
@@ -67,7 +68,7 @@ export default function WalletScreen() {
     void syncWithServer();
   }, [syncWithServer]);
 
-  const usd = balances.USD;
+  const usd = balances?.USD;
   const irr = irrEquivalent();
 
   const retryUnlock = () => {
@@ -191,47 +192,75 @@ export default function WalletScreen() {
       {/* Main Balance Card */}
       <View className="px-5 mb-5">
         <View className="rounded-3xl bg-slate-900 p-6 shadow-sm">
-          <View className="flex-row items-center justify-between mb-4">
-            <View>
-              <Text className="text-xs font-semibold text-slate-400">{t('wallet.newcashBalance')}</Text>
-              <Text className="text-3xl font-bold text-white mt-1">
-                ${usd.amount.toFixed(2)}
+          {usd ? (
+            <>
+              <View className="flex-row items-center justify-between mb-4">
+                <View>
+                  <Text className="text-xs font-semibold text-slate-400">{t('wallet.newcashBalance')}</Text>
+                  <Text className="text-3xl font-bold text-white mt-1">
+                    ${usd.amount.toFixed(2)}
+                  </Text>
+                  {lastSyncedAt ? (
+                    <Text className="text-[10px] text-slate-400 mt-1">
+                      Last synced: {new Date(lastSyncedAt).toLocaleTimeString()}
+                    </Text>
+                  ) : null}
+                </View>
+                <Badge label="NewCash Verified" variant="brand" className="bg-teal-500/20 text-teal-300" />
+              </View>
+
+              {irr ? (
+                <View className="rounded-xl bg-slate-800/80 p-3 mb-5 border border-slate-700/50">
+                  <Text className="text-[11px] text-slate-400">{t('wallet.equivalentRial')}</Text>
+                  <Text
+                    className="text-base font-bold text-action mt-0.5"
+                    style={{ writingDirection: 'ltr' }}
+                  >
+                    {format(irr, 'en-US')}
+                  </Text>
+                </View>
+              ) : null}
+
+              {/* Quick Action Buttons */}
+              <View className="flex-row justify-between">
+                <Pressable
+                  onPress={() => setTopUpModal(true)}
+                  className="flex-1 items-center bg-brand rounded-xl py-3 mr-2 active:opacity-90"
+                >
+                  <Text className="text-sm font-semibold text-white">{t('wallet.charge')}</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setConvertModal(true)}
+                  className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 mr-2 active:opacity-90"
+                >
+                  <Text className="text-sm font-semibold text-white">{t('wallet.convert')}</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => router.push('/sos')}
+                  className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 active:opacity-90"
+                >
+                  <Text className="text-sm font-semibold text-action">{t('wallet.scanPay')}</Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
+            <View className="items-center py-2">
+              <Text className="text-xs font-semibold text-slate-400 mb-1">{t('wallet.newcashBalance')}</Text>
+              <Text className="text-xl font-bold text-white mb-2">
+                {isSyncing ? 'Synchronizing Ledger...' : 'Balance Unavailable'}
               </Text>
+              <Text className="text-xs text-slate-400 text-center mb-4">
+                Connect to the internet to fetch your authoritative balance from the financial ledger.
+              </Text>
+              <Button
+                variant="action"
+                size="md"
+                title={isSyncing ? 'Syncing...' : 'Sync Ledger Now'}
+                onPress={syncWithServer}
+                disabled={isSyncing || !isOnline}
+              />
             </View>
-            <Badge label="NewCash Verified" variant="brand" className="bg-teal-500/20 text-teal-300" />
-          </View>
-
-          <View className="rounded-xl bg-slate-800/80 p-3 mb-5 border border-slate-700/50">
-            <Text className="text-[11px] text-slate-400">{t('wallet.equivalentRial')}</Text>
-            <Text
-              className="text-base font-bold text-action mt-0.5"
-              style={{ writingDirection: 'ltr' }}
-            >
-              {format(irr, 'en-US')}
-            </Text>
-          </View>
-
-          {/* Quick Action Buttons */}
-          <View className="flex-row justify-between">
-            <Pressable
-              onPress={() => setTopUpModal(true)}
-              className="flex-1 items-center bg-brand rounded-xl py-3 mr-2 active:opacity-90"
-            >
-              <Text className="text-sm font-semibold text-white">{t('wallet.charge')}</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setConvertModal(true)}
-              className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 mr-2 active:opacity-90"
-            >
-              <Text className="text-sm font-semibold text-white">{t('wallet.convert')}</Text>
-            </Pressable>
-            <Pressable
-              onPress={() => router.push('/sos')}
-              className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 active:opacity-90"
-            >
-              <Text className="text-sm font-semibold text-action">{t('wallet.scanPay')}</Text>
-            </Pressable>
-          </View>
+          )}
         </View>
       </View>
 
@@ -270,47 +299,54 @@ export default function WalletScreen() {
           ) : null}
         </View>
 
-        {transactions.map((tx) => {
-          const isCredit = tx.amount.amount.isPositive();
-          return (
-            <Card
-              key={tx.id}
-              variant="flat"
-              className="flex-row items-center justify-between mb-2.5 bg-surface border border-slate-100"
-            >
-              <View className="flex-row items-center">
-                <View
-                  className={`w-10 h-10 rounded-xl items-center justify-center mr-3 ${
-                    isCredit ? 'bg-emerald-50' : 'bg-slate-100'
-                  }`}
-                >
-                  <Svg
-                    width={18}
-                    height={18}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={isCredit ? colors.success : colors.sub}
-                    strokeWidth={2}
-                  >
-                    {isCredit ? <Path d="M12 19V5M5 12l7-7 7 7" /> : <Path d="M12 5v14M19 12l-7 7-7-7" />}
-                  </Svg>
-                </View>
-                <View>
-                  <Text className="text-sm font-semibold text-ink">{tx.title}</Text>
-                  <Text className="text-[11px] text-sub mt-0.5">{tx.date.slice(0, 10)}</Text>
-                </View>
-              </View>
-
-              <Text
-                className={`text-sm font-bold ${isCredit ? 'text-emerald-600' : 'text-ink'}`}
-                style={{ writingDirection: 'ltr' }}
+        {transactions.length === 0 ? (
+          <EmptyState
+            title={t('wallet.noTransactions')}
+            description="Transactions will appear here once verified on the double-entry financial ledger."
+          />
+        ) : (
+          transactions.map((tx) => {
+            const isCredit = tx.amount.amount.isPositive();
+            return (
+              <Card
+                key={tx.id}
+                variant="flat"
+                className="flex-row items-center justify-between mb-2.5 bg-surface border border-slate-100"
               >
-                {isCredit ? '+' : '-'}
-                {tx.amount.amount.abs().toFixed(2)} {tx.amount.currency}
-              </Text>
-            </Card>
-          );
-        })}
+                <View className="flex-row items-center">
+                  <View
+                    className={`w-10 h-10 rounded-xl items-center justify-center mr-3 ${
+                      isCredit ? 'bg-emerald-50' : 'bg-slate-100'
+                    }`}
+                  >
+                    <Svg
+                      width={18}
+                      height={18}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke={isCredit ? colors.success : colors.sub}
+                      strokeWidth={2}
+                    >
+                      {isCredit ? <Path d="M12 19V5M5 12l7-7 7 7" /> : <Path d="M12 5v14M19 12l-7 7-7-7" />}
+                    </Svg>
+                  </View>
+                  <View>
+                    <Text className="text-sm font-semibold text-ink">{tx.title}</Text>
+                    <Text className="text-[11px] text-sub mt-0.5">{tx.date.slice(0, 10)}</Text>
+                  </View>
+                </View>
+
+                <Text
+                  className={`text-sm font-bold ${isCredit ? 'text-emerald-600' : 'text-ink'}`}
+                  style={{ writingDirection: 'ltr' }}
+                >
+                  {isCredit ? '+' : '-'}
+                  {tx.amount.amount.abs().toFixed(2)} {tx.amount.currency}
+                </Text>
+              </Card>
+            );
+          })
+        )}
       </View>
 
       {/* Top-up Modal */}

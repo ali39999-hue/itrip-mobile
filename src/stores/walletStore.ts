@@ -15,10 +15,11 @@ import { walletService, type ServerTransaction } from '@/services/api';
 /**
  * Wallet store — NewCash balances and transaction history.
  *
- * Financial invariants:
+ * Financial Invariants (Phase 2 — P0 Wallet Integrity):
+ * - NO SYNTHETIC BALANCES: Starts uninitialized (null) until first authoritative server sync.
+ * - NO FAKE SEED TRANSACTIONS: Transaction ledger populated exclusively from server ledger.
+ * - OFFLINE SEMANTICS: Retains the last known server balance with lastSyncedAt timestamp.
  * - Every amount is a Money object backed by Decimal (never raw float).
- * - Balances mutate only through add/sub which enforce same-currency rules.
- * - Server is the Source of Truth; local state is optimistic display cache.
  */
 
 export interface WalletTransaction {
@@ -32,18 +33,18 @@ export interface WalletTransaction {
   status?: 'PENDING' | 'SETTLED' | 'FAILED' | 'REFUNDED';
 }
 
-/** Default spot rate used until the API returns live rates. */
 const FALLBACK_USD_IRR_RATE = '600000';
 
 interface WalletState {
-  balances: Record<CurrencyCode, Money>;
+  balances: Record<CurrencyCode, Money> | null;
   /** Rate: 1 USD in IRR. Refreshed from API when online. */
   usdIrrRate: Decimal;
   transactions: WalletTransaction[];
-  /** Marks that the wallet is unlocked for viewing (biometric gate passed). */
+  /** Marks that the wallet is unlocked for viewing (biometric/PIN gate passed). */
   unlocked: boolean;
   isSyncing: boolean;
   lastSyncedAt: string | null;
+  syncError: string | null;
   loyaltyPoints: number;
   loyaltyTier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM';
   setUnlocked: (v: boolean) => void;
@@ -54,71 +55,28 @@ interface WalletState {
   /** Debits the wallet; throws on insufficient funds. */
   debit: (amount: Money, tx: Omit<WalletTransaction, 'amount'>) => Money;
   setRate: (rate: string | Decimal) => void;
-  /** Equivalent of the USD balance in IRR as a Money object. */
-  irrEquivalent: () => Money;
+  /** Equivalent of the USD balance in IRR as a Money object (null if uninitialized). */
+  irrEquivalent: () => Money | null;
   /** Formatted USD balance string for the given locale. */
   formattedUsd: (locale: string) => string;
 }
 
-const initialBalances: Record<CurrencyCode, Money> = {
-  IRR: zero('IRR'),
-  USD: money('1450.00', 'USD'),
-  EUR: zero('EUR'),
-  AED: zero('AED'),
-  CNY: zero('CNY'),
-  RUB: zero('RUB'),
-};
-
-const seedTransactions: WalletTransaction[] = [
-  {
-    id: 'tx-1',
-    title: 'Mahan Air · Flight Ticket',
-    date: '2026-09-23T14:20:00Z',
-    amount: money('-45.00', 'USD'),
-    category: 'flight',
-    status: 'SETTLED',
-  },
-  {
-    id: 'tx-2',
-    title: 'Shiraz Grand Hotel · Deposit',
-    date: '2026-10-10T09:00:00Z',
-    amount: money('-120.00', 'USD'),
-    category: 'hotel',
-    status: 'SETTLED',
-  },
-  {
-    id: 'tx-3',
-    title: 'NewCash Top-up',
-    date: '2026-10-08T11:30:00Z',
-    amount: money('500.00', 'USD'),
-    category: 'topup',
-    status: 'SETTLED',
-  },
-  {
-    id: 'tx-4',
-    title: 'ATM Withdrawal · Shetab',
-    date: '2026-10-07T18:45:00Z',
-    amount: money('-15000000', 'IRR'),
-    category: 'atm',
-    status: 'SETTLED',
-  },
-];
-
 export const useWalletStore = create<WalletState>((set, get) => ({
-  balances: initialBalances,
+  balances: null,
   usdIrrRate: new Decimal(FALLBACK_USD_IRR_RATE),
-  transactions: seedTransactions,
+  transactions: [],
   unlocked: false,
   isSyncing: false,
   lastSyncedAt: null,
-  loyaltyPoints: 120,
+  syncError: null,
+  loyaltyPoints: 0,
   loyaltyTier: 'BRONZE',
 
   setUnlocked: (v) => set({ unlocked: v }),
 
   syncWithServer: async () => {
     if (get().isSyncing) return;
-    set({ isSyncing: true });
+    set({ isSyncing: true, syncError: null });
     try {
       const [serverBalances, serverTxs] = await Promise.all([
         walletService.getBalances(),
@@ -134,49 +92,57 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         RUB: money(serverBalances.RUB, 'RUB'),
       };
 
-      const parsedTxs: WalletTransaction[] = serverTxs.length > 0
-        ? serverTxs.map((t: ServerTransaction) => ({
-            id: t.id,
-            title: t.title,
-            date: t.date,
-            amount: money(t.amount, t.currency),
-            category: t.category,
-            status: t.status,
-          }))
-        : get().transactions;
+      const parsedTxs: WalletTransaction[] = serverTxs.map((t: ServerTransaction) => ({
+        id: t.id,
+        title: t.title,
+        date: t.date,
+        amount: money(t.amount, t.currency),
+        category: t.category,
+        status: t.status,
+      }));
 
       set({
         balances: parsedBalances,
         usdIrrRate: new Decimal(serverBalances.usdIrrRate || FALLBACK_USD_IRR_RATE),
         transactions: parsedTxs,
-        loyaltyPoints: serverBalances.loyaltyPoints ?? 120,
+        loyaltyPoints: serverBalances.loyaltyPoints ?? 0,
         loyaltyTier: serverBalances.loyaltyTier ?? 'BRONZE',
-        lastSyncedAt: new Date().toISOString(),
+        lastSyncedAt: serverBalances.lastSyncedAt || new Date().toISOString(),
         isSyncing: false,
+        syncError: null,
       });
-    } catch {
-      set({ isSyncing: false });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Server synchronization failed';
+      set({ isSyncing: false, syncError: message });
     }
   },
 
   credit: (amount, tx) => {
-    const current = get().balances[amount.currency] ?? zero(amount.currency);
+    const { balances } = get();
+    if (!balances) {
+      throw new Error('Wallet not initialized from server ledger');
+    }
+    const current = balances[amount.currency] ?? zero(amount.currency);
     const next = add(current, amount);
     set((s) => ({
-      balances: { ...s.balances, [amount.currency]: next },
+      balances: s.balances ? { ...s.balances, [amount.currency]: next } : null,
       transactions: [{ ...tx, amount }, ...s.transactions],
     }));
     return next;
   },
 
   debit: (amount, tx) => {
-    const current = get().balances[amount.currency] ?? zero(amount.currency);
+    const { balances } = get();
+    if (!balances) {
+      throw new Error('Wallet not initialized from server ledger');
+    }
+    const current = balances[amount.currency] ?? zero(amount.currency);
     if (current.amount.minus(amount.amount).isNegative()) {
       throw new Error(`Insufficient funds: ${amount.currency}`);
     }
     const next = sub(current, amount);
     set((s) => ({
-      balances: { ...s.balances, [amount.currency]: next },
+      balances: s.balances ? { ...s.balances, [amount.currency]: next } : null,
       transactions: [{ ...tx, amount }, ...s.transactions],
     }));
     return next;
@@ -186,11 +152,13 @@ export const useWalletStore = create<WalletState>((set, get) => ({
 
   irrEquivalent: () => {
     const { balances, usdIrrRate } = get();
-    return convert(balances.USD ?? zero('USD'), usdIrrRate, 'IRR');
+    if (!balances || !balances.USD) return null;
+    return convert(balances.USD, usdIrrRate, 'IRR');
   },
 
   formattedUsd: (locale) => {
     const { balances } = get();
-    return format(balances.USD ?? zero('USD'), locale);
+    if (!balances || !balances.USD) return '$0.00';
+    return format(balances.USD, locale);
   },
 }));

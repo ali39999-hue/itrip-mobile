@@ -31,6 +31,24 @@ describe('Booking API Service (Server-Authoritative)', () => {
     expect(quote.priceMismatch).toBe(false);
   });
 
+  it('strictly throws when quote validation fails on server — no silent true fallback', async () => {
+    const mockAxios = {
+      post: vi.fn().mockRejectedValue({
+        response: { data: { error: 'Price expired on GDS' } },
+      }),
+    } as unknown as AxiosInstance;
+
+    const service = createBookingService(mockAxios);
+    await expect(
+      service.validateQuote({
+        type: 'FLIGHT',
+        itemId: 'fl-expired',
+        expectedAmount: '45.00',
+        expectedCurrency: 'USD',
+      }),
+    ).rejects.toThrow(/Quote verification error: Price expired on GDS/);
+  });
+
   it('creates an authoritative booking draft hold on the server', async () => {
     const mockAxios = {
       post: vi.fn().mockResolvedValue({
@@ -64,6 +82,29 @@ describe('Booking API Service (Server-Authoritative)', () => {
     expect(draft.status).toBe('HELD');
   });
 
+  it('strictly throws when server draft creation fails — no fake booking reference generated', async () => {
+    const mockAxios = {
+      post: vi.fn().mockRejectedValue({
+        response: { data: { error: 'Allotment sold out' } },
+      }),
+    } as unknown as AxiosInstance;
+
+    const service = createBookingService(mockAxios);
+    await expect(
+      service.createDraft({
+        idempotencyKey: 'idem-fail-uuid',
+        type: 'FLIGHT',
+        itemId: 'fl-sold-out',
+        itemTitle: 'W5 1042',
+        count: 1,
+        travelDate: '2026-11-01',
+        passengers: [{ firstName: 'Sarah', lastName: 'Smith' }],
+        contactPhone: '+989120000000',
+        source: 'MOBILE',
+      }),
+    ).rejects.toThrow(/Booking draft creation failed: Allotment sold out/);
+  });
+
   it('executes server payment confirmation and returns PNR', async () => {
     const mockAxios = {
       post: vi.fn().mockResolvedValue({
@@ -88,6 +129,26 @@ describe('Booking API Service (Server-Authoritative)', () => {
     expect(confirmation.bookingStatus).toBe('CONFIRMED');
     expect(confirmation.paymentStatus).toBe('CAPTURED');
     expect(confirmation.pnr).toBe('W598X1');
+  });
+
+  it('strictly fails payment when server capture declines — no client-fabricated CAPTURED status', async () => {
+    const mockAxios = {
+      post: vi.fn().mockRejectedValue({
+        response: { data: { error: 'Card balance insufficient' } },
+      }),
+    } as unknown as AxiosInstance;
+
+    const service = createBookingService(mockAxios);
+    const confirmation = await service.confirmPayment({
+      bookingId: 'bk_srv_declined',
+      method: 'gateway_shetab',
+      idempotencyKey: 'idem-pay-fail',
+    });
+
+    expect(confirmation.success).toBe(false);
+    expect(confirmation.error).toBe('Card balance insufficient');
+    expect(confirmation.bookingStatus).toBeUndefined();
+    expect(confirmation.paymentStatus).toBeUndefined();
   });
 
   it('requests booking cancellation through server state machine', async () => {

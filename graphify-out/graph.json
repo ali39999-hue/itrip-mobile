@@ -4,17 +4,17 @@
   "graph": {},
   "nodes": [
     {
-      "id": "src_services_api_config_domainpinningpolicy",
-      "label": "DomainPinningPolicy",
+      "id": "src_i18n_index_applanguage",
+      "label": "AppLanguage",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
-      "norm_label": "domainpinningpolicy",
-      "source_file": "src/services/api/config.ts",
-      "source_location": "L10"
+      "norm_label": "applanguage",
+      "source_file": "src/i18n/index.ts",
+      "source_location": "L12"
     },
     {
       "id": "src_services_notifications_devicetoken_devicetokenservice",
@@ -23,7 +23,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "devicetokenservice",
       "source_file": "src/services/notifications/deviceToken.ts",
@@ -36,37 +36,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "notificationpayload",
       "source_file": "src/services/notifications/payload.ts",
       "source_location": "L37"
-    },
-    {
-      "id": "src_services_sync_backgroundsync_syncresult",
-      "label": "SyncResult",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "syncresult",
-      "source_file": "src/services/sync/backgroundSync.ts",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_services_telemetry_index_telemetryevent",
-      "label": "TelemetryEvent",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "telemetryevent",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L11"
     },
     {
       "id": "src_domains_identity_passenger_passenger",
@@ -157,7 +131,7 @@
       "file_type": "code",
       "norm_label": "airport",
       "source_file": "src/services/api/flights.ts",
-      "source_location": "L15"
+      "source_location": "L19"
     },
     {
       "id": "src_services_api_flights_flightoffer",
@@ -170,7 +144,33 @@
       "file_type": "code",
       "norm_label": "flightoffer",
       "source_file": "src/services/api/flights.ts",
-      "source_location": "L38"
+      "source_location": "L42"
+    },
+    {
+      "id": "src_services_api_flights_flightsegment",
+      "label": "FlightSegment",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flightsegment",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_services_api_flights_flightservice",
+      "label": "FlightService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flightservice",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L155"
     },
     {
       "id": "src_services_api_flights_searchflightsparams",
@@ -183,7 +183,7 @@
       "file_type": "code",
       "norm_label": "searchflightsparams",
       "source_file": "src/services/api/flights.ts",
-      "source_location": "L49"
+      "source_location": "L53"
     },
     {
       "id": "src_services_db_vault_flightvoucherrow",
@@ -251,17 +251,147 @@
       "source_location": "L17"
     },
     {
-      "id": "src_i18n_index_applanguage",
-      "label": "AppLanguage",
+      "id": "src_test_e2e_flows_test_mockvaultdriver",
+      "label": "MockVaultDriver",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "mockvaultdriver",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_domains_booking_pricing_farebreakdown",
+      "label": "FareBreakdown",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "applanguage",
-      "source_file": "src/i18n/index.ts",
-      "source_location": "L12"
+      "norm_label": "farebreakdown",
+      "source_file": "src/domains/booking/pricing.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_domains_booking_state_bookingstatus",
+      "label": "BookingStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "bookingstatus",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_domains_booking_state_fulfillmentstatus",
+      "label": "FulfillmentStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "fulfillmentstatus",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "src_domains_booking_state_paymentstatus",
+      "label": "PaymentStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "paymentstatus",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_domains_booking_state_ticketstatus",
+      "label": "TicketStatus",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "ticketstatus",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_domains_hotel_stay_staydates",
+      "label": "StayDates",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "staydates",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_services_api_hotels_roomoffer",
+      "label": "RoomOffer",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "roomoffer",
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_services_api_hotels_searchhotelsparams",
+      "label": "SearchHotelsParams",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "searchhotelsparams",
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "src_stores_hotelstore_hoteldraft",
+      "label": "HotelDraft",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "hoteldraft",
+      "source_file": "src/stores/hotelStore.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_stores_hotelstore_hotelstate",
+      "label": "HotelState",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "hotelstate",
+      "source_file": "src/stores/hotelStore.ts",
+      "source_location": "L33"
     },
     {
       "id": "src_components_ui_tabicons_tabiconprops",
@@ -283,7 +413,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "authservice",
       "source_file": "src/services/api/auth.ts",
@@ -296,7 +426,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "apiconfig",
       "source_file": "src/services/api/client.ts",
@@ -309,11 +439,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "storedtokens",
       "source_file": "src/services/secure/tokens.ts",
       "source_location": "L12"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_conflictresolutionpolicy",
+      "label": "ConflictResolutionPolicy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "conflictresolutionpolicy",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L16"
     },
     {
       "id": "src_stores_authstore_authstate",
@@ -322,7 +465,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "authstate",
       "source_file": "src/stores/authStore.ts",
@@ -335,7 +478,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "authstatus",
       "source_file": "src/stores/authStore.ts",
@@ -348,7 +491,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "userprofile",
       "source_file": "src/stores/authStore.ts",
@@ -563,19 +706,6 @@
       "source_location": "L10"
     },
     {
-      "id": "src_domains_booking_pricing_farebreakdown",
-      "label": "FareBreakdown",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "farebreakdown",
-      "source_file": "src/domains/booking/pricing.ts",
-      "source_location": "L15"
-    },
-    {
       "id": "src_domains_booking_pricing_pricingrules",
       "label": "PricingRules",
       "_callable": true,
@@ -587,45 +717,6 @@
       "norm_label": "pricingrules",
       "source_file": "src/domains/booking/pricing.ts",
       "source_location": "L27"
-    },
-    {
-      "id": "src_domains_booking_state_bookingstatus",
-      "label": "BookingStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "bookingstatus",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_domains_booking_state_fulfillmentstatus",
-      "label": "FulfillmentStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "fulfillmentstatus",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_domains_booking_state_ticketstatus",
-      "label": "TicketStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "ticketstatus",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L45"
     },
     {
       "id": "src_domains_currency_money_currencycode",
@@ -654,71 +745,6 @@
       "source_location": "L18"
     },
     {
-      "id": "src_domains_hotel_stay_staydates",
-      "label": "StayDates",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "staydates",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_services_api_hotels_roomoffer",
-      "label": "RoomOffer",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "roomoffer",
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_services_api_hotels_searchhotelsparams",
-      "label": "SearchHotelsParams",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "searchhotelsparams",
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L44"
-    },
-    {
-      "id": "src_stores_hotelstore_hoteldraft",
-      "label": "HotelDraft",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "hoteldraft",
-      "source_file": "src/stores/hotelStore.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_stores_hotelstore_hotelstate",
-      "label": "HotelState",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "hotelstate",
-      "source_file": "src/stores/hotelStore.ts",
-      "source_location": "L33"
-    },
-    {
       "id": "src_stores_walletstore_walletstate",
       "label": "WalletState",
       "_callable": true,
@@ -742,33 +768,20 @@
       "file_type": "code",
       "norm_label": "wallettransaction",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
-      "id": "src_services_api_flights_flightsegment",
-      "label": "FlightSegment",
+      "id": "src_services_sync_backgroundsync_syncresult",
+      "label": "SyncResult",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "flightsegment",
-      "source_file": "src/services/api/flights.ts",
+      "norm_label": "syncresult",
+      "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L26"
-    },
-    {
-      "id": "src_services_api_flights_flightservice",
-      "label": "FlightService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "flights.ts",
-      "file_type": "code",
-      "norm_label": "flightservice",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L224"
     },
     {
       "id": "src_services_db_driver_opsqlitedb",
@@ -937,7 +950,7 @@
       "file_type": "code",
       "norm_label": "walletservice",
       "source_file": "src/services/api/wallet.ts",
-      "source_location": "L137"
+      "source_location": "L117"
     },
     {
       "id": "src_services_api_hotels_hotel",
@@ -946,11 +959,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "hotel",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L21"
+      "source_location": "L25"
     },
     {
       "id": "src_services_api_hotels_hotelservice",
@@ -959,11 +972,50 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "hotelservice",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L205"
+      "source_location": "L140"
+    },
+    {
+      "id": "src_services_api_config_domainpinningpolicy",
+      "label": "DomainPinningPolicy",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "config.ts",
+      "file_type": "code",
+      "norm_label": "domainpinningpolicy",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_services_api_config_environment",
+      "label": "Environment",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "config.ts",
+      "file_type": "code",
+      "norm_label": "environment",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_services_telemetry_index_telemetryevent",
+      "label": "TelemetryEvent",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "telemetryevent",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L11"
     },
     {
       "id": "android_app_src_main_java_com_firuzo_itrip_mainactivity_mainactivity",
@@ -992,19 +1044,6 @@
       "source_location": "L36"
     },
     {
-      "id": "src_domains_booking_state_paymentstatus",
-      "label": "PaymentStatus",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "booking.ts",
-      "file_type": "code",
-      "norm_label": "paymentstatus",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L23"
-    },
-    {
       "id": "src_services_api_booking_bookingservice",
       "label": "BookingService",
       "_callable": true,
@@ -1015,7 +1054,7 @@
       "file_type": "code",
       "norm_label": "bookingservice",
       "source_file": "src/services/api/booking.ts",
-      "source_location": "L224"
+      "source_location": "L209"
     },
     {
       "id": "src_services_api_booking_confirmpaymentparams",
@@ -1127,23 +1166,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "rootlayout()",
       "source_file": "src/app/_layout.tsx",
       "source_location": "L30"
-    },
-    {
-      "id": "src_app_tabs_my_trips_mytripsscreen",
-      "label": "MyTripsScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "mytripsscreen()",
-      "source_file": "src/app/(tabs)/my-trips.tsx",
-      "source_location": "L35"
     },
     {
       "id": "src_hooks_useappfonts_useappfonts",
@@ -1151,7 +1178,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "useappfonts()",
       "source_file": "src/hooks/useAppFonts.ts",
@@ -1163,11 +1190,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "usepushnotifications()",
       "source_file": "src/hooks/usePushNotifications.ts",
       "source_location": "L18"
+    },
+    {
+      "id": "src_i18n_index_isrtl",
+      "label": "isRTL()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "file_type": "code",
+      "norm_label": "isrtl()",
+      "source_file": "src/i18n/index.ts",
+      "source_location": "L22"
     },
     {
       "id": "src_services_notifications_devicetoken_createdevicetokenservice",
@@ -1175,7 +1214,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "createdevicetokenservice()",
       "source_file": "src/services/notifications/deviceToken.ts",
@@ -1187,7 +1226,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "configurenotificationhandler()",
       "source_file": "src/services/notifications/index.ts",
@@ -1199,7 +1238,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "ensureandroidchannel()",
       "source_file": "src/services/notifications/index.ts",
@@ -1211,7 +1250,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "registerforpushnotifications()",
       "source_file": "src/services/notifications/index.ts",
@@ -1223,7 +1262,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "routepayload()",
       "source_file": "src/services/notifications/index.ts",
@@ -1235,7 +1274,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "parsenotificationpayload()",
       "source_file": "src/services/notifications/payload.ts",
@@ -1247,7 +1286,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "registerbackgroundsync()",
       "source_file": "src/services/sync/backgroundSync.ts",
@@ -1259,7 +1298,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "syncall()",
       "source_file": "src/services/sync/backgroundSync.ts",
@@ -1271,35 +1310,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "syncvaultonce()",
       "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L116"
     },
     {
-      "id": "src_services_sync_backgroundsync_unregisterbackgroundsync",
-      "label": "unregisterBackgroundSync()",
+      "id": "src_app_tabs_my_trips_mytripsscreen",
+      "label": "MyTripsScreen()",
       "_callable": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
+      "community": 1,
+      "community_name": "bookingStore.ts",
       "file_type": "code",
-      "norm_label": "unregisterbackgroundsync()",
-      "source_file": "src/services/sync/backgroundSync.ts",
-      "source_location": "L135"
-    },
-    {
-      "id": "src_services_telemetry_index_sanitizemetadata",
-      "label": "sanitizeMetadata()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "sanitizemetadata()",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L40"
+      "norm_label": "mytripsscreen()",
+      "source_file": "src/app/(tabs)/my-trips.tsx",
+      "source_location": "L35"
     },
     {
       "id": "src_domains_identity_passenger_ispassportvalidfortravel",
@@ -1338,6 +1365,18 @@
       "source_location": "L86"
     },
     {
+      "id": "src_domains_voucher_voucher_flightvoucherfromdraft",
+      "label": "flightVoucherFromDraft()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flightvoucherfromdraft()",
+      "source_file": "src/domains/voucher/voucher.ts",
+      "source_location": "L91"
+    },
+    {
       "id": "src_domains_voucher_voucher_sortvouchers",
       "label": "sortVouchers()",
       "_callable": true,
@@ -1362,7 +1401,43 @@
       "source_location": "L128"
     },
     {
-      "id": "src_services_db_driver_vaultdriver_exec",
+      "id": "src_services_api_flights_createflightservice",
+      "label": "createFlightService()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "createflightservice()",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L72"
+    },
+    {
+      "id": "src_services_api_flights_parsedurationminutes",
+      "label": "parseDurationMinutes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "parsedurationminutes()",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "src_test_e2e_flows_test_mockvaultdriver_all",
+      "label": ".all()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": ".all()",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_test_e2e_flows_test_mockvaultdriver_exec",
       "label": ".exec()",
       "_callable": true,
       "_origin": "ast",
@@ -1370,44 +1445,152 @@
       "community_name": "bookingStore.ts",
       "file_type": "code",
       "norm_label": ".exec()",
-      "source_file": "src/services/db/driver.ts",
-      "source_location": "L23"
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L43"
     },
     {
-      "id": "src_services_db_vault_migrate",
-      "label": "migrate()",
+      "id": "src_test_e2e_flows_test_mockvaultdriver_get",
+      "label": ".get()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "bookingStore.ts",
       "file_type": "code",
-      "norm_label": "migrate()",
-      "source_file": "src/services/db/vault.ts",
-      "source_location": "L23"
+      "norm_label": ".get()",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L34"
     },
     {
-      "id": "src_services_db_vault_withdb",
-      "label": "withDb()",
+      "id": "src_test_e2e_flows_test_mockvaultdriver_run",
+      "label": ".run()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
       "community_name": "bookingStore.ts",
       "file_type": "code",
-      "norm_label": "withdb()",
-      "source_file": "src/services/db/vault.ts",
-      "source_location": "L15"
+      "norm_label": ".run()",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L17"
     },
     {
-      "id": "src_i18n_index_isrtl",
-      "label": "isRTL()",
+      "id": "src_app_booking_hotel_results_hotelresultsscreen",
+      "label": "HotelResultsScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "isrtl()",
-      "source_file": "src/i18n/index.ts",
-      "source_location": "L22"
+      "norm_label": "hotelresultsscreen()",
+      "source_file": "src/app/booking/hotel-results.tsx",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_app_booking_hotel_review_hotelreviewscreen",
+      "label": "HotelReviewScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "hotelreviewscreen()",
+      "source_file": "src/app/booking/hotel-review.tsx",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_domains_booking_state_cantransition",
+      "label": "canTransition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "cantransition()",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "src_domains_booking_state_isbookingactive",
+      "label": "isBookingActive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "isbookingactive()",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L79"
+    },
+    {
+      "id": "src_domains_booking_state_isbookingpending",
+      "label": "isBookingPending()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "isbookingpending()",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L88"
+    },
+    {
+      "id": "src_domains_booking_state_isbookingterminal",
+      "label": "isBookingTerminal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "isbookingterminal()",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L97"
+    },
+    {
+      "id": "src_domains_hotel_stay_adddays",
+      "label": "addDays()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "adddays()",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_domains_hotel_stay_daynumber",
+      "label": "dayNumber()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "daynumber()",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_domains_hotel_stay_nightsbetween",
+      "label": "nightsBetween()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "nightsbetween()",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L31"
+    },
+    {
+      "id": "src_domains_hotel_stay_validatestay",
+      "label": "validateStay()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "validatestay()",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L45"
     },
     {
       "id": "scripts_i18n_parity_flatten",
@@ -1499,22 +1682,22 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "otpscreen()",
       "source_file": "src/app/(auth)/otp.tsx",
       "source_location": "L22"
     },
     {
-      "id": "src_app_booking_hotel_review_hotelreviewscreen",
-      "label": "HotelReviewScreen()",
+      "id": "src_app_booking_review_reviewscreen",
+      "label": "ReviewScreen()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
-      "norm_label": "hotelreviewscreen()",
-      "source_file": "src/app/booking/hotel-review.tsx",
+      "norm_label": "reviewscreen()",
+      "source_file": "src/app/booking/review.tsx",
       "source_location": "L32"
     },
     {
@@ -1523,7 +1706,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "homescreen()",
       "source_file": "src/app/(tabs)/index.tsx",
@@ -1535,7 +1718,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "useauthbootstrap()",
       "source_file": "src/hooks/useAuth.ts",
@@ -1547,7 +1730,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "userequireauth()",
       "source_file": "src/hooks/useAuth.ts",
@@ -1559,7 +1742,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "createauthservice()",
       "source_file": "src/services/api/auth.ts",
@@ -1571,7 +1754,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "createapiclient()",
       "source_file": "src/services/api/client.ts",
@@ -1583,11 +1766,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "dorefresh()",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L104"
+      "source_location": "L112"
     },
     {
       "id": "src_services_api_client_generatecorrelationid",
@@ -1595,7 +1778,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "generatecorrelationid()",
       "source_file": "src/services/api/client.ts",
@@ -1607,11 +1790,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "refreshonce()",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L95"
+      "source_location": "L103"
     },
     {
       "id": "src_services_api_client_sanitizerequestdetails",
@@ -1619,7 +1802,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "sanitizerequestdetails()",
       "source_file": "src/services/api/client.ts",
@@ -1631,7 +1814,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "cleartokens()",
       "source_file": "src/services/secure/tokens.ts",
@@ -1643,7 +1826,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "getaccesstoken()",
       "source_file": "src/services/secure/tokens.ts",
@@ -1655,7 +1838,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "getrefreshtoken()",
       "source_file": "src/services/secure/tokens.ts",
@@ -1667,7 +1850,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "getsecurestore()",
       "source_file": "src/services/secure/tokens.ts",
@@ -1679,11 +1862,59 @@
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "savetokens()",
       "source_file": "src/services/secure/tokens.ts",
       "source_location": "L28"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_conflictresolutionpolicy_resolve",
+      "label": ".resolve()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": ".resolve()",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_resolvebookingconflict",
+      "label": "resolveBookingConflict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "resolvebookingconflict()",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_resolvepreferenceconflict",
+      "label": "resolvePreferenceConflict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "resolvepreferenceconflict()",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L55"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_resolveprofileconflict",
+      "label": "resolveProfileConflict()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "resolveprofileconflict()",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L33"
     },
     {
       "id": "src_app_auth_layout_authlayout",
@@ -1734,18 +1965,6 @@
       "source_location": "L370"
     },
     {
-      "id": "src_app_booking_review_reviewscreen",
-      "label": "ReviewScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "hotel-results.tsx",
-      "file_type": "code",
-      "norm_label": "reviewscreen()",
-      "source_file": "src/app/booking/review.tsx",
-      "source_location": "L32"
-    },
-    {
       "id": "src_app_booking_review_row",
       "label": "Row()",
       "_callable": true,
@@ -1758,16 +1977,28 @@
       "source_location": "L350"
     },
     {
-      "id": "src_app_tabs_account_accountscreen",
-      "label": "AccountScreen()",
+      "id": "src_app_tabs_search_extractiata",
+      "label": "extractIata()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "hotel-results.tsx",
       "file_type": "code",
-      "norm_label": "accountscreen()",
-      "source_file": "src/app/(tabs)/account.tsx",
-      "source_location": "L17"
+      "norm_label": "extractiata()",
+      "source_file": "src/app/(tabs)/search.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_app_tabs_search_searchscreen",
+      "label": "SearchScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "hotel-results.tsx",
+      "file_type": "code",
+      "norm_label": "searchscreen()",
+      "source_file": "src/app/(tabs)/search.tsx",
+      "source_location": "L26"
     },
     {
       "id": "src_components_shared_placeholderscreen_placeholderscreen",
@@ -1878,30 +2109,6 @@
       "source_location": "L15"
     },
     {
-      "id": "src_domains_voucher_voucher_flightvoucherfromdraft",
-      "label": "flightVoucherFromDraft()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "hotel-results.tsx",
-      "file_type": "code",
-      "norm_label": "flightvoucherfromdraft()",
-      "source_file": "src/domains/voucher/voucher.ts",
-      "source_location": "L91"
-    },
-    {
-      "id": "src_hooks_usebiometrics_usebiometrics",
-      "label": "useBiometrics()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "hotel-results.tsx",
-      "file_type": "code",
-      "norm_label": "usebiometrics()",
-      "source_file": "src/hooks/useBiometrics.ts",
-      "source_location": "L11"
-    },
-    {
       "id": "src_hooks_usenetworkstatus_usenetworkstatus",
       "label": "useNetworkStatus()",
       "_callable": true,
@@ -1912,30 +2119,6 @@
       "norm_label": "usenetworkstatus()",
       "source_file": "src/hooks/useNetworkStatus.ts",
       "source_location": "L11"
-    },
-    {
-      "id": "src_app_tabs_search_extractiata",
-      "label": "extractIata()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "jalali.ts",
-      "file_type": "code",
-      "norm_label": "extractiata()",
-      "source_file": "src/app/(tabs)/search.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_app_tabs_search_searchscreen",
-      "label": "SearchScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "jalali.ts",
-      "file_type": "code",
-      "norm_label": "searchscreen()",
-      "source_file": "src/app/(tabs)/search.tsx",
-      "source_location": "L26"
     },
     {
       "id": "src_domains_calendar_jalali_formatdualdate",
@@ -2022,18 +2205,6 @@
       "source_location": "L3"
     },
     {
-      "id": "src_app_booking_hotel_results_hotelresultsscreen",
-      "label": "HotelResultsScreen()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "hotelresultsscreen()",
-      "source_file": "src/app/booking/hotel-results.tsx",
-      "source_location": "L26"
-    },
-    {
       "id": "src_app_booking_passengers_passengersscreen",
       "label": "PassengersScreen()",
       "_callable": true,
@@ -2070,6 +2241,18 @@
       "source_location": "L48"
     },
     {
+      "id": "src_app_tabs_account_accountscreen",
+      "label": "AccountScreen()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "money",
+      "file_type": "code",
+      "norm_label": "accountscreen()",
+      "source_file": "src/app/(tabs)/account.tsx",
+      "source_location": "L17"
+    },
+    {
       "id": "src_app_tabs_wallet_walletscreen",
       "label": "WalletScreen()",
       "_callable": true,
@@ -2079,7 +2262,7 @@
       "file_type": "code",
       "norm_label": "walletscreen()",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L19"
+      "source_location": "L20"
     },
     {
       "id": "src_domains_booking_pricing_convertbreakdown",
@@ -2152,54 +2335,6 @@
       "norm_label": "zero()",
       "source_file": "src/domains/booking/pricing.ts",
       "source_location": "L143"
-    },
-    {
-      "id": "src_domains_booking_state_cantransition",
-      "label": "canTransition()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "cantransition()",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L74"
-    },
-    {
-      "id": "src_domains_booking_state_isbookingactive",
-      "label": "isBookingActive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "isbookingactive()",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L79"
-    },
-    {
-      "id": "src_domains_booking_state_isbookingpending",
-      "label": "isBookingPending()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "isbookingpending()",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L88"
-    },
-    {
-      "id": "src_domains_booking_state_isbookingterminal",
-      "label": "isBookingTerminal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "isbookingterminal()",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L97"
     },
     {
       "id": "src_domains_currency_money_add",
@@ -2298,88 +2433,28 @@
       "source_location": "L58"
     },
     {
-      "id": "src_domains_hotel_stay_adddays",
-      "label": "addDays()",
+      "id": "src_hooks_usebiometrics_usebiometrics",
+      "label": "useBiometrics()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "money",
       "file_type": "code",
-      "norm_label": "adddays()",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L37"
+      "norm_label": "usebiometrics()",
+      "source_file": "src/hooks/useBiometrics.ts",
+      "source_location": "L11"
     },
     {
-      "id": "src_domains_hotel_stay_daynumber",
-      "label": "dayNumber()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "daynumber()",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_domains_hotel_stay_nightsbetween",
-      "label": "nightsBetween()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "nightsbetween()",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_domains_hotel_stay_validatestay",
-      "label": "validateStay()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "validatestay()",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_services_api_flights_createflightservice",
-      "label": "createFlightService()",
+      "id": "src_services_sync_backgroundsync_unregisterbackgroundsync",
+      "label": "unregisterBackgroundSync()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "createflightservice()",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L117"
-    },
-    {
-      "id": "src_services_api_flights_getfallbackoffers",
-      "label": "getFallbackOffers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "flights.ts",
-      "file_type": "code",
-      "norm_label": "getfallbackoffers()",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L72"
-    },
-    {
-      "id": "src_services_api_flights_parsedurationminutes",
-      "label": "parseDurationMinutes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "flights.ts",
-      "file_type": "code",
-      "norm_label": "parsedurationminutes()",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L58"
+      "norm_label": "unregisterbackgroundsync()",
+      "source_file": "src/services/sync/backgroundSync.ts",
+      "source_location": "L135"
     },
     {
       "id": "src_services_db_driver_createdriver",
@@ -2454,6 +2529,18 @@
       "source_location": "L21"
     },
     {
+      "id": "src_services_db_driver_vaultdriver_exec",
+      "label": ".exec()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "mutationQueue.ts",
+      "file_type": "code",
+      "norm_label": ".exec()",
+      "source_file": "src/services/db/driver.ts",
+      "source_location": "L23"
+    },
+    {
       "id": "src_services_db_driver_vaultdriver_get",
       "label": ".get()",
       "_callable": true,
@@ -2478,6 +2565,18 @@
       "source_location": "L20"
     },
     {
+      "id": "src_services_db_vault_migrate",
+      "label": "migrate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "mutationQueue.ts",
+      "file_type": "code",
+      "norm_label": "migrate()",
+      "source_file": "src/services/db/vault.ts",
+      "source_location": "L23"
+    },
+    {
       "id": "src_services_db_vault_vaultengine",
       "label": "vaultEngine()",
       "_callable": true,
@@ -2488,6 +2587,18 @@
       "norm_label": "vaultengine()",
       "source_file": "src/services/db/vault.ts",
       "source_location": "L66"
+    },
+    {
+      "id": "src_services_db_vault_withdb",
+      "label": "withDb()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "mutationQueue.ts",
+      "file_type": "code",
+      "norm_label": "withdb()",
+      "source_file": "src/services/db/vault.ts",
+      "source_location": "L15"
     },
     {
       "id": "src_services_sync_mutationqueue_calculatebackoffms",
@@ -2634,28 +2745,28 @@
       "source_location": "L56"
     },
     {
+      "id": "src_services_api_booking_createbookingservice",
+      "label": "createBookingService()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "createbookingservice()",
+      "source_file": "src/services/api/booking.ts",
+      "source_location": "L100"
+    },
+    {
       "id": "src_services_api_hotels_createhotelservice",
       "label": "createHotelService()",
       "_callable": true,
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "createhotelservice()",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L95"
-    },
-    {
-      "id": "src_services_api_hotels_getfallbackhoteloffers",
-      "label": "getFallbackHotelOffers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "hotels.ts",
-      "file_type": "code",
-      "norm_label": "getfallbackhoteloffers()",
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L52"
+      "source_location": "L56"
     },
     {
       "id": "src_services_security_dbkey_deletedbkey",
@@ -2682,16 +2793,40 @@
       "source_location": "L15"
     },
     {
-      "id": "src_services_api_booking_createbookingservice",
-      "label": "createBookingService()",
+      "id": "src_services_api_config_resolvebaseurl",
+      "label": "resolveBaseUrl()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "axios",
+      "community_name": "config.ts",
       "file_type": "code",
-      "norm_label": "createbookingservice()",
-      "source_file": "src/services/api/booking.ts",
-      "source_location": "L100"
+      "norm_label": "resolvebaseurl()",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_services_api_config_resolveenvironment",
+      "label": "resolveEnvironment()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "config.ts",
+      "file_type": "code",
+      "norm_label": "resolveenvironment()",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_services_telemetry_index_sanitizemetadata",
+      "label": "sanitizeMetadata()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "sanitizemetadata()",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L40"
     },
     {
       "id": "android_app_src_main_java_com_firuzo_itrip_mainactivity_mainactivity_createreactactivitydelegate",
@@ -2770,7 +2905,7 @@
       "label": "app/_layout.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "app/_layout.tsx",
       "source_file": "src/app/_layout.tsx",
@@ -2781,7 +2916,7 @@
       "label": "queryClient",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "queryclient",
       "source_file": "src/app/_layout.tsx",
@@ -2792,7 +2927,7 @@
       "label": "useAppFonts.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "useappfonts.ts",
       "source_file": "src/hooks/useAppFonts.ts",
@@ -2803,106 +2938,73 @@
       "label": "usePushNotifications.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "usepushnotifications.ts",
       "source_file": "src/hooks/usePushNotifications.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_services_api_config",
-      "label": "config.ts",
+      "id": "src_i18n_index",
+      "label": "i18n/index.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
-      "norm_label": "config.ts",
-      "source_file": "src/services/api/config.ts",
+      "norm_label": "i18n/index.ts",
+      "source_file": "src/i18n/index.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_services_api_config_apiconfig",
-      "label": "apiConfig",
+      "id": "src_i18n_index_language_names",
+      "label": "LANGUAGE_NAMES",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
-      "norm_label": "apiconfig",
-      "source_file": "src/services/api/config.ts",
-      "source_location": "L16"
+      "norm_label": "language_names",
+      "source_file": "src/i18n/index.ts",
+      "source_location": "L14"
     },
     {
-      "id": "src_services_api_index",
-      "label": "api/index.ts",
+      "id": "src_i18n_index_rtl_languages",
+      "label": "RTL_LANGUAGES",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
-      "norm_label": "api/index.ts",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L1"
+      "norm_label": "rtl_languages",
+      "source_file": "src/i18n/index.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_i18n_index_supported_languages",
+      "label": "SUPPORTED_LANGUAGES",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "file_type": "code",
+      "norm_label": "supported_languages",
+      "source_file": "src/i18n/index.ts",
+      "source_location": "L11"
     },
     {
       "id": "src_services_api_index_api",
       "label": "api",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "api",
       "source_file": "src/services/api/index.ts",
       "source_location": "L13"
     },
     {
-      "id": "src_services_api_index_bookingservice",
-      "label": "bookingService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "bookingservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_services_api_index_flightservice",
-      "label": "flightService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "flightservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_services_api_index_hotelservice",
-      "label": "hotelService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "hotelservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_services_api_index_walletservice",
-      "label": "walletService",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "walletservice",
-      "source_file": "src/services/api/index.ts",
-      "source_location": "L18"
-    },
-    {
       "id": "src_services_notifications_devicetoken",
       "label": "deviceToken.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "devicetoken.ts",
       "source_file": "src/services/notifications/deviceToken.ts",
@@ -2913,7 +3015,7 @@
       "label": "notifications/index.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "notifications/index.ts",
       "source_file": "src/services/notifications/index.ts",
@@ -2924,7 +3026,7 @@
       "label": "payload.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "payload.ts",
       "source_file": "src/services/notifications/payload.ts",
@@ -2935,7 +3037,7 @@
       "label": "NotificationPayloadSchema",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "notificationpayloadschema",
       "source_file": "src/services/notifications/payload.ts",
@@ -2946,139 +3048,40 @@
       "label": "payload.test.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "code",
       "norm_label": "payload.test.ts",
       "source_file": "src/services/notifications/payload.test.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_services_sync_backgroundsync",
-      "label": "backgroundSync.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "backgroundsync.ts",
-      "source_file": "src/services/sync/backgroundSync.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_sync_backgroundsync_vault_sync_task",
-      "label": "VAULT_SYNC_TASK",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "vault_sync_task",
-      "source_file": "src/services/sync/backgroundSync.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "src_services_telemetry_index",
-      "label": "telemetry/index.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "telemetry/index.ts",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_telemetry_index_eventbuffer",
-      "label": "eventBuffer",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "eventbuffer",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_services_telemetry_index_sensitive_keys",
-      "label": "SENSITIVE_KEYS",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "sensitive_keys",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L25"
-    },
-    {
-      "id": "src_services_telemetry_index_telemetry",
-      "label": "telemetry",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "telemetry",
-      "source_file": "src/services/telemetry/index.ts",
-      "source_location": "L57"
-    },
-    {
-      "id": "src_services_telemetry_index_test",
-      "label": "index.test.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "index.test.ts",
-      "source_file": "src/services/telemetry/index.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_stores_vaultstore_usevaultstore",
-      "label": "useVaultStore",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "code",
-      "norm_label": "usevaultstore",
-      "source_file": "src/stores/vaultStore.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "docref_rfc_7469",
-      "label": "RFC-7469",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "concept",
-      "norm_label": "rfc-7469",
-      "source_file": "src/services/api/config.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "ref_expo_background_task",
-      "label": "expo-background-task",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "api/index.ts",
-      "file_type": "concept",
-      "norm_label": "expo-background-task",
-      "source_file": "package.json",
-      "source_location": "L26"
-    },
-    {
       "id": "ref_expo_device",
       "label": "expo-device",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
       "norm_label": "expo-device",
       "source_file": "package.json",
       "source_location": "L30"
     },
     {
+      "id": "ref_expo_font",
+      "label": "expo-font",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "file_type": "concept",
+      "norm_label": "expo-font",
+      "source_file": "package.json",
+      "source_location": "L31"
+    },
+    {
       "id": "ref_expo_notifications",
       "label": "expo-notifications",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
       "norm_label": "expo-notifications",
       "source_file": "package.json",
@@ -3089,29 +3092,29 @@
       "label": "expo-status-bar",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
       "norm_label": "expo-status-bar",
       "source_file": "package.json",
       "source_location": "L40"
     },
     {
-      "id": "ref_expo_task_manager",
-      "label": "expo-task-manager",
+      "id": "ref_i18next",
+      "label": "i18next",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
-      "norm_label": "expo-task-manager",
+      "norm_label": "i18next",
       "source_file": "package.json",
-      "source_location": "L41"
+      "source_location": "L42"
     },
     {
       "id": "ref_nativewind",
       "label": "nativewind",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
       "norm_label": "nativewind",
       "source_file": "package.json",
@@ -3122,7 +3125,7 @@
       "label": "react-native-gesture-handler",
       "_origin": "ast",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "file_type": "concept",
       "norm_label": "react-native-gesture-handler",
       "source_file": "package.json",
@@ -3228,6 +3231,83 @@
       "source_location": "L33"
     },
     {
+      "id": "src_services_api_flights",
+      "label": "flights.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flights.ts",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_flights_airportschema",
+      "label": "AirportSchema",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "airportschema",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_services_api_flights_flightofferschema",
+      "label": "FlightOfferSchema",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flightofferschema",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_services_api_flights_flightsegmentschema",
+      "label": "FlightSegmentSchema",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flightsegmentschema",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_services_api_flights_searchflightsparamsschema",
+      "label": "SearchFlightsParamsSchema",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "searchflightsparamsschema",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L44"
+    },
+    {
+      "id": "src_services_api_flights_searchflightsresponseschema",
+      "label": "SearchFlightsResponseSchema",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "searchflightsresponseschema",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L55"
+    },
+    {
+      "id": "src_services_api_flights_test",
+      "label": "flights.test.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flights.test.ts",
+      "source_file": "src/services/api/flights.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_services_db_vault",
       "label": "vault.ts",
       "_origin": "ast",
@@ -3324,6 +3404,28 @@
       "file_type": "code",
       "norm_label": "vaultstore.ts",
       "source_file": "src/stores/vaultStore.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_stores_vaultstore_usevaultstore",
+      "label": "useVaultStore",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "usevaultstore",
+      "source_file": "src/stores/vaultStore.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_test_e2e_flows_test",
+      "label": "flows.test.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "bookingStore.ts",
+      "file_type": "code",
+      "norm_label": "flows.test.ts",
+      "source_file": "src/test/e2e/flows.test.ts",
       "source_location": "L1"
     },
     {
@@ -3636,59 +3738,125 @@
       "source_location": "L213"
     },
     {
-      "id": "src_i18n_index",
-      "label": "i18n/index.ts",
+      "id": "src_domains_booking_state",
+      "label": "state.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "i18n/index.ts",
-      "source_file": "src/i18n/index.ts",
+      "norm_label": "state.ts",
+      "source_file": "src/domains/booking/state.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_i18n_index_language_names",
-      "label": "LANGUAGE_NAMES",
+      "id": "src_domains_booking_state_allowedtransitions",
+      "label": "allowedTransitions",
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "language_names",
-      "source_file": "src/i18n/index.ts",
-      "source_location": "L14"
+      "norm_label": "allowedtransitions",
+      "source_file": "src/domains/booking/state.ts",
+      "source_location": "L59"
     },
     {
-      "id": "src_i18n_index_rtl_languages",
-      "label": "RTL_LANGUAGES",
+      "id": "src_domains_booking_state_test",
+      "label": "state.test.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "rtl_languages",
-      "source_file": "src/i18n/index.ts",
-      "source_location": "L10"
+      "norm_label": "state.test.ts",
+      "source_file": "src/domains/booking/state.test.ts",
+      "source_location": "L1"
     },
     {
-      "id": "src_i18n_index_supported_languages",
-      "label": "SUPPORTED_LANGUAGES",
+      "id": "src_domains_hotel_stay",
+      "label": "stay.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "file_type": "code",
-      "norm_label": "supported_languages",
-      "source_file": "src/i18n/index.ts",
-      "source_location": "L11"
+      "norm_label": "stay.ts",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L1"
     },
     {
-      "id": "ref_i18next",
-      "label": "i18next",
+      "id": "src_domains_hotel_stay_staydatesschema",
+      "label": "StayDatesSchema",
       "_origin": "ast",
       "community": 12,
-      "community_name": "i18n/index.ts",
-      "file_type": "concept",
-      "norm_label": "i18next",
-      "source_file": "package.json",
-      "source_location": "L42"
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "staydatesschema",
+      "source_file": "src/domains/hotel/stay.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_domains_hotel_stay_test",
+      "label": "stay.test.ts",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "stay.test.ts",
+      "source_file": "src/domains/hotel/stay.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_stores_hotelstore",
+      "label": "hotelStore.ts",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "hotelstore.ts",
+      "source_file": "src/stores/hotelStore.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_stores_hotelstore_emptydraft",
+      "label": "emptyDraft",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "emptydraft",
+      "source_file": "src/stores/hotelStore.ts",
+      "source_location": "L71"
+    },
+    {
+      "id": "src_stores_hotelstore_test",
+      "label": "hotelStore.test.ts",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "hotelstore.test.ts",
+      "source_file": "src/stores/hotelStore.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_stores_hotelstore_test_offer",
+      "label": "offer",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "offer",
+      "source_file": "src/stores/hotelStore.test.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_stores_hotelstore_usehotelstore",
+      "label": "useHotelStore",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "hotelStore.ts",
+      "file_type": "code",
+      "norm_label": "usehotelstore",
+      "source_file": "src/stores/hotelStore.ts",
+      "source_location": "L84"
     },
     {
       "id": "scripts_add_booking_i18n",
@@ -4131,7 +4299,7 @@
       "label": "expo-secure-store",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "confidence": "EXTRACTED",
       "file_type": "code",
       "norm_label": "expo-secure-store",
@@ -4142,7 +4310,7 @@
       "label": "useAuth.ts",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "useauth.ts",
       "source_file": "src/hooks/useAuth.ts",
@@ -4153,7 +4321,7 @@
       "label": "auth.ts",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "auth.ts",
       "source_file": "src/services/api/auth.ts",
@@ -4164,7 +4332,7 @@
       "label": "SendOtpResponse",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "sendotpresponse",
       "source_file": "src/services/api/auth.ts",
@@ -4175,7 +4343,7 @@
       "label": "VerifyOtpResponse",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "verifyotpresponse",
       "source_file": "src/services/api/auth.ts",
@@ -4186,7 +4354,7 @@
       "label": "client.ts",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "client.ts",
       "source_file": "src/services/api/client.ts",
@@ -4197,7 +4365,7 @@
       "label": "tokens.ts",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "tokens.ts",
       "source_file": "src/services/secure/tokens.ts",
@@ -4208,18 +4376,40 @@
       "label": "memoryStore",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "memorystore",
       "source_file": "src/services/secure/tokens.ts",
       "source_location": "L18"
     },
     {
+      "id": "src_services_sync_conflictresolver",
+      "label": "conflictResolver.ts",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "conflictresolver.ts",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_sync_conflictresolver_test",
+      "label": "conflictResolver.test.ts",
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "authStore.ts",
+      "file_type": "code",
+      "norm_label": "conflictresolver.test.ts",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_stores_authstore",
       "label": "authStore.ts",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "authstore.ts",
       "source_file": "src/stores/authStore.ts",
@@ -4230,7 +4420,7 @@
       "label": "useAuthStore",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "code",
       "norm_label": "useauthstore",
       "source_file": "src/stores/authStore.ts",
@@ -4241,22 +4431,11 @@
       "label": "zod",
       "_origin": "ast",
       "community": 18,
-      "community_name": "useAuthStore",
+      "community_name": "authStore.ts",
       "file_type": "concept",
       "norm_label": "zod",
       "source_file": "package.json",
       "source_location": "L56"
-    },
-    {
-      "id": "ref_zustand",
-      "label": "zustand",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "useAuthStore",
-      "file_type": "concept",
-      "norm_label": "zustand",
-      "source_file": "package.json",
-      "source_location": "L57"
     },
     {
       "id": "package_devdependencies",
@@ -4730,17 +4909,6 @@
       "norm_label": "colors",
       "source_file": "src/styles/colors.ts",
       "source_location": "L6"
-    },
-    {
-      "id": "ref_expo_local_authentication",
-      "label": "expo-local-authentication",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "hotel-results.tsx",
-      "file_type": "concept",
-      "norm_label": "expo-local-authentication",
-      "source_file": "package.json",
-      "source_location": "L34"
     },
     {
       "id": "ref_expo_router",
@@ -5404,39 +5572,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_domains_booking_state",
-      "label": "state.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "state.ts",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domains_booking_state_allowedtransitions",
-      "label": "allowedTransitions",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "allowedtransitions",
-      "source_file": "src/domains/booking/state.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "src_domains_booking_state_test",
-      "label": "state.test.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "state.test.ts",
-      "source_file": "src/domains/booking/state.test.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_domains_currency_money",
       "label": "money.ts",
       "_origin": "ast",
@@ -5459,39 +5594,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_domains_hotel_stay",
-      "label": "stay.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "stay.ts",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_domains_hotel_stay_staydatesschema",
-      "label": "StayDatesSchema",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "staydatesschema",
-      "source_file": "src/domains/hotel/stay.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_domains_hotel_stay_test",
-      "label": "stay.test.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "stay.test.ts",
-      "source_file": "src/domains/hotel/stay.test.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_stores_bookingstore_usebookingstore",
       "label": "useBookingStore",
       "_origin": "ast",
@@ -5503,61 +5605,6 @@
       "source_location": "L105"
     },
     {
-      "id": "src_stores_hotelstore",
-      "label": "hotelStore.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "hotelstore.ts",
-      "source_file": "src/stores/hotelStore.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_stores_hotelstore_emptydraft",
-      "label": "emptyDraft",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "emptydraft",
-      "source_file": "src/stores/hotelStore.ts",
-      "source_location": "L71"
-    },
-    {
-      "id": "src_stores_hotelstore_test",
-      "label": "hotelStore.test.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "hotelstore.test.ts",
-      "source_file": "src/stores/hotelStore.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_stores_hotelstore_test_offer",
-      "label": "offer",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "offer",
-      "source_file": "src/stores/hotelStore.test.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_stores_hotelstore_usehotelstore",
-      "label": "useHotelStore",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "usehotelstore",
-      "source_file": "src/stores/hotelStore.ts",
-      "source_location": "L84"
-    },
-    {
       "id": "src_stores_walletstore",
       "label": "walletStore.ts",
       "_origin": "ast",
@@ -5567,28 +5614,6 @@
       "norm_label": "walletstore.ts",
       "source_file": "src/stores/walletStore.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_stores_walletstore_initialbalances",
-      "label": "initialBalances",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "initialbalances",
-      "source_file": "src/stores/walletStore.ts",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_stores_walletstore_seedtransactions",
-      "label": "seedTransactions",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "money",
-      "file_type": "code",
-      "norm_label": "seedtransactions",
-      "source_file": "src/stores/walletStore.ts",
-      "source_location": "L72"
     },
     {
       "id": "src_stores_walletstore_test",
@@ -5610,7 +5635,7 @@
       "file_type": "code",
       "norm_label": "usewalletstore",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L107"
+      "source_location": "L64"
     },
     {
       "id": "ref_decimal_js",
@@ -5624,15 +5649,15 @@
       "source_location": "L23"
     },
     {
-      "id": "ref_vitest",
-      "label": "vitest",
+      "id": "ref_zustand",
+      "label": "zustand",
       "_origin": "ast",
       "community": 3,
       "community_name": "money",
       "file_type": "concept",
-      "norm_label": "vitest",
+      "norm_label": "zustand",
       "source_file": "package.json",
-      "source_location": "L65"
+      "source_location": "L57"
     },
     {
       "id": "package",
@@ -5745,6 +5770,17 @@
       "source_location": "L25"
     },
     {
+      "id": "ref_expo_background_task",
+      "label": "expo-background-task",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "expo-background-task",
+      "source_file": "package.json",
+      "source_location": "L26"
+    },
+    {
       "id": "ref_expo_constants",
       "label": "expo-constants",
       "_origin": "ast",
@@ -5767,17 +5803,6 @@
       "source_location": "L29"
     },
     {
-      "id": "ref_expo_font",
-      "label": "expo-font",
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "expo-font",
-      "source_file": "package.json",
-      "source_location": "L31"
-    },
-    {
       "id": "ref_expo_haptics",
       "label": "expo-haptics",
       "_origin": "ast",
@@ -5798,6 +5823,17 @@
       "norm_label": "expo-linking",
       "source_file": "package.json",
       "source_location": "L33"
+    },
+    {
+      "id": "ref_expo_local_authentication",
+      "label": "expo-local-authentication",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "expo-local-authentication",
+      "source_file": "package.json",
+      "source_location": "L34"
     },
     {
       "id": "ref_expo_localization",
@@ -5899,81 +5935,92 @@
       "source_location": "L63"
     },
     {
-      "id": "src_services_api_flights",
-      "label": "flights.ts",
+      "id": "src_services_api_index",
+      "label": "api/index.ts",
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "flights.ts",
-      "source_file": "src/services/api/flights.ts",
+      "norm_label": "api/index.ts",
+      "source_file": "src/services/api/index.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_services_api_flights_airportschema",
-      "label": "AirportSchema",
+      "id": "src_services_api_index_bookingservice",
+      "label": "bookingService",
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "airportschema",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_services_api_flights_flightofferschema",
-      "label": "FlightOfferSchema",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "flights.ts",
-      "file_type": "code",
-      "norm_label": "flightofferschema",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L28"
-    },
-    {
-      "id": "src_services_api_flights_flightsegmentschema",
-      "label": "FlightSegmentSchema",
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "flights.ts",
-      "file_type": "code",
-      "norm_label": "flightsegmentschema",
-      "source_file": "src/services/api/flights.ts",
+      "norm_label": "bookingservice",
+      "source_file": "src/services/api/index.ts",
       "source_location": "L17"
     },
     {
-      "id": "src_services_api_flights_searchflightsparamsschema",
-      "label": "SearchFlightsParamsSchema",
+      "id": "src_services_api_index_flightservice",
+      "label": "flightService",
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "searchflightsparamsschema",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L40"
+      "norm_label": "flightservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L15"
     },
     {
-      "id": "src_services_api_flights_searchflightsresponseschema",
-      "label": "SearchFlightsResponseSchema",
+      "id": "src_services_api_index_hotelservice",
+      "label": "hotelService",
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "searchflightsresponseschema",
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L51"
+      "norm_label": "hotelservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L16"
     },
     {
-      "id": "src_services_api_flights_test",
-      "label": "flights.test.ts",
+      "id": "src_services_api_index_walletservice",
+      "label": "walletService",
       "_origin": "ast",
       "community": 31,
-      "community_name": "flights.ts",
+      "community_name": "api/index.ts",
       "file_type": "code",
-      "norm_label": "flights.test.ts",
-      "source_file": "src/services/api/flights.test.ts",
+      "norm_label": "walletservice",
+      "source_file": "src/services/api/index.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_services_sync_backgroundsync",
+      "label": "backgroundSync.ts",
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "backgroundsync.ts",
+      "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_services_sync_backgroundsync_vault_sync_task",
+      "label": "VAULT_SYNC_TASK",
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "api/index.ts",
+      "file_type": "code",
+      "norm_label": "vault_sync_task",
+      "source_file": "src/services/sync/backgroundSync.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "ref_expo_task_manager",
+      "label": "expo-task-manager",
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "api/index.ts",
+      "file_type": "concept",
+      "norm_label": "expo-task-manager",
+      "source_file": "package.json",
+      "source_location": "L41"
     },
     {
       "id": "tailwindcss",
@@ -6647,11 +6694,22 @@
       "source_location": "L57"
     },
     {
+      "id": "src_services_api_booking_test",
+      "label": "booking.test.ts",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "booking.test.ts",
+      "source_file": "src/services/api/booking.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_services_api_hotels",
       "label": "hotels.ts",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "hotels.ts",
       "source_file": "src/services/api/hotels.ts",
@@ -6662,55 +6720,77 @@
       "label": "HotelSchema",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "hotelschema",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L9"
+      "source_location": "L13"
     },
     {
       "id": "src_services_api_hotels_roomofferschema",
       "label": "RoomOfferSchema",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "roomofferschema",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L23"
+      "source_location": "L27"
     },
     {
       "id": "src_services_api_hotels_searchhotelsparamsschema",
       "label": "SearchHotelsParamsSchema",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "searchhotelsparamsschema",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L37"
+      "source_location": "L41"
     },
     {
       "id": "src_services_api_hotels_searchhotelsresponseschema",
       "label": "SearchHotelsResponseSchema",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "searchhotelsresponseschema",
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L46"
+      "source_location": "L50"
     },
     {
       "id": "src_services_api_hotels_test",
       "label": "hotels.test.ts",
       "_origin": "ast",
       "community": 40,
-      "community_name": "hotels.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "hotels.test.ts",
       "source_file": "src/services/api/hotels.test.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "ref_axios",
+      "label": "axios",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "vitest",
+      "file_type": "concept",
+      "norm_label": "axios",
+      "source_file": "package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "vitest",
+      "file_type": "concept",
+      "norm_label": "vitest",
+      "source_file": "package.json",
+      "source_location": "L65"
     },
     {
       "id": "src_services_security_dbkey",
@@ -6768,26 +6848,37 @@
       "source_location": "L64"
     },
     {
-      "id": "src_services_api_booking_test",
-      "label": "booking.test.ts",
+      "id": "src_services_api_config",
+      "label": "config.ts",
       "_origin": "ast",
       "community": 43,
-      "community_name": "axios",
+      "community_name": "config.ts",
       "file_type": "code",
-      "norm_label": "booking.test.ts",
-      "source_file": "src/services/api/booking.test.ts",
+      "norm_label": "config.ts",
+      "source_file": "src/services/api/config.ts",
       "source_location": "L1"
     },
     {
-      "id": "ref_axios",
-      "label": "axios",
+      "id": "src_services_api_config_apiconfig",
+      "label": "apiConfig",
       "_origin": "ast",
       "community": 43,
-      "community_name": "axios",
+      "community_name": "config.ts",
+      "file_type": "code",
+      "norm_label": "apiconfig",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L47"
+    },
+    {
+      "id": "docref_rfc_7469",
+      "label": "RFC-7469",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "config.ts",
       "file_type": "concept",
-      "norm_label": "axios",
-      "source_file": "package.json",
-      "source_location": "L22"
+      "norm_label": "rfc-7469",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L7"
     },
     {
       "id": "package_engines",
@@ -6832,6 +6923,61 @@
       "norm_label": "sqlcipher",
       "source_file": "package.json",
       "source_location": "L71"
+    },
+    {
+      "id": "src_services_telemetry_index",
+      "label": "telemetry/index.ts",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "telemetry/index.ts",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_telemetry_index_eventbuffer",
+      "label": "eventBuffer",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "eventbuffer",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_services_telemetry_index_sensitive_keys",
+      "label": "SENSITIVE_KEYS",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "sensitive_keys",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_services_telemetry_index_telemetry",
+      "label": "telemetry",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "telemetry",
+      "source_file": "src/services/telemetry/index.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "src_services_telemetry_index_test",
+      "label": "index.test.ts",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "telemetry/index.ts",
+      "file_type": "code",
+      "norm_label": "index.test.ts",
+      "source_file": "src/services/telemetry/index.test.ts",
+      "source_location": "L1"
     },
     {
       "id": "agents",
@@ -7977,11 +8123,71 @@
       "source_location": ""
     },
     {
+      "id": "src_i18n_locales_ar",
+      "label": "src_i18n_locales_ar",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_i18n_locales_ar",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "src_i18n_locales_en",
+      "label": "src_i18n_locales_en",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_i18n_locales_en",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "src_i18n_locales_fa",
+      "label": "src_i18n_locales_fa",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_i18n_locales_fa",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "src_i18n_locales_ru",
+      "label": "src_i18n_locales_ru",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_i18n_locales_ru",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "src_i18n_locales_zh",
+      "label": "src_i18n_locales_zh",
+      "_origin": "semantic",
+      "community": 0,
+      "community_name": "app/_layout.tsx",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_i18n_locales_zh",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "src_styles_global",
       "label": "src_styles_global",
       "_origin": "semantic",
       "community": 0,
-      "community_name": "api/index.ts",
+      "community_name": "app/_layout.tsx",
       "external": true,
       "file_type": "concept",
       "norm_label": "src_styles_global",
@@ -8025,62 +8231,26 @@
       "type": "external"
     },
     {
-      "id": "src_i18n_locales_ar",
-      "label": "src_i18n_locales_ar",
+      "id": "src_services_api_index_roomoffer",
+      "label": "src_services_api_index_roomoffer",
       "_origin": "semantic",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "external": true,
       "file_type": "concept",
-      "norm_label": "src_i18n_locales_ar",
+      "norm_label": "src_services_api_index_roomoffer",
       "source_file": "",
       "type": "external"
     },
     {
-      "id": "src_i18n_locales_en",
-      "label": "src_i18n_locales_en",
+      "id": "src_services_api_index_searchhotelsparams",
+      "label": "src_services_api_index_searchhotelsparams",
       "_origin": "semantic",
       "community": 12,
-      "community_name": "i18n/index.ts",
+      "community_name": "hotelStore.ts",
       "external": true,
       "file_type": "concept",
-      "norm_label": "src_i18n_locales_en",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_i18n_locales_fa",
-      "label": "src_i18n_locales_fa",
-      "_origin": "semantic",
-      "community": 12,
-      "community_name": "i18n/index.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_i18n_locales_fa",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_i18n_locales_ru",
-      "label": "src_i18n_locales_ru",
-      "_origin": "semantic",
-      "community": 12,
-      "community_name": "i18n/index.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_i18n_locales_ru",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_i18n_locales_zh",
-      "label": "src_i18n_locales_zh",
-      "_origin": "semantic",
-      "community": 12,
-      "community_name": "i18n/index.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_i18n_locales_zh",
+      "norm_label": "src_services_api_index_searchhotelsparams",
       "source_file": "",
       "type": "external"
     },
@@ -8141,30 +8311,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_nativewind_metro",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_services_api_index_roomoffer",
-      "label": "src_services_api_index_roomoffer",
-      "_origin": "semantic",
-      "community": 3,
-      "community_name": "money",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_services_api_index_roomoffer",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_services_api_index_searchhotelsparams",
-      "label": "src_services_api_index_searchhotelsparams",
-      "_origin": "semantic",
-      "community": 3,
-      "community_name": "money",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_services_api_index_searchhotelsparams",
       "source_file": "",
       "type": "external"
     },
@@ -8803,7 +8949,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/search.tsx",
-      "source_location": "L218",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -8815,7 +8961,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/search.tsx",
-      "source_location": "L55",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -8827,7 +8973,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -8839,7 +8985,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L210",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -8851,7 +8997,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -8863,7 +9009,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -8875,7 +9021,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -8887,7 +9033,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -9288,18 +9434,6 @@
     },
     {
       "source": "src_services_api_client_createapiclient",
-      "target": "src_services_api_client_refreshonce",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/services/api/client.ts",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_client_createapiclient",
       "target": "src_services_secure_tokens_cleartokens",
       "relation": "calls",
       "_origin": "ast",
@@ -9307,7 +9441,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L84",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_client_createapiclient",
+      "target": "src_services_api_client_refreshonce",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/api/client.ts",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -9319,7 +9465,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L105",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -9331,7 +9477,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L114",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -9343,7 +9489,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L122",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -9355,7 +9501,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/api/client.ts",
-      "source_location": "L97",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_config_resolvebaseurl",
+      "target": "src_services_api_config_resolveenvironment",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -9768,18 +9926,6 @@
     },
     {
       "source": "src_stores_walletstore_usewalletstore",
-      "target": "src_domains_currency_money_money",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/stores/walletStore.ts",
-      "source_location": "L129",
-      "weight": 1.0
-    },
-    {
-      "source": "src_stores_walletstore_usewalletstore",
       "target": "src_domains_currency_money_zero",
       "relation": "calls",
       "_origin": "ast",
@@ -9787,7 +9933,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L163",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -9799,7 +9945,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L164",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -9811,7 +9957,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L177",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -9823,7 +9969,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L189",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -9835,7 +9981,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L194",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "src_stores_walletstore_usewalletstore",
+      "target": "src_domains_currency_money_money",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/stores/walletStore.ts",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_api_flights_createflightservice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -9860,6 +10030,18 @@
       "context": "call",
       "source_file": "src/services/sync/mutationQueue.test.ts",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_test_e2e_flows_test_mockvaultdriver",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -10244,7 +10426,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L53",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -10256,7 +10438,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -10346,6 +10528,19 @@
       "deferred": true,
       "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_api_flights",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "deferred": true,
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L248",
       "weight": 1.0
     },
     {
@@ -12666,7 +12861,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_stores_walletstore_usewalletstore",
+      "target": "src_components_ui_emptystate_emptystate",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12678,7 +12873,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_stores_authstore_useauthstore",
+      "target": "src_stores_walletstore_usewalletstore",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12690,7 +12885,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_hooks_usebiometrics_usebiometrics",
+      "target": "src_stores_authstore_useauthstore",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12702,7 +12897,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_hooks_usenetworkstatus_usenetworkstatus",
+      "target": "src_hooks_usebiometrics_usebiometrics",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12714,7 +12909,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_domains_currency_money_format",
+      "target": "src_hooks_usenetworkstatus_usenetworkstatus",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12722,6 +12917,18 @@
       "context": "import",
       "source_file": "src/app/(tabs)/wallet.tsx",
       "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_tabs_wallet",
+      "target": "src_domains_currency_money_format",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/(tabs)/wallet.tsx",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -12733,7 +12940,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -12745,7 +12952,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -13649,30 +13856,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_services_api_booking",
-      "target": "src_domains_booking_state_bookingstatus",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/services/api/booking.ts",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_booking",
-      "target": "src_domains_booking_state_paymentstatus",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/services/api/booking.ts",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
       "source": "src_services_api_booking_test",
       "target": "src_services_api_booking_createbookingservice",
       "relation": "imports",
@@ -14030,6 +14213,78 @@
       "context": "import",
       "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_domains_booking_state_bookingstatus",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_stores_authstore_userprofile",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_services_sync_conflictresolver_resolvebookingconflict",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_services_sync_conflictresolver_resolvepreferenceconflict",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_services_sync_conflictresolver_resolveprofileconflict",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_stores_authstore_userprofile",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -14834,6 +15089,162 @@
       "context": "import",
       "source_file": "src/stores/walletStore.test.ts",
       "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_stores_walletstore_test",
+      "target": "src_services_api_index_walletservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/stores/walletStore.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_stores_bookingstore_usebookingstore",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_stores_authstore_useauthstore",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_api_index_bookingservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_db_vault_vault",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_db_driver_setvaultdriverfortests",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_db_driver_vaultdriver",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_domains_voucher_voucher_buildflightbarcodepayload",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_domains_voucher_voucher_flightvoucherfromdraft",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_domains_identity_passenger_passengerschema",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_secure_tokens_cleartokens",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_secure_tokens_getaccesstoken",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_secure_tokens_savetokens",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -17361,7 +17772,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_stores_walletstore",
+      "target": "src_components_ui_emptystate",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17373,7 +17784,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_stores_authstore",
+      "target": "src_stores_walletstore",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17385,7 +17796,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_hooks_usebiometrics",
+      "target": "src_stores_authstore",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17397,7 +17808,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_hooks_usenetworkstatus",
+      "target": "src_hooks_usebiometrics",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17409,7 +17820,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_domains_currency_money",
+      "target": "src_hooks_usenetworkstatus",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17421,7 +17832,7 @@
     },
     {
       "source": "src_app_tabs_wallet",
-      "target": "src_services_api_index",
+      "target": "src_domains_currency_money",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17429,6 +17840,18 @@
       "context": "import",
       "source_file": "src/app/(tabs)/wallet.tsx",
       "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_tabs_wallet",
+      "target": "src_services_api_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/(tabs)/wallet.tsx",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -18711,18 +19134,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_services_api_booking",
-      "target": "src_domains_booking_state",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/services/api/booking.ts",
-      "source_location": "L3",
-      "weight": 1.0
-    },
-    {
       "source": "src_services_api_booking_test",
       "target": "ref_vitest",
       "relation": "imports_from",
@@ -19209,6 +19620,69 @@
       "context": "import",
       "source_file": "src/services/sync/backgroundSync.ts",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_domains_booking_state",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L1",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_stores_authstore",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L2",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_services_sync_conflictresolver",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver_test",
+      "target": "src_stores_authstore",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/sync/conflictResolver.test.ts",
+      "source_location": "L7",
+      "type_only": true,
       "weight": 1.0
     },
     {
@@ -19708,6 +20182,138 @@
       "weight": 1.0
     },
     {
+      "source": "src_stores_walletstore_test",
+      "target": "src_services_api_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/stores/walletStore.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "ref_axios",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_stores_bookingstore",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_stores_authstore",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_api_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_db_vault",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_db_driver",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_domains_voucher_voucher",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_domains_identity_passenger",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_services_secure_tokens",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "vitest_config",
       "target": "ref_vitest_config",
       "relation": "imports_from",
@@ -19829,6 +20435,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_test_e2e_flows_test_mockvaultdriver",
+      "target": "src_services_db_driver_vaultdriver",
+      "relation": "implements",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "type",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
       "source": "src_services_api_config",
       "target": "docref_rfc_7469",
       "relation": "cites",
@@ -19836,7 +20454,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/config.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -22509,7 +23127,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/(tabs)/wallet.tsx",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -23642,7 +24260,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/booking.ts",
-      "source_location": "L224",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -23790,13 +24408,24 @@
     },
     {
       "source": "src_services_api_client",
+      "target": "src_services_api_client_refreshonce",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/client.ts",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_client",
       "target": "src_services_api_client_dorefresh",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/client.ts",
-      "source_location": "L104",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -23844,14 +24473,14 @@
       "weight": 1.0
     },
     {
-      "source": "src_services_api_client",
-      "target": "src_services_api_client_refreshonce",
+      "source": "src_services_api_config",
+      "target": "src_services_api_config_environment",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/client.ts",
-      "source_location": "L95",
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -23862,7 +24491,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/config.ts",
-      "source_location": "L10",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_config",
+      "target": "src_services_api_config_resolveenvironment",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_config",
+      "target": "src_services_api_config_resolvebaseurl",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/config.ts",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -23873,139 +24524,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/config.ts",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_createflightservice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L117",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_airport",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_flightsegmentschema",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_flightservice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L224",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_flightsegment",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L26",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_flightofferschema",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_flightoffer",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L38",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_searchflightsparamsschema",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L40",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_searchflightsparams",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L49",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_searchflightsresponseschema",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L51",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_parsedurationminutes",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L58",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_flights",
-      "target": "src_services_api_flights_getfallbackoffers",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/flights.ts",
-      "source_location": "L72",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -24016,95 +24535,128 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/flights.ts",
-      "source_location": "L9",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_hotelservice",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_flightservice",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L205",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_hotel",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_airport",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_flightsegmentschema",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/flights.ts",
       "source_location": "L21",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_roomofferschema",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_flightsegment",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L23",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_roomoffer",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_flightofferschema",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L35",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_searchhotelsparamsschema",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_flightoffer",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L37",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_searchhotelsparams",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_searchflightsparamsschema",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
+      "source_file": "src/services/api/flights.ts",
       "source_location": "L44",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_searchhotelsresponseschema",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_searchflightsparams",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L46",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
-      "source": "src_services_api_hotels",
-      "target": "src_services_api_hotels_getfallbackhoteloffers",
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_searchflightsresponseschema",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/services/api/hotels.ts",
-      "source_location": "L52",
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_parsedurationminutes",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_flights",
+      "target": "src_services_api_flights_createflightservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/flights.ts",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -24115,7 +24667,84 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L9",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_hotelservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_hotel",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_roomofferschema",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_roomoffer",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_searchhotelsparamsschema",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_searchhotelsparams",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_hotels",
+      "target": "src_services_api_hotels_searchhotelsresponseschema",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/hotels.ts",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -24126,7 +24755,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/api/hotels.ts",
-      "source_location": "L95",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -24197,6 +24826,17 @@
     },
     {
       "source": "src_services_api_wallet",
+      "target": "src_services_api_wallet_walletservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/api/wallet.ts",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_api_wallet",
       "target": "src_services_api_wallet_walletbalancesschema",
       "relation": "contains",
       "_origin": "ast",
@@ -24204,17 +24844,6 @@
       "confidence_score": 1.0,
       "source_file": "src/services/api/wallet.ts",
       "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_api_wallet",
-      "target": "src_services_api_wallet_walletservice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/api/wallet.ts",
-      "source_location": "L137",
       "weight": 1.0
     },
     {
@@ -24702,6 +25331,50 @@
       "weight": 1.0
     },
     {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_services_sync_conflictresolver_conflictresolutionpolicy",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_services_sync_conflictresolver_resolvebookingconflict",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_services_sync_conflictresolver_resolveprofileconflict",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_sync_conflictresolver",
+      "target": "src_services_sync_conflictresolver_resolvepreferenceconflict",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
       "source": "src_services_sync_mutationqueue",
       "target": "src_services_sync_mutationqueue_mutationtype",
       "relation": "contains",
@@ -25033,24 +25706,13 @@
     },
     {
       "source": "src_stores_walletstore",
-      "target": "src_stores_walletstore_usewalletstore",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/stores/walletStore.ts",
-      "source_location": "L107",
-      "weight": 1.0
-    },
-    {
-      "source": "src_stores_walletstore",
       "target": "src_stores_walletstore_wallettransaction",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -25066,24 +25728,13 @@
     },
     {
       "source": "src_stores_walletstore",
-      "target": "src_stores_walletstore_initialbalances",
+      "target": "src_stores_walletstore_usewalletstore",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/stores/walletStore.ts",
-      "source_location": "L63",
-      "weight": 1.0
-    },
-    {
-      "source": "src_stores_walletstore",
-      "target": "src_stores_walletstore_seedtransactions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/stores/walletStore.ts",
-      "source_location": "L72",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -25493,6 +26144,17 @@
       "weight": 1.0
     },
     {
+      "source": "src_services_sync_conflictresolver_conflictresolutionpolicy",
+      "target": "src_services_sync_conflictresolver_conflictresolutionpolicy_resolve",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/sync/conflictResolver.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
       "source": "src_services_sync_mutationqueue_mutationqueueengine",
       "target": "src_services_sync_mutationqueue_mutationqueueengine_listpending",
       "relation": "method",
@@ -25603,6 +26265,50 @@
       "weight": 1.0
     },
     {
+      "source": "src_test_e2e_flows_test_mockvaultdriver",
+      "target": "src_test_e2e_flows_test_mockvaultdriver_run",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test_mockvaultdriver",
+      "target": "src_test_e2e_flows_test_mockvaultdriver_all",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test_mockvaultdriver",
+      "target": "src_test_e2e_flows_test_mockvaultdriver_get",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test_mockvaultdriver",
+      "target": "src_test_e2e_flows_test_mockvaultdriver_exec",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
       "source": "architecture_fa",
       "target": "android_architecture",
       "relation": "references",
@@ -25623,6 +26329,18 @@
       "context": "call",
       "source_file": "src/services/db/vault.ts",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "src_test_e2e_flows_test",
+      "target": "src_test_e2e_flows_test_mockvaultdriver_all",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "argument",
+      "source_file": "src/test/e2e/flows.test.ts",
+      "source_location": "L295",
       "weight": 1.0
     },
     {
@@ -25699,5 +26417,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b0805477d5a350c9f216e144d6951cd5622d82e9"
+  "built_at_commit": "db4963306cb165be9afa40e5512d320fa5befda1"
 }
