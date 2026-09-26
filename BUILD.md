@@ -219,61 +219,38 @@ android.enableShrinkResourcesInReleaseBuilds=true
 
 ---
 
-## ۶. ساخت خروجی
+## ۶. ساخت و توزیع خروجی‌ها (Distribution Channels)
 
-### گزینه ۱ — EAS Build (ابری، بدون SDK محلی) ⭐ پیشنهادی
+پلتفرم iTRIP Mobile دارای ۵ سطح خروجی تفکیک‌شده است:
 
-فایل [`eas.json`](eas.json) از قبل آماده است. کافی است:
-
-```bash
-npm install -g eas-cli
-eas login
-
-# اتصال پروژه به EAS (یک‌بار)
-eas build:configure
-
-# ساخت production (AAB امضاشده، با versionCode خودافزا)
-eas build --platform android --profile production
-```
-
-**سه پروفایل آماده در [`eas.json`](eas.json):**
-
-| پروفایل | خروجی | کاربرد |
-|---|---|---|
-| `development` | APK (dev-client) | تست روی دستگاه با hot-reload |
-| `preview` | APK release | تست داخلی / کافه بازار |
-| `production` | AAB | Google Play / انتشار نهایی |
-
-```bash
-# تست داخلی سریع (APK release)
-eas build --platform android --profile preview
-
-# مشاهده buildهای قبلی
-eas build:list
-```
-
-> **نکته:** آدرس‌های `EXPO_PUBLIC_API_URL` در eas.json فعلاً placeholder هستند
-> (`api.itrip.example.com`)؛ پیش از build واقعی آن‌ها را با دامنه تولید فیروزو جایگزین کنید.
-
-### گزینه ۲ — Gradle محلی (با Android SDK نصب‌شده)
-
-```bash
-cd android
-
-# AAB (Google Play) 
-.\gradlew.bat bundleRelease
-
-# APK (کافه بازار / دانلود مستقیم)
-.\gradlew.bat assembleRelease
-```
-
-خروجی‌ها:
-- AAB: `android/app/build/outputs/bundle/release/app-release.aab`
-- APK: `android/app/build/outputs/apk/release/app-release.apk`
+| کانال / پروفایل | نوع خروجی | مقصد انتشار | دستور ساخت |
+| :--- | :---: | :---: | :--- |
+| **A. Development** | Debug APK (Dev Client) | توسعه‌دهندگان (Hot Reload) | `eas build -p android --profile development` |
+| **B. Internal Preview** | Signed Release APK | تیم تضمین کیفیت (QA) | `eas build -p android --profile preview` |
+| **C. Public Android APK** | Signed Production APK | دانلود مستقیم کاربران و وب‌سایت | `eas build -p android --profile production-apk` |
+| **D. Google Play Store** | Signed Production AAB | انتشار بین‌المللی پلی‌استور | `eas build -p android --profile production` |
+| **E. کافه بازار و مایکت** | Signed Production APK | مارکت‌های بومی ایرانی | `./gradlew assembleRelease` یا profile `production-apk` |
 
 ---
 
-## ۷. چک‌لیست پیش از انتشار (Quality Gates)
+## ۷. خط لوله انتشار خودکار گیت‌هاب (GitHub Release CI/CD)
+
+فایل ورک‌فلو [`.github/workflows/build-and-release-apk.yml`](.github/workflows/build-and-release-apk.yml) به صورت تمام‌خودکار:
+1. روی تگ‌های نسخه (مانند `v0.2.0`) اجرا می‌شود.
+2. گیت‌های تست و کیفیت (`npm run verify`) را می‌سنجد.
+3. بیلد نیتیو پروداکشن اندروید (`./gradlew assembleRelease`) را در کانتینر اوبونتو کامپایل می‌کند.
+4. فایل APK را با نام کاربرپسند `iTRIP-Mobile-v0.2.0.apk` نام‌گذاری می‌کند.
+5. کد هش SHA-256 را محاسبه کرده و در فایل `iTRIP-Mobile-v0.2.0.apk.sha256` ذخیره می‌نماید.
+6. فایل APK و هش اصالت را مستقیماً به بخش **Assets** در GitHub Release پیوست می‌کند.
+
+### اجرای دستی خط لوله از طریق CLI:
+```bash
+gh workflow run "Build & Release Android APK" -f release_tag=v0.2.0
+```
+
+---
+
+## ۸. چک‌لیست پیش از انتشار (Quality Gates)
 
 قبل از هر build production این‌ها را اجرا کنید:
 

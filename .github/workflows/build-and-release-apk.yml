@@ -1,0 +1,95 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Target GitHub Release Tag (e.g. v0.2.0)'
+        required: false
+        default: 'v0.2.0'
+
+jobs:
+  build-and-publish:
+    name: Build Signed Production APK & Attach to Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Run Quality Gate Verifications
+        run: npm run verify
+
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x android/gradlew
+
+      - name: Compile Production Release APK
+        working-directory: android
+        env:
+          EXPO_PUBLIC_API_URL: https://itrip-platform.vercel.app/api
+          EXPO_PUBLIC_APP_ENV: production
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Prepare Release Artifacts & Calculate Checksum
+        run: |
+          mkdir -p dist-apk
+          TAG="${{ github.ref_name }}"
+          if [[ "$TAG" != v* ]]; then
+            TAG="${{ github.event.inputs.release_tag || 'v0.2.0' }}"
+          fi
+          APK_NAME="iTRIP-Mobile-${TAG}.apk"
+          SRC_APK="android/app/build/outputs/apk/release/app-release.apk"
+          if [[ ! -f "$SRC_APK" ]]; then
+            echo "Error: Generated APK not found at $SRC_APK"
+            exit 1
+          fi
+          cp "$SRC_APK" "dist-apk/${APK_NAME}"
+          cd dist-apk
+          sha256sum "${APK_NAME}" > "${APK_NAME}.sha256"
+          echo "ARTIFACT_TAG=${TAG}" >> $GITHUB_ENV
+          echo "BUILT_APK_NAME=${APK_NAME}" >> $GITHUB_ENV
+          echo "SHA256_HASH=$(awk '{print $1}' ${APK_NAME}.sha256)" >> $GITHUB_ENV
+          echo "Generated APK: ${APK_NAME}"
+          cat "${APK_NAME}.sha256"
+
+      - name: Upload APK & Checksum to GitHub Actions Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: itrip-mobile-android-apk
+          path: dist-apk/
+          retention-days: 30
+
+      - name: Attach APK and Checksum to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Uploading ${BUILT_APK_NAME} to GitHub release ${ARTIFACT_TAG}..."
+          gh release upload "${ARTIFACT_TAG}" \
+            "dist-apk/${BUILT_APK_NAME}" \
+            "dist-apk/${BUILT_APK_NAME}.sha256" \
+            --clobber

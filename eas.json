@@ -24,13 +24,25 @@
         "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api"
       }
     },
+    "production-apk": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api",
+        "EXPO_PUBLIC_APP_ENV": "production"
+      }
+    },
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "aab"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api"
+        "EXPO_PUBLIC_API_URL": "https://itrip-platform.vercel.app/api",
+        "EXPO_PUBLIC_APP_ENV": "production"
       }
     }
   },
