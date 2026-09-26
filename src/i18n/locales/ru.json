@@ -107,5 +107,62 @@
     "close": "Закрыть",
     "all": "Все",
     "comingSoon": "Скоро в {{phase}}"
+  },
+  "booking": {
+    "resultsTitle": "Результаты поиска рейсов",
+    "passengersTitle": "Данные пассажиров",
+    "passengersProgress": "Пассажир {{done}} из {{total}}",
+    "firstNameLatin": "Имя (латиницей)",
+    "lastNameLatin": "Фамилия (латиницей)",
+    "dateOfBirth": "Дата рождения",
+    "passportNumber": "Номер паспорта",
+    "nationality": "Гражданство (код страны)",
+    "passportExpiry": "Срок действия паспорта",
+    "passportValidityHint": "Паспорт должен быть действителен минимум 6 месяцев",
+    "addPassenger": "Добавить пассажира",
+    "formInvalid": "Введённые данные недействительны",
+    "reviewTitle": "Проверка и оплата",
+    "fareBreakdown": "Детали тарифа",
+    "baseFare": "Базовый тариф",
+    "tax": "Налог",
+    "serviceFee": "Сервисный сбор",
+    "total": "Итого",
+    "payNow": "Оплатить",
+    "payConfirm": "Подтвердить оплату этого бронирования?",
+    "cancelConfirm": "Отменить черновик бронирования?",
+    "cancelBooking": "Отменить бронирование",
+    "successTitle": "Бронирование подтверждено",
+    "successBody": "Билет оформлен и доступен в разделе «Мои поездки».",
+    "noDraft": "Нет активного бронирования. Сначала найдите рейс.",
+    "seatNotFound": "Пожалуйста, выберите другое место"
+  },
+  "notifications": {
+    "flightDelayTitle": "Рейс задержан",
+    "flightDelayBody": "Рейс {{flight}} задержан на {{minutes}} минут.",
+    "gateChangeTitle": "Изменение выхода",
+    "gateChangeBody": "Рейс {{flight}} теперь отправляется от выхода {{gate}}.",
+    "checkinTitle": "Напоминание о заселении",
+    "checkinBody": "Скоро ваше заселение в {{hotel}}.",
+    "bookingConfirmedTitle": "Бронирование подтверждено",
+    "bookingConfirmedBody": "Бронирование {{ref}} подтверждено и сохранено в вашем сейфе."
+  },
+  "hotel": {
+    "nights": "ночей",
+    "rooms": "номеров",
+    "guests": "гостей",
+    "freeCancellation": "Бесплатная отмена",
+    "nightlyRate": "Цена за ночь",
+    "leadGuest": "Имя основного гостя",
+    "leadGuestPlaceholder": "Полное имя как в документе"
+  },
+  "sos": {
+    "title": "Центр экстренной помощи",
+    "subtitle": "Экстренные инструменты — работают офлайн",
+    "emergency": "Экстренный вызов",
+    "currencyConverter": "Офлайн-конвертер валют",
+    "phrasebook": "Основные фразы на фарси",
+    "touristPolice": "Туристическая полиция",
+    "medical": "Скорая медицинская помощь",
+    "fireRescue": "Пожарная охрана и спасатели"
   }
 }

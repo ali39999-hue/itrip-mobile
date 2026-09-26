@@ -107,5 +107,62 @@
     "close": "إغلاق",
     "all": "الكل",
     "comingSoon": "قريباً في {{phase}}"
+  },
+  "booking": {
+    "resultsTitle": "نتائج الرحلات",
+    "passengersTitle": "بيانات المسافرين",
+    "passengersProgress": "المسافر {{done}} من {{total}}",
+    "firstNameLatin": "الاسم الأول (باللاتينية)",
+    "lastNameLatin": "اسم العائلة (باللاتينية)",
+    "dateOfBirth": "تاريخ الميلاد",
+    "passportNumber": "رقم جواز السفر",
+    "nationality": "الجنسية (رمز الدولة)",
+    "passportExpiry": "تاريخ انتهاء الجواز",
+    "passportValidityHint": "يجب أن يكون الجواز صالحًا لمدة ٦ أشهر على الأقل",
+    "addPassenger": "إضافة مسافر",
+    "formInvalid": "البيانات المدخلة غير صالحة",
+    "reviewTitle": "المراجعة والدفع",
+    "fareBreakdown": "تفاصيل الأجرة",
+    "baseFare": "الأجرة الأساسية",
+    "tax": "الضريبة",
+    "serviceFee": "رسوم الخدمة",
+    "total": "الإجمالي",
+    "payNow": "الدفع الآن",
+    "payConfirm": "هل تؤكد الدفع لهذا الحجز؟",
+    "cancelConfirm": "إلغاء مسودة الحجز هذه؟",
+    "cancelBooking": "إلغاء الحجز",
+    "successTitle": "تم تأكيد الحجز",
+    "successBody": "تم إصدار تذكرتك وهي متاحة في رحلاتي.",
+    "noDraft": "لا يوجد حجز نشط. ابحث عن رحلة أولاً.",
+    "seatNotFound": "يرجى اختيار مقعد آخر"
+  },
+  "notifications": {
+    "flightDelayTitle": "تأخير الرحلة",
+    "flightDelayBody": "الرحلة {{flight}} متأخرة {{minutes}} دقيقة.",
+    "gateChangeTitle": "تغيير البوابة",
+    "gateChangeBody": "الرحلة {{flight}} تنطلق الآن من البوابة {{gate}}.",
+    "checkinTitle": "تذكير بتسجيل الوصول",
+    "checkinBody": "موعد تسجيل وصولك في {{hotel}} يقترب.",
+    "bookingConfirmedTitle": "تم تأكيد الحجز",
+    "bookingConfirmedBody": "تم تأكيد الحجز {{ref}} وحفظه في خزنتك."
+  },
+  "hotel": {
+    "nights": "ليالٍ",
+    "rooms": "غرف",
+    "guests": "ضيوف",
+    "freeCancellation": "إلغاء مجاني",
+    "nightlyRate": "السعر لكل ليلة",
+    "leadGuest": "اسم النزيل الرئيسي",
+    "leadGuestPlaceholder": "الاسم الكامل كما في الهوية"
+  },
+  "sos": {
+    "title": "مركز طوارئ السفر",
+    "subtitle": "أدوات الطوارئ — جاهزة للاستخدام دون اتصال",
+    "emergency": "الاتصال بالطوارئ",
+    "currencyConverter": "مبدل العملات دون اتصال",
+    "phrasebook": "عبارات فارسية أساسية",
+    "touristPolice": "شرطة السياحة",
+    "medical": "الطوارئ الطبية",
+    "fireRescue": "الإطفاء والإنقاذ"
   }
 }

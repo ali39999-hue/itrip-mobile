@@ -29,5 +29,14 @@ jobs:
       - name: Strict TypeScript Compilation
         run: npm run typecheck
 
+      - name: Static Code Analysis & Linting
+        run: npm run lint
+
       - name: Run Domain & Financial Invariant Tests
         run: npm run test
+
+      - name: Verify 5-Language i18n Parity
+        run: npm run i18n:parity
+
+      - name: Verify Mobile Production Bundle Compilation
+        run: npm run build:bundle

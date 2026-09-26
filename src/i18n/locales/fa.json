@@ -107,5 +107,62 @@
     "close": "بستن",
     "all": "همه",
     "comingSoon": "به زودی در {{phase}}"
+  },
+  "booking": {
+    "resultsTitle": "نتایج پرواز",
+    "passengersTitle": "اطلاعات مسافران",
+    "passengersProgress": "مسافر {{done}} از {{total}}",
+    "firstNameLatin": "نام (لاتین)",
+    "lastNameLatin": "نام خانوادگی (لاتین)",
+    "dateOfBirth": "تاریخ تولد",
+    "passportNumber": "شماره گذرنامه",
+    "nationality": "ملیت (کد کشور)",
+    "passportExpiry": "تاریخ انقضای گذرنامه",
+    "passportValidityHint": "گذرنامه باید حداقل ۶ ماه اعتبار داشته باشد",
+    "addPassenger": "افزودن مسافر",
+    "formInvalid": "اطلاعات وارد شده معتبر نیست",
+    "reviewTitle": "بازبینی و پرداخت",
+    "fareBreakdown": "جزئیات کرایه",
+    "baseFare": "کرایه پایه",
+    "tax": "مالیات",
+    "serviceFee": "کارمزد خدمات",
+    "total": "مبلغ کل",
+    "payNow": "پرداخت",
+    "payConfirm": "پرداخت این رزرو را تأیید می‌کنید؟",
+    "cancelConfirm": "این پیش‌نویس رزرو لغو شود؟",
+    "cancelBooking": "لغو رزرو",
+    "successTitle": "رزرو تأیید شد",
+    "successBody": "بلیط شما صادر شد و در سفرهای من قابل مشاهده است.",
+    "noDraft": "رزرو فعالی وجود ندارد. ابتدا پرواز را جستجو کنید.",
+    "seatNotFound": "صندلی دیگری انتخاب کنید"
+  },
+  "notifications": {
+    "flightDelayTitle": "تأخیر پرواز",
+    "flightDelayBody": "پرواز {{flight}} به میزان {{minutes}} دقیقه تأخیر دارد.",
+    "gateChangeTitle": "تغییر گیت پرواز",
+    "gateChangeBody": "پرواز {{flight}} اکنون از گیت {{gate}} انجام می‌شود.",
+    "checkinTitle": "یادآوری ورود به هتل",
+    "checkinBody": "ورود شما به {{hotel}} نزدیک است.",
+    "bookingConfirmedTitle": "رزرو تأیید شد",
+    "bookingConfirmedBody": "رزرو {{ref}} تأیید شد و در گاوصندوق شما ذخیره گردید."
+  },
+  "hotel": {
+    "nights": "شب",
+    "rooms": "اتاق",
+    "guests": "مهمان",
+    "freeCancellation": "کنسلی رایگان",
+    "nightlyRate": "نرخ هر شب",
+    "leadGuest": "نام سرپرست مسافران",
+    "leadGuestPlaceholder": "نام کامل مطابق کارت شناسایی"
+  },
+  "sos": {
+    "title": "مرکز اضطراری سفر",
+    "subtitle": "ابزارهای اضطراری — آماده استفاده آفلاین",
+    "emergency": "تماس اضطراری",
+    "currencyConverter": "مبدل ارز آفلاین",
+    "phrasebook": "جملات ضروری فارسی",
+    "touristPolice": "پلیس گردشگری",
+    "medical": "اورژانس پزشکی",
+    "fireRescue": "آتش‌نشانی و امداد"
   }
 }

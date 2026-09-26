@@ -9,12 +9,14 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useAuthStore } from '@/stores/authStore';
+import { useBiometrics } from '@/hooks/useBiometrics';
 import i18n, { LANGUAGE_NAMES, type AppLanguage, SUPPORTED_LANGUAGES } from '@/i18n';
 
 export default function AccountScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { auth, biometricsEnabled, setBiometrics, logout } = useAuthStore();
+  const { hasHardware, isEnrolled, authenticate } = useBiometrics();
   const [offlineSync, setOfflineSync] = useState(true);
 
   const handleLanguageChange = (lng: AppLanguage) => {
@@ -121,15 +123,28 @@ export default function AccountScreen() {
       <View className="px-5 mb-5">
         <Text className="text-sm font-bold text-ink mb-2.5">Security & Vault Settings</Text>
         <Card variant="elevated" className="p-0 overflow-hidden divide-y divide-slate-100">
-          {/* Biometrics */}
+          {/* Biometrics — wired to real device capability via expo-local-authentication */}
           <View className="flex-row items-center justify-between p-4">
             <View className="flex-1 pr-3">
               <Text className="text-sm font-semibold text-ink">{t('account.biometrics')}</Text>
-              <Text className="text-xs text-sub mt-0.5">Protect NewCash wallet with Keystore</Text>
+              <Text className="text-xs text-sub mt-0.5">
+                {hasHardware && isEnrolled
+                  ? 'Protect NewCash wallet with Keystore'
+                  : 'Not available on this device'}
+              </Text>
             </View>
             <Switch
-              value={biometricsEnabled}
-              onValueChange={setBiometrics}
+              value={biometricsEnabled && hasHardware && isEnrolled}
+              onValueChange={(v) => {
+                if (!hasHardware || !isEnrolled) return;
+                if (v) {
+                  // Require a successful biometric prompt before enabling.
+                  void authenticate(t('account.biometrics')).then((ok) => setBiometrics(ok));
+                } else {
+                  setBiometrics(false);
+                }
+              }}
+              disabled={!hasHardware || !isEnrolled}
               trackColor={{ false: '#E2E8F0', true: colors.brand }}
             />
           </View>
@@ -152,15 +167,17 @@ export default function AccountScreen() {
       {/* Emergency & Support */}
       <View className="px-5 mb-6">
         <Text className="text-sm font-bold text-ink mb-2.5">{t('account.sos')}</Text>
-        <Card variant="flat" className="p-4 bg-rose-50/60 border border-rose-100">
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-sm font-bold text-rose">Emergency Assistance in Iran</Text>
-              <Text className="text-xs text-rose-700/80 mt-0.5">Tourist Police: 110 · Medical: 115</Text>
+        <Pressable onPress={() => router.push('/sos')}>
+          <Card variant="flat" className="p-4 bg-rose-50/60 border border-rose-100">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-sm font-bold text-rose">Emergency Assistance in Iran</Text>
+                <Text className="text-xs text-rose-700/80 mt-0.5">Tourist Police: 110 · Medical: 115</Text>
+              </View>
+              <Badge label="24/7 Concierge" variant="danger" size="sm" />
             </View>
-            <Badge label="24/7 Concierge" variant="danger" size="sm" />
-          </View>
-        </Card>
+          </Card>
+        </Pressable>
       </View>
 
       {/* Logout / Login button */}

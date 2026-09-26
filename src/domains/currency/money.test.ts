@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { money, add, sub, mul, convert, format, zero, isEqual } from './money';
-import Decimal from 'decimal.js';
+import { money, add, sub, mul, convert, zero, isEqual } from './money';
 
 describe('Money and Currency Domain Engine', () => {
   it('prevents floating point errors (e.g. 0.1 + 0.2 = 0.3)', () => {

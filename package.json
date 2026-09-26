@@ -1,36 +1,47 @@
 {
   "name": "itrip-mobile",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "iTrip (Firuzo) Android app — digital travel vault & companion",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
+    "android": "expo run:android",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "i18n:parity": "node scripts/i18n-parity.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run i18n:parity",
+    "build:bundle": "expo export --platform android --no-bytecode",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@op-engineering/op-sqlite": "^11.4.0",
-    "@react-native-community/netinfo": "^11.4.1",
+    "@react-native-community/netinfo": "11.4.1",
     "@tanstack/react-query": "^5.62.0",
     "axios": "^1.7.9",
     "decimal.js": "^10.4.3",
     "expo": "~52.0.0",
+    "expo-asset": "~11.0.5",
+    "expo-background-task": "~0.1.5",
     "expo-constants": "~17.0.0",
+    "expo-crypto": "~14.0.2",
     "expo-dev-client": "~5.0.0",
+    "expo-device": "~7.0.3",
     "expo-font": "~13.0.0",
     "expo-haptics": "~14.0.0",
     "expo-linking": "~7.0.0",
     "expo-local-authentication": "~15.0.0",
     "expo-localization": "~16.0.0",
+    "expo-notifications": "~0.29.14",
     "expo-router": "~4.0.0",
     "expo-secure-store": "~14.0.0",
     "expo-sqlite": "~15.0.0",
     "expo-status-bar": "~2.0.0",
+    "expo-task-manager": "~12.0.6",
     "i18next": "^24.2.0",
     "nativewind": "^4.1.23",
+    "query-string": "^9.5.1",
     "react": "18.3.1",
     "react-i18next": "^15.4.0",
     "react-native": "0.77.0",
@@ -50,9 +61,13 @@
     "@types/react": "~18.3.12",
     "eslint": "^9.17.0",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.70.1",
     "vitest": "^2.1.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "op-sqlite": {
+    "sqlcipher": true
   }
 }

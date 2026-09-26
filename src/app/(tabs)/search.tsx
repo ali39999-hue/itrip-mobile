@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { router } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { colors } from '@/styles/colors';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+
+/** Extracts a 3-letter IATA code from free-text like "Tehran (IKA)". */
+function extractIata(text: string, fallback: string): string {
+  const match = text.match(/\b([A-Za-z]{3})\b/);
+  return (match?.[1] ?? fallback).toUpperCase();
+}
 
 export default function SearchScreen() {
   const { t } = useTranslation();
@@ -114,6 +121,8 @@ export default function SearchScreen() {
                   <Path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16" />
                 </Svg>
                 <TextInput
+                  value={to}
+                  onChangeText={setTo}
                   placeholder="Isfahan / Tehran / Shiraz"
                   placeholderTextColor={colors.sub}
                   className="flex-1 ml-2.5 text-base font-semibold text-ink p-0"
@@ -156,7 +165,24 @@ export default function SearchScreen() {
             variant="action"
             size="lg"
             title={tab === 'flights' ? t('search.searchFlights') : t('search.searchHotels')}
-            onPress={() => {}}
+            onPress={() => {
+              if (tab === 'flights') {
+                router.push({
+                  pathname: '/booking/results',
+                  params: {
+                    origin: extractIata(from, 'IKA'),
+                    destination: extractIata(to, 'SYZ'),
+                    adults: String(passengers),
+                  },
+                });
+              } else {
+                // Hotel search now flows into the hotel booking funnel.
+                router.push({
+                  pathname: '/booking/hotel-results',
+                  params: { city: to.replace(/\s*\([^)]*\)\s*$/, ''), guests: String(passengers) },
+                });
+              }
+            }}
           />
         </Card>
       </View>

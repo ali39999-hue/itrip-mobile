@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -9,11 +9,21 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useAuthStore } from '@/stores/authStore';
+import { useVaultStore } from '@/stores/vaultStore';
+import type { FlightVoucher } from '@/domains/voucher/voucher';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const auth = useAuthStore((s) => s.auth);
+  const vouchers = useVaultStore((s) => s.vouchers);
+  const load = useVaultStore((s) => s.load);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const nextFlight = vouchers.find((v): v is FlightVoucher => v.kind === 'flight') ?? null;
 
   const services = [
     { id: 'flights', label: t('home.flights'), iconPath: 'M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z' },
@@ -116,44 +126,94 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        <Card variant="elevated" className="border-l-4 border-l-brand">
-          <View className="flex-row items-center justify-between mb-2">
-            <Badge label="Mahan Air · W5-104" variant="brand" size="sm" />
-            <Badge label="CONFIRMED" variant="success" size="sm" />
+        {nextFlight ? (
+          <Card variant="elevated" className="border-l-4 border-l-brand">
+            <View className="flex-row items-center justify-between mb-2">
+              <Badge
+                label={`${nextFlight.airlineCode}-${nextFlight.flightNumber}`}
+                variant="brand"
+                size="sm"
+              />
+              <Badge label="CONFIRMED" variant="success" size="sm" />
+            </View>
+
+            <View className="flex-row items-center justify-between py-2 border-b border-slate-100">
+              <View>
+                <Text className="text-xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                  {nextFlight.origin}
+                </Text>
+                <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
+                  {nextFlight.originCity}
+                </Text>
+              </View>
+
+              <View className="items-center px-4">
+                <Text className="text-[11px] font-semibold text-brand" style={{ writingDirection: 'ltr' }}>
+                  {nextFlight.durationMinutes}m
+                </Text>
+                <Text className="text-xs text-sub">────────✈</Text>
+                <Text className="text-[10px] text-emerald-600 font-medium">Direct Flight</Text>
+              </View>
+
+              <View className="items-end">
+                <Text className="text-xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                  {nextFlight.destination}
+                </Text>
+                <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
+                  {nextFlight.destinationCity}
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex-row items-center justify-between pt-3">
+              <View>
+                <Text className="text-xs text-sub">
+                  {t('search.departureDate')}:{' '}
+                  <Text className="font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                    {nextFlight.departureTime.slice(0, 10)}
+                  </Text>
+                </Text>
+                <Text className="text-[11px] text-emerald-600 font-medium mt-0.5">
+                  ● Offline Vault Ready
+                </Text>
+              </View>
+
+              <Button
+                size="sm"
+                variant="outline"
+                title={t('myTrips.showQr')}
+                onPress={() => router.push('/(tabs)/my-trips')}
+              />
+            </View>
+          </Card>
+        ) : (
+          <Card variant="flat" className="items-center p-5">
+            <Text className="text-sm text-sub">{t('home.noUpcomingTrip')}</Text>
+          </Card>
+        )}
+      </View>
+
+      {/* SOS quick access */}
+      <View className="px-5 mb-6">
+        <Pressable
+          onPress={() => router.push('/sos')}
+          className="rounded-2xl bg-rose-50 border border-rose-100 p-4 flex-row items-center justify-between active:opacity-80"
+        >
+          <View className="flex-row items-center">
+            <View className="w-10 h-10 rounded-xl bg-rose items-center justify-center">
+              <Svg width={20} height={20} viewBox="0 0 24 24" fill="#fff">
+                <Path d="M12 2 1 21h22L12 2zm0 6 7.53 13H4.47L12 8zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z" />
+              </Svg>
+            </View>
+            <View className="ml-3">
+              <Text className="text-sm font-bold text-rose">SOS</Text>
+              <Text className="text-[11px] text-rose-700/80">
+                Emergency tools · offline
+              </Text>
+            </View>
           </View>
-
-          <View className="flex-row items-center justify-between py-2 border-b border-slate-100">
-            <View>
-              <Text className="text-xl font-bold text-ink">THR</Text>
-              <Text className="text-xs text-sub">Tehran (IKA)</Text>
-            </View>
-
-            <View className="items-center px-4">
-              <Text className="text-[11px] font-semibold text-brand">1h 20m</Text>
-              <Text className="text-xs text-sub">────────✈</Text>
-              <Text className="text-[10px] text-emerald-600 font-medium">Direct Flight</Text>
-            </View>
-
-            <View className="items-end">
-              <Text className="text-xl font-bold text-ink">SYZ</Text>
-              <Text className="text-xs text-sub">Shiraz (SYZ)</Text>
-            </View>
-          </View>
-
-          <View className="flex-row items-center justify-between pt-3">
-            <View>
-              <Text className="text-xs text-sub">Seat: <Text className="font-bold text-ink">14A</Text></Text>
-              <Text className="text-[11px] text-emerald-600 font-medium mt-0.5">● Offline Vault Ready</Text>
-            </View>
-
-            <Button
-              size="sm"
-              variant="outline"
-              title={t('myTrips.showQr')}
-              onPress={() => router.push('/(tabs)/my-trips')}
-            />
-          </View>
-        </Card>
+          <Text className="text-xs font-semibold text-rose">{t('common.back')} →</Text>
+        </Pressable>
       </View>
 
       {/* Top Destinations */}

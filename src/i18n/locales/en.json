@@ -107,5 +107,62 @@
     "close": "Close",
     "all": "All",
     "comingSoon": "Coming soon in {{phase}}"
+  },
+  "booking": {
+    "resultsTitle": "Flight Results",
+    "passengersTitle": "Passenger Details",
+    "passengersProgress": "Passenger {{done}} of {{total}}",
+    "firstNameLatin": "First name (Latin)",
+    "lastNameLatin": "Last name (Latin)",
+    "dateOfBirth": "Date of birth",
+    "passportNumber": "Passport number",
+    "nationality": "Nationality (country code)",
+    "passportExpiry": "Passport expiry",
+    "passportValidityHint": "Passport must be valid for at least 6 months",
+    "addPassenger": "Add passenger",
+    "formInvalid": "The entered details are not valid",
+    "reviewTitle": "Review & Pay",
+    "fareBreakdown": "Fare breakdown",
+    "baseFare": "Base fare",
+    "tax": "Tax",
+    "serviceFee": "Service fee",
+    "total": "Total",
+    "payNow": "Pay now",
+    "payConfirm": "Confirm payment for this booking?",
+    "cancelConfirm": "Cancel this booking draft?",
+    "cancelBooking": "Cancel booking",
+    "successTitle": "Booking confirmed",
+    "successBody": "Your ticket has been issued and is available in My Trips.",
+    "noDraft": "No active booking. Search for a flight first.",
+    "seatNotFound": "Please choose another seat"
+  },
+  "notifications": {
+    "flightDelayTitle": "Flight delayed",
+    "flightDelayBody": "Flight {{flight}} is delayed by {{minutes}} minutes.",
+    "gateChangeTitle": "Gate changed",
+    "gateChangeBody": "Flight {{flight}} now departs from gate {{gate}}.",
+    "checkinTitle": "Hotel check-in reminder",
+    "checkinBody": "Your check-in at {{hotel}} is approaching.",
+    "bookingConfirmedTitle": "Booking confirmed",
+    "bookingConfirmedBody": "Booking {{ref}} is confirmed and saved in your vault."
+  },
+  "hotel": {
+    "nights": "nights",
+    "rooms": "rooms",
+    "guests": "guests",
+    "freeCancellation": "Free cancellation",
+    "nightlyRate": "Nightly rate",
+    "leadGuest": "Lead guest name",
+    "leadGuestPlaceholder": "Full name as on ID"
+  },
+  "sos": {
+    "title": "Travel Emergency Hub",
+    "subtitle": "Emergency tools — offline ready",
+    "emergency": "Emergency dialer",
+    "currencyConverter": "Offline currency converter",
+    "phrasebook": "Essential Persian phrases",
+    "touristPolice": "Tourist Police",
+    "medical": "Medical emergency",
+    "fireRescue": "Fire & Rescue"
   }
 }

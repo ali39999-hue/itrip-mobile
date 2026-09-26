@@ -107,5 +107,62 @@
     "close": "关闭",
     "all": "全部",
     "comingSoon": "即将推出（{{phase}}）"
+  },
+  "booking": {
+    "resultsTitle": "航班搜索结果",
+    "passengersTitle": "乘客信息",
+    "passengersProgress": "第 {{done}} 位乘客，共 {{total}} 位",
+    "firstNameLatin": "名（拉丁字母）",
+    "lastNameLatin": "姓（拉丁字母）",
+    "dateOfBirth": "出生日期",
+    "passportNumber": "护照号码",
+    "nationality": "国籍（国家代码）",
+    "passportExpiry": "护照有效期至",
+    "passportValidityHint": "护照有效期须至少 6 个月",
+    "addPassenger": "添加乘客",
+    "formInvalid": "填写的信息无效",
+    "reviewTitle": "订单确认与支付",
+    "fareBreakdown": "费用明细",
+    "baseFare": "基础票价",
+    "tax": "税费",
+    "serviceFee": "服务费",
+    "total": "总计",
+    "payNow": "立即支付",
+    "payConfirm": "确认支付此订单？",
+    "cancelConfirm": "取消此订单草稿？",
+    "cancelBooking": "取消订单",
+    "successTitle": "预订已确认",
+    "successBody": "机票已出票，可在「我的行程」中查看。",
+    "noDraft": "暂无进行中的预订，请先搜索航班。",
+    "seatNotFound": "请选择其他座位"
+  },
+  "notifications": {
+    "flightDelayTitle": "航班延误",
+    "flightDelayBody": "航班 {{flight}} 延误 {{minutes}} 分钟。",
+    "gateChangeTitle": "登机口变更",
+    "gateChangeBody": "航班 {{flight}} 现从 {{gate}} 登机口出发。",
+    "checkinTitle": "酒店入住提醒",
+    "checkinBody": "您入住 {{hotel}} 的时间即将到来。",
+    "bookingConfirmedTitle": "预订已确认",
+    "bookingConfirmedBody": "预订 {{ref}} 已确认并保存至您的行程保险箱。"
+  },
+  "hotel": {
+    "nights": "晚",
+    "rooms": "间",
+    "guests": "位客人",
+    "freeCancellation": "免费取消",
+    "nightlyRate": "每晚价格",
+    "leadGuest": "主要客人姓名",
+    "leadGuestPlaceholder": "与证件一致的全名"
+  },
+  "sos": {
+    "title": "旅行紧急求助中心",
+    "subtitle": "紧急工具 — 可离线使用",
+    "emergency": "紧急呼叫",
+    "currencyConverter": "离线汇率换算",
+    "phrasebook": "波斯语常用语句",
+    "touristPolice": "旅游警察",
+    "medical": "医疗急救",
+    "fireRescue": "消防救援"
   }
 }
