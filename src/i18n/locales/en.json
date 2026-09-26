@@ -54,6 +54,9 @@
   "myTrips": {
     "title": "Travel Vault",
     "active": "Active Trips",
+    "completed": "Completed",
+    "all": "All Passes",
+    "viewVoucher": "View in Travel Vault",
     "history": "Trip History",
     "offlineNotice": "All vouchers and tickets in this section are available offline.",
     "ticketNumber": "Ticket No.",
@@ -164,5 +167,18 @@
     "touristPolice": "Tourist Police",
     "medical": "Medical emergency",
     "fireRescue": "Fire & Rescue"
+  },
+  "voucher": {
+    "qrHint": "Airport scanner & offline gate barcode"
+  },
+  "date": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "in3Days": "+3 Days",
+    "nextWeek": "Next Week",
+    "in2Weeks": "+2 Weeks",
+    "in1Month": "+1 Month",
+    "selectedDate": "Selected Date",
+    "quickSelect": "Quick Select"
   }
 }

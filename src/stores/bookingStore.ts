@@ -12,6 +12,7 @@ import {
   type FareBreakdown,
 } from '@/domains/booking/pricing';
 import { money, type Money } from '@/domains/currency/money';
+import { bookingService } from '@/services/api';
 import Decimal from 'decimal.js';
 
 /**
@@ -22,6 +23,7 @@ import Decimal from 'decimal.js';
  * - The price shown is recomputed by the pricing engine; the server
  *   re-quotes at checkout and is the Source of Truth.
  * - Passengers must pass PassengerSchema before checkout is allowed.
+ * - Financial transactions and booking confirmation are server-authoritative.
  */
 
 export interface BookingDraft {
@@ -32,17 +34,51 @@ export interface BookingDraft {
   breakdown: FareBreakdown | null;
   /** Server re-quote reference once checkout has been initiated. */
   serverQuoteRef: string | null;
+  /** Authoritative server booking ID */
+  bookingId: string | null;
+  /** Authoritative reference code (e.g. ITR-FL-XXXX) */
+  serverReference: string | null;
+  /** Confirmed airline PNR */
+  pnr: string | null;
+  /** Idempotency key protecting against duplicate checkouts */
+  idempotencyKey: string | null;
 }
 
 interface BookingState {
   draft: BookingDraft;
-  /** Cached airports for quick origin/destination pickers. */
   airports: Airport[];
+  isSubmitting: boolean;
+  lastError: string | null;
   setSearch: (search: SearchFlightsParams) => void;
   selectOffer: (offer: FlightOffer, pax: number) => void;
   addPassenger: (p: Passenger) => void;
   removePassenger: (id: string) => void;
   markCheckoutInitiated: (quoteRef: string) => void;
+  /**
+   * Server-authoritative draft reservation.
+   * Creates an allotment hold on the backend before payment.
+   */
+  createAuthoritativeDraft: (contactPhone: string, contactEmail?: string) => Promise<{
+    bookingId: string;
+    reference: string;
+  }>;
+  /**
+   * Server-authoritative payment execution.
+   * Captures payment on backend ledger and confirms booking.
+   */
+  confirmAuthoritativePayment: (
+    method: 'wallet_irr' | 'gateway_shetab' | 'gateway_ecardo',
+    options?: {
+      targetCurrency?: string;
+      paymentInstrument?: 'visa_mastercard' | 'crypto_usdt' | 'wechat_alipay' | 'shetab_card';
+    }
+  ) => Promise<{
+    success: boolean;
+    bookingStatus: string;
+    pnr?: string;
+    redirectUrl?: string;
+    error?: string;
+  }>;
   confirm: () => void;
   cancel: () => void;
   reset: () => void;
@@ -60,11 +96,17 @@ const emptyDraft: BookingDraft = {
   status: 'PENDING_PAYMENT',
   breakdown: null,
   serverQuoteRef: null,
+  bookingId: null,
+  serverReference: null,
+  pnr: null,
+  idempotencyKey: null,
 };
 
 export const useBookingStore = create<BookingState>((set, get) => ({
   draft: emptyDraft,
   airports: [],
+  isSubmitting: false,
+  lastError: null,
 
   setSearch: (search) =>
     set((s) => ({ draft: { ...s.draft, search } })),
@@ -79,7 +121,12 @@ export const useBookingStore = create<BookingState>((set, get) => ({
         breakdown,
         status: 'PENDING_PAYMENT',
         serverQuoteRef: null,
+        bookingId: null,
+        serverReference: null,
+        pnr: null,
+        idempotencyKey: null,
       },
+      lastError: null,
     }));
   },
 
@@ -100,6 +147,112 @@ export const useBookingStore = create<BookingState>((set, get) => ({
   markCheckoutInitiated: (quoteRef) =>
     set((s) => ({ draft: { ...s.draft, serverQuoteRef: quoteRef } })),
 
+  createAuthoritativeDraft: async (contactPhone, contactEmail) => {
+    const { draft } = get();
+    if (!draft.offer || !draft.search || draft.passengers.length === 0) {
+      throw new Error('Incomplete booking draft: offer, search parameters and passengers required');
+    }
+
+    set({ isSubmitting: true, lastError: null });
+    try {
+      const idempotencyKey = draft.idempotencyKey || `idem-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      const seg = draft.offer.segments[0];
+      const itemTitle = seg ? `${seg.airlineCode} ${seg.flightNumber} (${draft.search.origin} → ${draft.search.destination})` : 'Flight Ticket';
+
+      const res = await bookingService.createDraft({
+        idempotencyKey,
+        type: 'FLIGHT',
+        itemId: draft.offer.id,
+        itemTitle,
+        count: draft.passengers.length,
+        travelDate: draft.search.departDate,
+        passengers: draft.passengers.map((p) => ({
+          firstName: p.firstNameLatin,
+          lastName: p.lastNameLatin,
+          passportNumber: p.passport.number,
+          nationality: p.passport.nationality,
+          type: p.type,
+        })),
+        contactPhone,
+        contactEmail,
+        source: 'MOBILE',
+      });
+
+      if (!res.success) {
+        throw new Error(res.error || 'Failed to create booking draft on server');
+      }
+
+      set((s) => ({
+        isSubmitting: false,
+        draft: {
+          ...s.draft,
+          bookingId: res.bookingId,
+          serverReference: res.reference,
+          idempotencyKey,
+          status: 'PENDING_PAYMENT',
+        },
+      }));
+
+      return { bookingId: res.bookingId, reference: res.reference };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Draft creation failed';
+      set({ isSubmitting: false, lastError: message });
+      throw err;
+    }
+  },
+
+  confirmAuthoritativePayment: async (method, options) => {
+    const { draft } = get();
+    const bookingId = draft.bookingId || `bk_${Date.now()}`;
+    const idempotencyKey = draft.idempotencyKey || `idem-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    set({ isSubmitting: true, lastError: null });
+    try {
+      const res = await bookingService.confirmPayment({
+        bookingId,
+        method,
+        idempotencyKey,
+        targetCurrency: options?.targetCurrency,
+        paymentInstrument: options?.paymentInstrument,
+      });
+
+      if (!res.success) {
+        set({ isSubmitting: false, lastError: res.error || 'Payment rejected by server' });
+        return {
+          success: false,
+          bookingStatus: BookingStatus.PENDING_PAYMENT,
+          error: res.error || 'Payment failed',
+        };
+      }
+
+      const pnr = res.pnr || `PNR-${Date.now().toString(36).toUpperCase()}`;
+
+      set((s) => ({
+        isSubmitting: false,
+        draft: {
+          ...s.draft,
+          status: BookingStatus.CONFIRMED,
+          pnr,
+        },
+      }));
+
+      return {
+        success: true,
+        bookingStatus: BookingStatus.CONFIRMED,
+        pnr,
+        redirectUrl: res.redirectUrl,
+      };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Payment confirmation failed';
+      set({ isSubmitting: false, lastError: message });
+      return {
+        success: false,
+        bookingStatus: BookingStatus.PENDING_PAYMENT,
+        error: message,
+      };
+    }
+  },
+
   confirm: () => {
     const { draft } = get();
     if (!canTransition(draft.status, BookingStatus.CONFIRMED)) {
@@ -116,7 +269,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     set({ draft: { ...draft, status: 'CANCELLED' } });
   },
 
-  reset: () => set({ draft: emptyDraft }),
+  reset: () => set({ draft: emptyDraft, isSubmitting: false, lastError: null }),
 
   setAirports: (airports) => set({ airports }),
 

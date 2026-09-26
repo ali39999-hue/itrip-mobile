@@ -12,10 +12,12 @@ import { useAuthStore } from '@/stores/authStore';
 import { useBiometrics } from '@/hooks/useBiometrics';
 import i18n, { LANGUAGE_NAMES, type AppLanguage, SUPPORTED_LANGUAGES } from '@/i18n';
 
+const CURRENCIES = ['USD', 'IRR', 'EUR', 'AED', 'CNY', 'RUB'] as const;
+
 export default function AccountScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { auth, biometricsEnabled, setBiometrics, logout } = useAuthStore();
+  const { auth, biometricsEnabled, setBiometrics, logout, currency, setCurrency } = useAuthStore();
   const { hasHardware, isEnrolled, authenticate } = useBiometrics();
   const [offlineSync, setOfflineSync] = useState(true);
 
@@ -36,6 +38,9 @@ export default function AccountScreen() {
     ]);
   };
 
+  const profile = auth.state === 'authenticated' ? auth.profile : undefined;
+  const isKycApproved = profile?.kycApproved ?? false;
+
   return (
     <ScrollView
       className="flex-1 bg-soft"
@@ -53,29 +58,33 @@ export default function AccountScreen() {
       <View className="px-5 mb-5">
         <Card variant="elevated" className="p-5">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center">
+            <View className="flex-row items-center flex-1 mr-2">
               <View className="w-14 h-14 rounded-2xl bg-mint items-center justify-center mr-3.5">
                 <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
                   <Path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                   <Circle cx={12} cy={7} r={4} />
                 </Svg>
               </View>
-              <View>
-                <Text className="text-base font-bold text-ink">
+              <View className="flex-1">
+                <Text className="text-base font-bold text-ink" numberOfLines={1}>
                   {auth.state === 'authenticated'
-                    ? (auth.phone ?? 'Verified Traveler')
+                    ? (profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : auth.phone ?? 'Verified Traveler')
                     : t('auth.guestGreeting')}
                 </Text>
-                <Text className="text-xs text-sub mt-0.5">
+                <Text className="text-xs text-sub mt-0.5" numberOfLines={1}>
                   {auth.state === 'authenticated'
-                    ? 'ID: ' + auth.userId
+                    ? `ID: ${auth.userId} · ${auth.phone || ''}`
                     : 'Log in to save bookings & access NewCash'}
                 </Text>
               </View>
             </View>
 
             {auth.state === 'authenticated' ? (
-              <Badge label="Active" variant="success" size="sm" />
+              <Badge
+                label={isKycApproved ? 'KYC Verified' : 'KYC Pending'}
+                variant={isKycApproved ? 'success' : 'warning'}
+                size="sm"
+              />
             ) : null}
           </View>
 
@@ -88,7 +97,12 @@ export default function AccountScreen() {
                 onPress={() => router.push('/(auth)/login')}
               />
             </View>
-          ) : null}
+          ) : (
+            <View className="mt-4 pt-3 border-t border-slate-100 flex-row justify-between items-center">
+              <Text className="text-xs text-sub">Loyalty Tier</Text>
+              <Badge label={`${profile?.loyaltyTier || 'BRONZE'} · ${profile?.loyaltyPoints || 120} pts`} variant="brand" size="sm" />
+            </View>
+          )}
         </Card>
       </View>
 
@@ -119,11 +133,38 @@ export default function AccountScreen() {
         </Card>
       </View>
 
+      {/* Currency Switcher */}
+      <View className="px-5 mb-5">
+        <Text className="text-sm font-bold text-ink mb-2.5">{t('account.currency')}</Text>
+        <Card variant="flat" className="p-3 bg-surface border border-slate-200">
+          <View className="flex-row flex-wrap gap-2">
+            {CURRENCIES.map((curr) => {
+              const active = currency === curr;
+              return (
+                <Pressable
+                  key={curr}
+                  onPress={() => setCurrency(curr)}
+                  className={`px-3 py-2 rounded-xl border ${
+                    active
+                      ? 'bg-brand border-brand'
+                      : 'bg-soft border-slate-200'
+                  }`}
+                >
+                  <Text className={`text-xs font-semibold ${active ? 'text-white' : 'text-ink'}`}>
+                    {curr}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </Card>
+      </View>
+
       {/* Security & Settings */}
       <View className="px-5 mb-5">
         <Text className="text-sm font-bold text-ink mb-2.5">Security & Vault Settings</Text>
         <Card variant="elevated" className="p-0 overflow-hidden divide-y divide-slate-100">
-          {/* Biometrics — wired to real device capability via expo-local-authentication */}
+          {/* Biometrics */}
           <View className="flex-row items-center justify-between p-4">
             <View className="flex-1 pr-3">
               <Text className="text-sm font-semibold text-ink">{t('account.biometrics')}</Text>
@@ -138,7 +179,6 @@ export default function AccountScreen() {
               onValueChange={(v) => {
                 if (!hasHardware || !isEnrolled) return;
                 if (v) {
-                  // Require a successful biometric prompt before enabling.
                   void authenticate(t('account.biometrics')).then((ok) => setBiometrics(ok));
                 } else {
                   setBiometrics(false);
@@ -180,7 +220,7 @@ export default function AccountScreen() {
         </Pressable>
       </View>
 
-      {/* Logout / Login button */}
+      {/* Logout button */}
       {auth.state === 'authenticated' ? (
         <View className="px-5 mb-8">
           <Button
@@ -194,7 +234,7 @@ export default function AccountScreen() {
       ) : null}
 
       <Text className="text-center text-xs text-sub pb-4">
-        {t('account.version')} 0.1.0 · Firuzo Architecture v1
+        {t('account.version')} 0.2.0 · iTRIP Production v3.0
       </Text>
     </ScrollView>
   );

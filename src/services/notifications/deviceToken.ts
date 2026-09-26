@@ -1,4 +1,5 @@
 import type { AxiosInstance } from 'axios';
+import { api } from '@/services/api';
 import { registerForPushNotifications } from './index';
 
 /**
@@ -31,4 +32,5 @@ export function createDeviceTokenService(client: AxiosInstance) {
   };
 }
 
+export const deviceTokenService = createDeviceTokenService(api);
 export type DeviceTokenService = ReturnType<typeof createDeviceTokenService>;

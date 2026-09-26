@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { I18nManager, Alert } from 'react-native';
+import { I18nManager, Alert, AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,7 +14,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useVaultStore } from '@/stores/vaultStore';
 import { useAppFonts } from '@/hooks/useAppFonts';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
-import { registerBackgroundSync } from '@/services/sync/backgroundSync';
+import { registerBackgroundSync, syncAll } from '@/services/sync/backgroundSync';
 import type { NotificationPayload } from '@/services/notifications';
 import i18n from '@/i18n';
 
@@ -40,8 +40,19 @@ export default function RootLayout() {
     void loadVault().catch(() => {
       // Vault DB can fail on first launch (no permissions yet) — non-fatal.
     });
+    // Initial sync with backend
+    void syncAll();
     // Schedule periodic vault refresh via WorkManager (best-effort).
     void registerBackgroundSync();
+
+    // Trigger sync whenever the app resumes to the foreground
+    const appStateSub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        void syncAll();
+      }
+    });
+
+    return () => appStateSub.remove();
   }, [bootstrapAuth, loadVault]);
 
   // Travel alerts deep-link straight into the vault entry they concern.

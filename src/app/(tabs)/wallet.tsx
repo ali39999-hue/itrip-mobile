@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, RefreshControl, Modal, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { router } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { colors } from '@/styles/colors';
 import { Card } from '@/components/ui/Card';
@@ -12,7 +13,8 @@ import { useWalletStore } from '@/stores/walletStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useBiometrics } from '@/hooks/useBiometrics';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import { format } from '@/domains/currency/money';
+import { format, money } from '@/domains/currency/money';
+import { walletService } from '@/services/api';
 
 export default function WalletScreen() {
   const { t } = useTranslation();
@@ -24,15 +26,27 @@ export default function WalletScreen() {
     irrEquivalent,
     setUnlocked,
     unlocked,
+    syncWithServer,
+    isSyncing,
+    lastSyncedAt,
+    loyaltyPoints,
+    loyaltyTier,
+    credit,
   } = useWalletStore();
   const { authenticate, hasHardware, isEnrolled } = useBiometrics();
   const { isOnline } = useNetworkStatus();
   const [unlocking, setUnlocking] = useState(false);
 
+  // Modals
+  const [topUpModal, setTopUpModal] = useState(false);
+  const [convertModal, setConvertModal] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState('100');
+  const [topUpRail, setTopUpRail] = useState<'shetab' | 'ecardo_card' | 'ecardo_crypto'>('shetab');
+  const [isTopUpProcessing, setIsTopUpProcessing] = useState(false);
+
   const isGuest = auth.state !== 'authenticated';
 
   // Biometric gate: wallet requires biometric/PIN prompt before revealing data
-  // (only when the device actually supports it; otherwise fall back open).
   useEffect(() => {
     if (isGuest || unlocked || unlocking || !hasHardware || !isEnrolled) return;
     setUnlocking(true);
@@ -41,6 +55,17 @@ export default function WalletScreen() {
       setUnlocking(false);
     });
   }, [authenticate, isEnrolled, isGuest, hasHardware, setUnlocked, t, unlocking, unlocked]);
+
+  // Initial sync when authenticated and online
+  useEffect(() => {
+    if (!isGuest && isOnline) {
+      void syncWithServer();
+    }
+  }, [isGuest, isOnline, syncWithServer]);
+
+  const onRefresh = useCallback(() => {
+    void syncWithServer();
+  }, [syncWithServer]);
 
   const usd = balances.USD;
   const irr = irrEquivalent();
@@ -53,16 +78,68 @@ export default function WalletScreen() {
     });
   };
 
+  const handleTopUpSubmit = async () => {
+    const num = parseFloat(topUpAmount);
+    if (isNaN(num) || num <= 0) {
+      Alert.alert(t('common.error'), 'Please enter a valid amount');
+      return;
+    }
+
+    setIsTopUpProcessing(true);
+    try {
+      const res = await walletService.initiateTopUp({
+        amount: topUpAmount,
+        currency: 'USD',
+        method: topUpRail,
+        idempotencyKey: `topup-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      });
+
+      setIsTopUpProcessing(false);
+      setTopUpModal(false);
+
+      if (res.success) {
+        // Optimistically record credit and refresh server
+        credit(money(topUpAmount, 'USD'), {
+          id: res.intentId || `tx-${Date.now()}`,
+          title: `NewCash Top-up (${topUpRail.toUpperCase()})`,
+          date: new Date().toISOString(),
+          category: 'topup',
+          status: 'SETTLED',
+        });
+        Alert.alert('Top-up Successful', `Added $${topUpAmount} USD to your NewCash wallet.`);
+        void syncWithServer();
+      } else {
+        Alert.alert(t('common.error'), res.error || 'Top-up initiation failed');
+      }
+    } catch (e: unknown) {
+      setIsTopUpProcessing(false);
+      const msg = e instanceof Error ? e.message : String(e);
+      Alert.alert(t('common.error'), msg);
+    }
+  };
+
   if (isGuest) {
     return (
       <View
         className="flex-1 bg-soft items-center justify-center px-8"
         style={{ paddingBottom: insets.bottom }}
       >
-        <Text className="text-lg font-semibold text-ink">{t('wallet.title')}</Text>
+        <View className="w-16 h-16 rounded-full bg-brand/10 items-center justify-center mb-4">
+          <Svg width={32} height={32} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
+            <Path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+            <Path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+            <Path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+          </Svg>
+        </View>
+        <Text className="text-xl font-bold text-ink">{t('wallet.title')}</Text>
         <Text className="mt-2 text-center text-sm text-sub">{t('wallet.subtitle')}</Text>
         <View className="mt-6 w-full max-w-xs">
-          <Button title={t('auth.loginAction')} onPress={() => undefined} disabled />
+          <Button
+            variant="action"
+            size="lg"
+            title={t('auth.loginAction')}
+            onPress={() => router.push('/(auth)/login')}
+          />
         </View>
       </View>
     );
@@ -93,10 +170,20 @@ export default function WalletScreen() {
         paddingBottom: insets.bottom + 24,
       }}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={isSyncing} onRefresh={onRefresh} colors={[colors.brand]} />
+      }
     >
-      <View className="px-5 mb-4">
-        <Text className="text-2xl font-bold text-ink">{t('wallet.title')}</Text>
-        <Text className="text-xs text-sub mt-0.5">{t('wallet.subtitle')}</Text>
+      <View className="flex-row items-center justify-between px-5 mb-4">
+        <View>
+          <Text className="text-2xl font-bold text-ink">{t('wallet.title')}</Text>
+          <Text className="text-xs text-sub mt-0.5">{t('wallet.subtitle')}</Text>
+        </View>
+        <Badge
+          label={`${loyaltyTier} · ${loyaltyPoints} pts`}
+          variant="brand"
+          size="sm"
+        />
       </View>
 
       <OfflineBanner />
@@ -126,13 +213,22 @@ export default function WalletScreen() {
 
           {/* Quick Action Buttons */}
           <View className="flex-row justify-between">
-            <Pressable className="flex-1 items-center bg-brand rounded-xl py-3 mr-2 active:opacity-90">
+            <Pressable
+              onPress={() => setTopUpModal(true)}
+              className="flex-1 items-center bg-brand rounded-xl py-3 mr-2 active:opacity-90"
+            >
               <Text className="text-sm font-semibold text-white">{t('wallet.charge')}</Text>
             </Pressable>
-            <Pressable className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 mr-2 active:opacity-90">
+            <Pressable
+              onPress={() => setConvertModal(true)}
+              className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 mr-2 active:opacity-90"
+            >
               <Text className="text-sm font-semibold text-white">{t('wallet.convert')}</Text>
             </Pressable>
-            <Pressable className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 active:opacity-90">
+            <Pressable
+              onPress={() => router.push('/sos')}
+              className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 active:opacity-90"
+            >
               <Text className="text-sm font-semibold text-action">{t('wallet.scanPay')}</Text>
             </Pressable>
           </View>
@@ -163,9 +259,16 @@ export default function WalletScreen() {
         </Card>
       </View>
 
-      {/* Recent Transactions List — from walletStore (Money objects) */}
+      {/* Recent Transactions List */}
       <View className="px-5">
-        <Text className="text-base font-bold text-ink mb-3">{t('wallet.transactions')}</Text>
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-base font-bold text-ink">{t('wallet.transactions')}</Text>
+          {lastSyncedAt ? (
+            <Text className="text-[10px] text-sub">
+              Synced {new Date(lastSyncedAt).toLocaleTimeString()}
+            </Text>
+          ) : null}
+        </View>
 
         {transactions.map((tx) => {
           const isCredit = tx.amount.amount.isPositive();
@@ -209,6 +312,95 @@ export default function WalletScreen() {
           );
         })}
       </View>
+
+      {/* Top-up Modal */}
+      <Modal visible={topUpModal} animationType="slide" transparent>
+        <View className="flex-1 bg-black/50 justify-end">
+          <View className="bg-surface rounded-t-3xl p-6" style={{ paddingBottom: insets.bottom + 20 }}>
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-lg font-bold text-ink">{t('wallet.charge')}</Text>
+              <Pressable onPress={() => setTopUpModal(false)}>
+                <Text className="text-sm font-semibold text-sub">{t('common.cancel')}</Text>
+              </Pressable>
+            </View>
+
+            <Text className="text-xs text-sub mb-2">Select Amount (USD)</Text>
+            <View className="flex-row gap-2 mb-4">
+              {['50', '100', '250', '500'].map((amt) => (
+                <Pressable
+                  key={amt}
+                  onPress={() => setTopUpAmount(amt)}
+                  className={`flex-1 py-2.5 rounded-xl border items-center ${
+                    topUpAmount === amt ? 'border-brand bg-brand/10' : 'border-slate-200'
+                  }`}
+                >
+                  <Text className={`font-bold ${topUpAmount === amt ? 'text-brand' : 'text-ink'}`}>${amt}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Text className="text-xs text-sub mb-2">Payment Method</Text>
+            <View className="gap-2 mb-6">
+              {[
+                { id: 'shetab' as const, label: 'Shetab Card (Shaparak)', desc: 'Iranian debit card' },
+                { id: 'ecardo_card' as const, label: 'Visa / Mastercard', desc: 'International bank card' },
+                { id: 'ecardo_crypto' as const, label: 'Crypto (USDT)', desc: 'TRC-20 / ERC-20' },
+              ].map((m) => (
+                <Pressable
+                  key={m.id}
+                  onPress={() => setTopUpRail(m.id)}
+                  className={`p-3 rounded-xl border flex-row items-center justify-between ${
+                    topUpRail === m.id ? 'border-brand bg-mint/10' : 'border-slate-200'
+                  }`}
+                >
+                  <View>
+                    <Text className="text-sm font-bold text-ink">{m.label}</Text>
+                    <Text className="text-[11px] text-sub">{m.desc}</Text>
+                  </View>
+                  <View className={`w-4 h-4 rounded-full border items-center justify-center ${topUpRail === m.id ? 'border-brand' : 'border-slate-300'}`}>
+                    {topUpRail === m.id && <View className="w-2 h-2 rounded-full bg-brand" />}
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+
+            <Button
+              variant="action"
+              size="lg"
+              title={isTopUpProcessing ? 'Processing...' : `Pay $${topUpAmount} USD`}
+              onPress={handleTopUpSubmit}
+              disabled={isTopUpProcessing || !isOnline}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* FX Conversion Modal */}
+      <Modal visible={convertModal} animationType="slide" transparent>
+        <View className="flex-1 bg-black/50 justify-end">
+          <View className="bg-surface rounded-t-3xl p-6" style={{ paddingBottom: insets.bottom + 20 }}>
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-lg font-bold text-ink">{t('wallet.convert')}</Text>
+              <Pressable onPress={() => setConvertModal(false)}>
+                <Text className="text-sm font-semibold text-sub">{t('common.cancel')}</Text>
+              </Pressable>
+            </View>
+            <View className="p-4 rounded-2xl bg-soft border border-slate-100 mb-4">
+              <Text className="text-xs text-sub mb-1">Live USD / IRR Reference Rate</Text>
+              <Text className="text-xl font-bold text-ink">1 USD ≈ {useWalletStore.getState().usdIrrRate.toString()} IRR</Text>
+            </View>
+            <Button
+              variant="action"
+              size="md"
+              title="Open SOS Currency Tool"
+              onPress={() => {
+                setConvertModal(false);
+                router.push('/sos');
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }

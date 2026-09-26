@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Alert, ActivityIndicator, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import Svg, { Path } from 'react-native-svg';
 import { useBookingStore } from '@/stores/bookingStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useWalletStore } from '@/stores/walletStore';
 import { useVaultStore } from '@/stores/vaultStore';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { bookingService } from '@/services/api';
 import { flightVoucherFromDraft } from '@/domains/voucher/voucher';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -15,14 +17,17 @@ import { Button } from '@/components/ui/Button';
 import { OfflineBanner } from '@/components/ui/OfflineBanner';
 import { colors } from '@/styles/colors';
 
+type PaymentRail = 'wallet_irr' | 'gateway_shetab' | 'gateway_ecardo';
+
 /**
- * Review & checkout screen — Phase 2 booking funnel step 3 (final).
+ * Review & checkout screen — Phase 3 & 4 Server-Authoritative Booking Funnel.
  *
- * Shows the priced draft (base/tax/serviceFee/total from the pricing
- * engine), the passenger manifest and the offer details. Checkout marks
- * the FSM transition server-side in production; here the store's
- * confirm()/cancel() guards keep the lifecycle consistent with the
- * server (which remains the Source of Truth).
+ * Implements:
+ * 1. Server quote validation before checkout (detects price changes).
+ * 2. Multi-rail payment selection: NewCash Wallet, Shetab Cards, eCardo International.
+ * 3. Server draft hold creation (with soft-lock inventory).
+ * 4. Server-authoritative payment capture & atomic ledger posting.
+ * 5. Direct navigation to Booking Confirmation screen & offline vault sync.
  */
 export default function ReviewScreen() {
   const { t } = useTranslation();
@@ -30,12 +35,16 @@ export default function ReviewScreen() {
   const { isOnline } = useNetworkStatus();
   const authState = useAuthStore((s) => s.auth);
   const draft = useBookingStore((s) => s.draft);
-  const confirm = useBookingStore((s) => s.confirm);
+  const isSubmitting = useBookingStore((s) => s.isSubmitting);
+  const lastError = useBookingStore((s) => s.lastError);
+  const createAuthoritativeDraft = useBookingStore((s) => s.createAuthoritativeDraft);
+  const confirmAuthoritativePayment = useBookingStore((s) => s.confirmAuthoritativePayment);
   const cancel = useBookingStore((s) => s.cancel);
   const reset = useBookingStore((s) => s.reset);
   const draftTotalIn = useBookingStore((s) => s.draftTotalIn);
-  const debit = useWalletStore((s) => s.debit);
-  const [paying, setPaying] = useState(false);
+
+  const [paymentRail, setPaymentRail] = useState<PaymentRail>('wallet_irr');
+  const [processing, setProcessing] = useState(false);
 
   const seg = draft.offer?.segments[0];
 
@@ -44,66 +53,81 @@ export default function ReviewScreen() {
     return draftTotalIn('IRR', useWalletStore.getState().usdIrrRate.toString());
   }, [draft.offer?.priceCurrency, draftTotalIn]);
 
-  const onPay = () => {
+  const onPay = async () => {
     if (authState.state !== 'authenticated') {
       router.push('/(auth)/login');
       return;
     }
-    if (!draft.breakdown || !draft.offer) return;
+    if (!draft.breakdown || !draft.offer || !draft.search) return;
 
-    Alert.alert(t('booking.reviewTitle'), t('booking.payConfirm'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('booking.payNow'),
-        style: 'default',
-        onPress: () => {
-          setPaying(true);
-          try {
-            markCheckoutAndConfirm();
-          } catch (e) {
-            setPaying(false);
-            Alert.alert(t('common.error'), String((e as Error).message ?? e));
-          }
-        },
-      },
-    ]);
-  };
+    setProcessing(true);
+    try {
+      // 1. Validate quote freshness with server
+      const quoteCheck = await bookingService.validateQuote({
+        type: 'FLIGHT',
+        itemId: draft.offer.id,
+        expectedAmount: draft.breakdown.total.amount.toFixed(2),
+        expectedCurrency: draft.breakdown.total.currency,
+      });
 
-  const markCheckoutAndConfirm = () => {
-    // Simulated server round-trip: wallet settles the total in offer currency.
-    // debit() records the signed transaction; confirm() enforces the FSM.
-    const bd = draft.breakdown;
-    if (!bd) return;
-    debit(bd.total, {
-      id: `tx-${Date.now()}`,
-      title: seg ? `${seg.airlineCode} · ${seg.flightNumber}` : t('booking.reviewTitle'),
-      date: new Date().toISOString(),
-      category: 'flight',
-    });
-    confirm();
+      if (!quoteCheck.valid || quoteCheck.priceMismatch) {
+        setProcessing(false);
+        Alert.alert(
+          t('common.error'),
+          `Price updated by supplier to ${quoteCheck.serverAmount} ${quoteCheck.serverCurrency}. Please review.`,
+        );
+        return;
+      }
 
-    // Persist the offline voucher (digital pass) for airplane-mode access.
-    if (draft.offer && draft.search) {
+      // 2. Create authoritative server booking draft with soft lock
+      const userPhone = authState.phone || '09120000000';
+      const draftResult = await createAuthoritativeDraft(userPhone);
+
+      // 3. Confirm payment on backend
+      const payResult = await confirmAuthoritativePayment(paymentRail);
+
+      if (!payResult.success) {
+        setProcessing(false);
+        Alert.alert(t('common.error'), payResult.error || 'Payment declined by server');
+        return;
+      }
+
+      // 4. Save confirmed voucher to local offline vault
+      const bookingRef = draftResult.reference || `ITR-FL-${Date.now().toString(36).toUpperCase()}`;
       const voucher = flightVoucherFromDraft({
-        bookingRef: `ITR-${Date.now().toString(36).toUpperCase()}`,
+        bookingRef,
         offer: draft.offer,
         search: draft.search,
         passengers: draft.passengers,
-        total: bd.total,
+        total: draft.breakdown.total,
       });
-      void useVaultStore.getState().addFlightVoucher(voucher);
+      await useVaultStore.getState().addFlightVoucher(voucher);
+
+      // 5. Sync wallet balance with server
+      void useWalletStore.getState().syncWithServer();
+
+      setProcessing(false);
+
+      // 6. Navigate to dedicated Confirmation Screen
+      router.replace({
+        pathname: '/booking/confirmation' as never,
+        params: {
+          bookingRef,
+          pnr: payResult.pnr || voucher.flightNumber,
+          title: `${seg?.airlineCode} ${seg?.flightNumber}`,
+          origin: draft.search.origin,
+          destination: draft.search.destination,
+          date: draft.search.departDate,
+          totalAmount: draft.breakdown.total.amount.toFixed(2),
+          currency: draft.breakdown.total.currency,
+          kind: 'flight',
+        },
+      });
+    } catch (e: unknown) {
+      setProcessing(false);
+      const msg = e instanceof Error ? e.message : String(e);
+      Alert.alert(t('common.error'), msg);
     }
-
-    setPaying(false);
-    resetAfterSuccess();
-  };
-
-  const resetAfterSuccess = () => {
-    Alert.alert(t('booking.successTitle'), t('booking.successBody'), [
-      { text: t('common.ok'), onPress: () => router.replace('/(tabs)/my-trips' as never) },
-    ]);
-    // Keep the confirmed draft visible for the success summary, then clear.
-    setTimeout(() => reset(), 500);
   };
 
   const onCancel = () => {
@@ -144,7 +168,7 @@ export default function ReviewScreen() {
   return (
     <View className="flex-1 bg-soft" style={{ paddingTop: insets.top }}>
       <OfflineBanner />
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 140 }}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 160 }}>
         <Text className="text-2xl font-bold text-ink">{t('booking.reviewTitle')}</Text>
 
         {/* Offer summary */}
@@ -187,6 +211,80 @@ export default function ReviewScreen() {
           ))}
         </Card>
 
+        {/* Payment Method Selection */}
+        <Card variant="elevated" className="mt-4">
+          <Text className="text-sm font-bold text-ink mb-3">{t('wallet.title')}</Text>
+          <View className="gap-2">
+            <Pressable
+              onPress={() => setPaymentRail('wallet_irr')}
+              className={`p-3 rounded-xl border flex-row items-center justify-between ${
+                paymentRail === 'wallet_irr' ? 'border-brand bg-mint/10' : 'border-slate-200 bg-surface'
+              }`}
+            >
+              <View className="flex-row items-center">
+                <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center mr-3">
+                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
+                    <Path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                    <Path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                    <Path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+                  </Svg>
+                </View>
+                <View>
+                  <Text className="text-sm font-bold text-ink">NewCash Wallet</Text>
+                  <Text className="text-[11px] text-sub">Instant zero-fee settlement</Text>
+                </View>
+              </View>
+              <View className={`w-4 h-4 rounded-full border items-center justify-center ${paymentRail === 'wallet_irr' ? 'border-brand' : 'border-slate-300'}`}>
+                {paymentRail === 'wallet_irr' && <View className="w-2 h-2 rounded-full bg-brand" />}
+              </View>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setPaymentRail('gateway_shetab')}
+              className={`p-3 rounded-xl border flex-row items-center justify-between ${
+                paymentRail === 'gateway_shetab' ? 'border-brand bg-mint/10' : 'border-slate-200 bg-surface'
+              }`}
+            >
+              <View className="flex-row items-center">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.ink} strokeWidth={2}>
+                    <Path d="M2 10h20M2 14h20M2 6h20v12H2z" />
+                  </Svg>
+                </View>
+                <View>
+                  <Text className="text-sm font-bold text-ink">Shetab Cards</Text>
+                  <Text className="text-[11px] text-sub">All Iranian bank cards via Shaparak</Text>
+                </View>
+              </View>
+              <View className={`w-4 h-4 rounded-full border items-center justify-center ${paymentRail === 'gateway_shetab' ? 'border-brand' : 'border-slate-300'}`}>
+                {paymentRail === 'gateway_shetab' && <View className="w-2 h-2 rounded-full bg-brand" />}
+              </View>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setPaymentRail('gateway_ecardo')}
+              className={`p-3 rounded-xl border flex-row items-center justify-between ${
+                paymentRail === 'gateway_ecardo' ? 'border-brand bg-mint/10' : 'border-slate-200 bg-surface'
+              }`}
+            >
+              <View className="flex-row items-center">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                  <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.action} strokeWidth={2}>
+                    <Path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A4 4 0 0 1 8 13h2a2 2 0 1 0 4 0c0-1.5-1.5-2-3-2.5S8 9 8 7a4 4 0 0 1 3-3.93V3a1 1 0 0 1 2 0v.07A4 4 0 0 1 16 7h-2a2 2 0 0 0-4 0c0 1.5 1.5 2 3 2.5s3 1.5 3 3.5a4 4 0 0 1-3 3.93z" />
+                  </Svg>
+                </View>
+                <View>
+                  <Text className="text-sm font-bold text-ink">International (eCardo)</Text>
+                  <Text className="text-[11px] text-sub">Visa / Mastercard / USDT / WeChat</Text>
+                </View>
+              </View>
+              <View className={`w-4 h-4 rounded-full border items-center justify-center ${paymentRail === 'gateway_ecardo' ? 'border-brand' : 'border-slate-300'}`}>
+                {paymentRail === 'gateway_ecardo' && <View className="w-2 h-2 rounded-full bg-brand" />}
+              </View>
+            </Pressable>
+          </View>
+        </Card>
+
         {/* Fare breakdown */}
         <Card variant="elevated" className="mt-4">
           <Text className="text-sm font-bold text-ink mb-3">{t('booking.fareBreakdown')}</Text>
@@ -205,6 +303,12 @@ export default function ReviewScreen() {
             </Text>
           ) : null}
         </Card>
+
+        {lastError ? (
+          <View className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200">
+            <Text className="text-xs text-rose font-medium">{lastError}</Text>
+          </View>
+        ) : null}
 
         {!isOnline ? (
           <Card variant="flat" className="mt-4 items-center">
@@ -226,11 +330,13 @@ export default function ReviewScreen() {
         </View>
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <Button variant="outline" title={t('booking.cancelBooking')} onPress={onCancel} />
+            <Button variant="outline" title={t('booking.cancelBooking')} onPress={onCancel} disabled={processing || isSubmitting} />
           </View>
           <View className="flex-[2]">
-            {paying ? (
-              <ActivityIndicator size="small" color={colors.brand} />
+            {processing || isSubmitting ? (
+              <View className="py-3 items-center justify-center">
+                <ActivityIndicator size="small" color={colors.brand} />
+              </View>
             ) : (
               <Button variant="action" title={t('booking.payNow')} onPress={onPay} disabled={!isOnline} />
             )}

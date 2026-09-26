@@ -54,6 +54,9 @@
   "myTrips": {
     "title": "旅行保险库",
     "active": "有效行程",
+    "completed": "已完成",
+    "all": "所有卡券",
+    "viewVoucher": "在旅行保险库中查看",
     "history": "历史行程",
     "offlineNotice": "本专区的所有凭证与车票均支持离线使用。",
     "ticketNumber": "票号",
@@ -164,5 +167,18 @@
     "touristPolice": "旅游警察",
     "medical": "医疗急救",
     "fireRescue": "消防救援"
+  },
+  "voucher": {
+    "qrHint": "机场登机口离线扫码凭据"
+  },
+  "date": {
+    "today": "今天",
+    "tomorrow": "明天",
+    "in3Days": "+3天",
+    "nextWeek": "下周",
+    "in2Weeks": "+2周",
+    "in1Month": "+1个月",
+    "selectedDate": "已选日期",
+    "quickSelect": "快速选择"
   }
 }

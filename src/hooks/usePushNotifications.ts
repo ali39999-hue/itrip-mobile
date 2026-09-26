@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import { useAuthStore } from '@/stores/authStore';
-import { deviceTokenService } from '@/services/api';
+import { deviceTokenService } from '@/services/notifications/deviceToken';
 import {
   configureNotificationHandler,
   parseNotificationPayload,

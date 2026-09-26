@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Modal } from 'react-native';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { View, Text, ScrollView, Modal, Pressable, RefreshControl, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import Svg, { Path } from 'react-native-svg';
@@ -8,38 +8,105 @@ import { colors } from '@/styles/colors';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { useVaultStore } from '@/stores/vaultStore';
+import { syncAll } from '@/services/sync/backgroundSync';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { formatIsoToJalali } from '@/domains/calendar/jalali';
 import {
   buildFlightBarcodePayload,
   type FlightVoucher,
   type HotelVoucher,
 } from '@/domains/voucher/voucher';
 
+type TripTab = 'all' | 'upcoming' | 'completed';
+
 /**
- * My Trips — the offline Travel Vault.
+ * My Trips — The Digital Travel Vault (Phase 16 & Phase 17).
  *
- * Everything rendered here comes from the local voucher database and works
- * with zero network. Each ticket exposes a real scannable QR (BCBP-style
- * payload for flights, reference payload for hotels) and a Persian Driver
- * Card for taxi rides.
+ * Implements:
+ * 1. Filter tabs: All, Upcoming, Completed.
+ * 2. Searchable travel vault by booking reference, city, airline, or hotel.
+ * 3. Offline-first: works completely without cellular connection or internet.
+ * 4. Dual calendar date formatting (Persian Shamsi & Gregorian).
+ * 5. High-contrast QR boarding pass barcodes for airport gates.
+ * 6. Persian Taxi Driver Card for hotel navigation without cellular data.
  */
 export default function MyTripsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { isOnline } = useNetworkStatus();
+  const isPersian = i18n.language === 'fa';
   const vouchers = useVaultStore((s) => s.vouchers);
   const load = useVaultStore((s) => s.load);
 
+  const [activeTab, setActiveTab] = useState<TripTab>('upcoming');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const [qrFor, setQrFor] = useState<string | null>(null);
   const [driverFor, setDriverFor] = useState<HotelVoucher | null>(null);
+  const [expandedRef, setExpandedRef] = useState<string | null>(null);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const flights = vouchers.filter((v): v is FlightVoucher => v.kind === 'flight');
-  const hotels = vouchers.filter((v): v is HotelVoucher => v.kind === 'hotel');
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await syncAll();
+      await load();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [load]);
 
-  const activeQrFlight = flights.find((f) => f.bookingRef === qrFor) ?? null;
+  const now = Date.now();
+
+  const filteredVouchers = useMemo(() => {
+    let list = vouchers;
+
+    // Filter by tab
+    if (activeTab === 'upcoming') {
+      list = list.filter((v) => {
+        const time = v.kind === 'flight' ? new Date(v.departureTime).getTime() : new Date(v.checkIn).getTime();
+        return time >= now;
+      });
+    } else if (activeTab === 'completed') {
+      list = list.filter((v) => {
+        const time = v.kind === 'flight' ? new Date(v.departureTime).getTime() : new Date(v.checkIn).getTime();
+        return time < now;
+      });
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter((v) => {
+        if (v.bookingRef.toLowerCase().includes(q)) return true;
+        if (v.kind === 'flight') {
+          return (
+            v.origin.toLowerCase().includes(q) ||
+            v.destination.toLowerCase().includes(q) ||
+            v.airline.toLowerCase().includes(q) ||
+            v.flightNumber.toLowerCase().includes(q)
+          );
+        } else {
+          return (
+            v.hotelName.toLowerCase().includes(q) ||
+            v.hotelNameFa.includes(q) ||
+            v.addressFa.includes(q)
+          );
+        }
+      });
+    }
+
+    return list;
+  }, [vouchers, activeTab, searchQuery, now]);
+
+  const flights = filteredVouchers.filter((v): v is FlightVoucher => v.kind === 'flight');
+  const hotels = filteredVouchers.filter((v): v is HotelVoucher => v.kind === 'hotel');
+  const activeQrFlight = vouchers.find((f): f is FlightVoucher => f.kind === 'flight' && f.bookingRef === qrFor) ?? null;
 
   return (
     <ScrollView
@@ -49,150 +116,228 @@ export default function MyTripsScreen() {
         paddingBottom: insets.bottom + 24,
       }}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.brand]} />
+      }
     >
       <View className="px-5 mb-4">
         <Text className="text-2xl font-bold text-ink">{t('myTrips.title')}</Text>
-        <Text className="text-xs text-sub mt-0.5">Offline-Ready Travel Companion & Vault</Text>
+        <Text className="text-xs text-sub mt-0.5">Offline Digital Travel Vault & Passes</Text>
       </View>
 
-      {/* Offline Guarantee Notice Banner */}
-      <View className="px-5 mb-5">
-        <View className="flex-row items-center rounded-2xl bg-emerald-50 border border-emerald-100 p-3.5">
-          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth={2}>
-            <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </Svg>
-          <Text className="flex-1 ml-2.5 text-xs text-emerald-800 font-medium">
-            {t('myTrips.offlineNotice')}
-          </Text>
+      {/* Offline Status Notice */}
+      <View className="px-5 mb-4">
+        <View className="flex-row items-center justify-between rounded-2xl bg-emerald-50 border border-emerald-100 p-3.5">
+          <View className="flex-row items-center flex-1 mr-2">
+            <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth={2}>
+              <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </Svg>
+            <Text className="ml-2 text-xs text-emerald-800 font-medium flex-1">
+              {t('myTrips.offlineNotice')}
+            </Text>
+          </View>
+          <Badge label={isOnline ? 'CLOUD SYNC' : 'ENCRYPTED VAULT'} variant="success" size="sm" />
         </View>
       </View>
 
-      {/* Empty state */}
-      {vouchers.length === 0 ? (
+      {/* Search Input in Vault */}
+      <View className="px-5 mb-4">
+        <View className="flex-row items-center rounded-xl bg-surface border border-slate-200 px-3.5 py-2.5 shadow-xs">
+          <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={colors.sub} strokeWidth={2}>
+            <Path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </Svg>
+          <TextInput
+            placeholder="Search booking ref, city, airline..."
+            placeholderTextColor={colors.sub}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="flex-1 ml-2 text-sm text-ink p-0"
+          />
+          {searchQuery ? (
+            <Pressable onPress={() => setSearchQuery('')}>
+              <Text className="text-xs text-sub font-bold">✕</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
+
+      {/* Tab Filter Pills */}
+      <View className="px-5 mb-5">
+        <View className="flex-row rounded-2xl bg-surface border border-slate-200 p-1">
+          {[
+            { id: 'upcoming' as const, label: t('myTrips.active') || 'Upcoming' },
+            { id: 'completed' as const, label: t('myTrips.completed') || 'Completed' },
+            { id: 'all' as const, label: t('myTrips.all') || 'All Passes' },
+          ].map((tab) => (
+            <Pressable
+              key={tab.id}
+              onPress={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2 rounded-xl items-center ${activeTab === tab.id ? 'bg-brand' : ''}`}
+            >
+              <Text className={`text-xs font-bold ${activeTab === tab.id ? 'text-white' : 'text-sub'}`}>
+                {tab.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      {/* Empty State */}
+      {filteredVouchers.length === 0 ? (
         <View className="px-5">
-          <Card variant="flat" className="items-center p-8">
-            <Svg width={48} height={48} viewBox="0 0 24 24" fill="none" stroke={colors.sub} strokeWidth={1.5}>
-              <Path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
-            </Svg>
-            <Text className="mt-3 text-sm font-semibold text-ink">{t('myTrips.noTrips')}</Text>
-            <Text className="mt-1 text-xs text-sub text-center">
-              {t('myTrips.offlineNotice')}
-            </Text>
-          </Card>
+          <EmptyState
+            title={t('myTrips.noTrips')}
+            description={t('myTrips.offlineNotice')}
+          />
         </View>
       ) : null}
 
-      {/* Flight tickets */}
+      {/* Flight Tickets Section */}
       {flights.length > 0 ? (
         <View className="px-5 mb-5">
-          <Text className="text-base font-bold text-ink mb-3">{t('myTrips.active')}</Text>
-          {flights.map((v) => (
-            <Card key={v.bookingRef} variant="elevated" className="border-t-4 border-t-brand p-5 mb-4">
+          <Text className="text-base font-bold text-ink mb-3">{t('home.flights')}</Text>
+          {flights.map((v) => {
+            const isExpanded = expandedRef === v.bookingRef;
+            return (
+              <Card key={v.bookingRef} variant="elevated" className="border-t-4 border-t-brand p-5 mb-4">
+                <View className="flex-row items-center justify-between pb-3 border-b border-slate-100">
+                  <View>
+                    <Text className="text-xs font-semibold text-sub">
+                      {t('myTrips.bookingRef')}:{' '}
+                      <Text className="text-ink font-bold" style={{ writingDirection: 'ltr' }}>
+                        {v.bookingRef}
+                      </Text>
+                    </Text>
+                    <Text className="text-sm font-bold text-ink mt-0.5" style={{ writingDirection: 'ltr' }}>
+                      {v.airline} · {v.airlineCode}-{v.flightNumber}
+                    </Text>
+                  </View>
+                  <Badge label="CONFIRMED" variant="success" size="md" />
+                </View>
+
+                {/* Route Header */}
+                <View className="flex-row items-center justify-between py-4">
+                  <View>
+                    <Text className="text-2xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                      {v.origin}
+                    </Text>
+                    <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
+                      {v.originCity}
+                    </Text>
+                    <Text className="text-sm font-bold text-brand mt-1" style={{ writingDirection: 'ltr' }}>
+                      {v.departureTime.slice(11, 16)}
+                    </Text>
+                  </View>
+
+                  <View className="items-center px-4">
+                    <Text className="text-xs text-sub">{v.durationMinutes}m</Text>
+                    <Svg width={60} height={16} viewBox="0 0 60 16" fill="none">
+                      <Path d="M0 8h45m0 0l-4-4m4 4l-4 4" stroke={colors.brand} strokeWidth={2} />
+                    </Svg>
+                    <Badge label={v.cabinClass} variant="neutral" size="sm" />
+                  </View>
+
+                  <View className="items-end">
+                    <Text className="text-2xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                      {v.destination}
+                    </Text>
+                    <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
+                      {v.destinationCity}
+                    </Text>
+                    <Text className="text-sm font-bold text-brand mt-1" style={{ writingDirection: 'ltr' }}>
+                      {v.arrivalTime.slice(11, 16)}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Date & Manifest Info */}
+                <View className="py-2.5 px-3 rounded-xl bg-soft/60 border border-slate-100 flex-row justify-between items-center mb-3">
+                  <View>
+                    <Text className="text-[11px] text-sub">{t('search.departureDate')}</Text>
+                    <Text className="text-xs font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                      {v.departureTime.slice(0, 10)}
+                    </Text>
+                    <Text className="text-[10px] text-brand">
+                      {formatIsoToJalali(v.departureTime.slice(0, 10), isPersian ? 'fa' : 'en')}
+                    </Text>
+                  </View>
+                  <View className="items-end">
+                    <Text className="text-[11px] text-sub">{t('myTrips.ticketNumber')}</Text>
+                    <Text className="text-xs font-bold text-ink">{v.passengers.length} Traveler(s)</Text>
+                  </View>
+                </View>
+
+                {/* Expandable Passenger Manifest */}
+                {isExpanded ? (
+                  <View className="mb-3 pt-2 border-t border-slate-100">
+                    <Text className="text-xs font-bold text-ink mb-1.5">{t('booking.passengersTitle')}</Text>
+                    {v.passengers.map((p, idx) => (
+                      <View key={idx} className="flex-row items-center justify-between py-1">
+                        <Text className="text-xs text-ink">{p.firstNameLatin} {p.lastNameLatin}</Text>
+                        <Text className="text-xs text-sub font-mono">{p.passportNumber}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : null}
+
+                <View className="flex-row gap-2 mt-2">
+                  <View className="flex-1">
+                    <Button
+                      variant="action"
+                      size="md"
+                      title={t('myTrips.showQr')}
+                      onPress={() => setQrFor(v.bookingRef)}
+                    />
+                  </View>
+                  <Pressable
+                    onPress={() => setExpandedRef(isExpanded ? null : v.bookingRef)}
+                    className="px-3 rounded-xl border border-slate-200 bg-surface items-center justify-center"
+                  >
+                    <Text className="text-xs font-bold text-sub">{isExpanded ? 'Less' : 'Details'}</Text>
+                  </Pressable>
+                </View>
+              </Card>
+            );
+          })}
+        </View>
+      ) : null}
+
+      {/* Hotel Vouchers Section */}
+      {hotels.length > 0 ? (
+        <View className="px-5 mb-5">
+          <Text className="text-base font-bold text-ink mb-3">{t('home.hotels')}</Text>
+          {hotels.map((v) => (
+            <Card key={v.bookingRef} variant="elevated" className="border-t-4 border-t-action p-5 mb-4">
               <View className="flex-row items-center justify-between pb-3 border-b border-slate-100">
                 <View>
-                  <Text className="text-xs font-semibold text-sub">
-                    {t('myTrips.bookingRef')}:{' '}
-                    <Text className="text-ink font-bold" style={{ writingDirection: 'ltr' }}>
-                      {v.bookingRef}
-                    </Text>
-                  </Text>
-                  <Text className="text-sm font-bold text-ink mt-0.5" style={{ writingDirection: 'ltr' }}>
-                    {v.airline} · {v.airlineCode}-{v.flightNumber}
-                  </Text>
+                  <Text className="text-xs font-semibold text-sub">Hotel Voucher</Text>
+                  <Text className="text-base font-bold text-ink mt-0.5">{v.hotelName}</Text>
                 </View>
-                <Badge label="CONFIRMED" variant="success" size="md" />
+                <Badge label={`${v.nights} NIGHTS`} variant="warning" size="sm" />
               </View>
 
-              <View className="flex-row items-center justify-between py-4">
-                <View>
-                  <Text className="text-2xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
-                    {v.origin}
-                  </Text>
-                  <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
-                    {v.originCity}
-                  </Text>
-                  <Text className="text-sm font-bold text-brand mt-1" style={{ writingDirection: 'ltr' }}>
-                    {v.departureTime.slice(11, 16)}
-                  </Text>
-                </View>
-
-                <View className="items-center px-4">
-                  <Text className="text-xs text-sub">{v.durationMinutes}m</Text>
-                  <Svg width={60} height={16} viewBox="0 0 60 16" fill="none">
-                    <Path d="M0 8h45m0 0l-4-4m4 4l-4 4" stroke={colors.brand} strokeWidth={2} />
-                  </Svg>
-                  <Badge label={v.cabinClass} variant="neutral" size="sm" />
-                </View>
-
-                <View className="items-end">
-                  <Text className="text-2xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
-                    {v.destination}
-                  </Text>
-                  <Text className="text-xs text-sub" style={{ writingDirection: 'ltr' }}>
-                    {v.destinationCity}
-                  </Text>
-                  <Text className="text-sm font-bold text-brand mt-1" style={{ writingDirection: 'ltr' }}>
-                    {v.arrivalTime.slice(11, 16)}
-                  </Text>
-                </View>
+              <View className="py-3">
+                <Text className="text-xs text-sub">
+                  Check-in: <Text className="text-ink font-semibold" style={{ writingDirection: 'ltr' }}>{v.checkIn.slice(0, 10)}</Text>
+                </Text>
+                <Text className="text-[10px] text-brand mb-1">
+                  {formatIsoToJalali(v.checkIn.slice(0, 10), isPersian ? 'fa' : 'en')}
+                </Text>
+                <Text className="text-xs text-sub mt-1">
+                  Stay: <Text className="text-ink font-semibold">{v.roomType}</Text>
+                </Text>
               </View>
 
-              <View className="flex-row justify-between py-3 border-t border-slate-100 bg-soft/50 rounded-xl px-3 my-1">
-                <View>
-                  <Text className="text-[11px] text-sub">{t('myTrips.ticketNumber')}</Text>
-                  <Text className="text-sm font-bold text-ink">{v.passengers.length}</Text>
-                </View>
-                <View>
-                  <Text className="text-[11px] text-sub">{t('search.departureDate')}</Text>
-                  <Text className="text-sm font-bold text-ink" style={{ writingDirection: 'ltr' }}>
-                    {v.departureTime.slice(0, 10)}
-                  </Text>
-                </View>
-              </View>
-
-              <View className="mt-3">
-                <Button
-                  variant="action"
-                  size="md"
-                  title={t('myTrips.showQr')}
-                  onPress={() => setQrFor(v.bookingRef)}
-                />
-              </View>
+              <Button
+                variant="outline"
+                size="md"
+                title={t('myTrips.driverCard')}
+                onPress={() => setDriverFor(v)}
+              />
             </Card>
           ))}
         </View>
       ) : null}
-
-      {/* Hotel vouchers */}
-      {hotels.map((v) => (
-        <View key={v.bookingRef} className="px-5 mb-5">
-          <Card variant="elevated" className="border-t-4 border-t-action p-5">
-            <View className="flex-row items-center justify-between pb-3 border-b border-slate-100">
-              <View>
-                <Text className="text-xs font-semibold text-sub">Hotel Voucher</Text>
-                <Text className="text-base font-bold text-ink mt-0.5">{v.hotelName}</Text>
-              </View>
-              <Badge label={`${v.nights} NIGHTS`} variant="warning" size="sm" />
-            </View>
-
-            <View className="py-3">
-              <Text className="text-xs text-sub">
-                Check-in: <Text className="text-ink font-semibold" style={{ writingDirection: 'ltr' }}>{v.checkIn.slice(0, 10)}</Text>
-              </Text>
-              <Text className="text-xs text-sub mt-1">
-                Stay: <Text className="text-ink font-semibold">{v.roomType}</Text>
-              </Text>
-            </View>
-
-            <Button
-              variant="outline"
-              size="md"
-              title={t('myTrips.driverCard')}
-              onPress={() => setDriverFor(v)}
-            />
-          </Card>
-        </View>
-      ))}
 
       {/* Taxi Driver Card Modal — large Persian address, works offline */}
       <Modal visible={driverFor !== null} transparent animationType="slide">

@@ -31,6 +31,33 @@ async function migrate(db: VaultDriver): Promise<void> {
     );
     CREATE INDEX IF NOT EXISTS idx_vouchers_kind ON vouchers(kind);
     CREATE INDEX IF NOT EXISTS idx_vouchers_created ON vouchers(created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS mutation_queue (
+      id TEXT PRIMARY KEY NOT NULL,
+      timestamp INTEGER NOT NULL,
+      retry_count INTEGER NOT NULL DEFAULT 0,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      mutation_type TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      status TEXT NOT NULL,
+      failure_reason TEXT,
+      last_attempt_at INTEGER
+    );
+    CREATE INDEX IF NOT EXISTS idx_mutation_status ON mutation_queue(status);
+
+    CREATE TABLE IF NOT EXISTS server_bookings (
+      id TEXT PRIMARY KEY NOT NULL,
+      reference TEXT NOT NULL,
+      type TEXT NOT NULL,
+      item_title TEXT NOT NULL,
+      travel_date TEXT NOT NULL,
+      status TEXT NOT NULL,
+      total_amount REAL NOT NULL,
+      currency TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_server_bookings_status ON server_bookings(status);
   `);
   migrated = true;
 }

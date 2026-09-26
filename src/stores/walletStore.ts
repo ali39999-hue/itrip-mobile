@@ -10,6 +10,7 @@ import {
   type Money,
   type CurrencyCode,
 } from '@/domains/currency/money';
+import { walletService, type ServerTransaction } from '@/services/api';
 
 /**
  * Wallet store — NewCash balances and transaction history.
@@ -28,6 +29,7 @@ export interface WalletTransaction {
   /** Signed amount: positive = credit, negative = debit */
   amount: Money;
   category: 'flight' | 'hotel' | 'topup' | 'atm' | 'pos' | 'transfer';
+  status?: 'PENDING' | 'SETTLED' | 'FAILED' | 'REFUNDED';
 }
 
 /** Default spot rate used until the API returns live rates. */
@@ -40,7 +42,13 @@ interface WalletState {
   transactions: WalletTransaction[];
   /** Marks that the wallet is unlocked for viewing (biometric gate passed). */
   unlocked: boolean;
+  isSyncing: boolean;
+  lastSyncedAt: string | null;
+  loyaltyPoints: number;
+  loyaltyTier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM';
   setUnlocked: (v: boolean) => void;
+  /** Syncs balances and transaction ledger with the backend server */
+  syncWithServer: () => Promise<void>;
   /** Credits the wallet; returns the new balance. */
   credit: (amount: Money, tx: Omit<WalletTransaction, 'amount'>) => Money;
   /** Debits the wallet; throws on insufficient funds. */
@@ -68,6 +76,7 @@ const seedTransactions: WalletTransaction[] = [
     date: '2026-09-23T14:20:00Z',
     amount: money('-45.00', 'USD'),
     category: 'flight',
+    status: 'SETTLED',
   },
   {
     id: 'tx-2',
@@ -75,6 +84,7 @@ const seedTransactions: WalletTransaction[] = [
     date: '2026-10-10T09:00:00Z',
     amount: money('-120.00', 'USD'),
     category: 'hotel',
+    status: 'SETTLED',
   },
   {
     id: 'tx-3',
@@ -82,6 +92,7 @@ const seedTransactions: WalletTransaction[] = [
     date: '2026-10-08T11:30:00Z',
     amount: money('500.00', 'USD'),
     category: 'topup',
+    status: 'SETTLED',
   },
   {
     id: 'tx-4',
@@ -89,6 +100,7 @@ const seedTransactions: WalletTransaction[] = [
     date: '2026-10-07T18:45:00Z',
     amount: money('-15000000', 'IRR'),
     category: 'atm',
+    status: 'SETTLED',
   },
 ];
 
@@ -97,8 +109,55 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   usdIrrRate: new Decimal(FALLBACK_USD_IRR_RATE),
   transactions: seedTransactions,
   unlocked: false,
+  isSyncing: false,
+  lastSyncedAt: null,
+  loyaltyPoints: 120,
+  loyaltyTier: 'BRONZE',
 
   setUnlocked: (v) => set({ unlocked: v }),
+
+  syncWithServer: async () => {
+    if (get().isSyncing) return;
+    set({ isSyncing: true });
+    try {
+      const [serverBalances, serverTxs] = await Promise.all([
+        walletService.getBalances(),
+        walletService.getTransactions(),
+      ]);
+
+      const parsedBalances: Record<CurrencyCode, Money> = {
+        USD: money(serverBalances.USD, 'USD'),
+        IRR: money(serverBalances.IRR, 'IRR'),
+        EUR: money(serverBalances.EUR, 'EUR'),
+        AED: money(serverBalances.AED, 'AED'),
+        CNY: money(serverBalances.CNY, 'CNY'),
+        RUB: money(serverBalances.RUB, 'RUB'),
+      };
+
+      const parsedTxs: WalletTransaction[] = serverTxs.length > 0
+        ? serverTxs.map((t: ServerTransaction) => ({
+            id: t.id,
+            title: t.title,
+            date: t.date,
+            amount: money(t.amount, t.currency),
+            category: t.category,
+            status: t.status,
+          }))
+        : get().transactions;
+
+      set({
+        balances: parsedBalances,
+        usdIrrRate: new Decimal(serverBalances.usdIrrRate || FALLBACK_USD_IRR_RATE),
+        transactions: parsedTxs,
+        loyaltyPoints: serverBalances.loyaltyPoints ?? 120,
+        loyaltyTier: serverBalances.loyaltyTier ?? 'BRONZE',
+        lastSyncedAt: new Date().toISOString(),
+        isSyncing: false,
+      });
+    } catch {
+      set({ isSyncing: false });
+    }
+  },
 
   credit: (amount, tx) => {
     const current = get().balances[amount.currency] ?? zero(amount.currency);

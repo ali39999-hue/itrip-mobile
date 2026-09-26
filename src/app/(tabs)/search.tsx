@@ -6,29 +6,75 @@ import { router } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 import { colors } from '@/styles/colors';
 import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { DatePickerModal } from '@/components/ui/DatePickerModal';
+import { formatIsoToJalali } from '@/domains/calendar/jalali';
 
-/** Extracts a 3-letter IATA code from free-text like "Tehran (IKA)". */
 function extractIata(text: string, fallback: string): string {
   const match = text.match(/\b([A-Za-z]{3})\b/);
   return (match?.[1] ?? fallback).toUpperCase();
 }
 
+const POPULAR_HUBS = [
+  { city: 'Tehran', iata: 'IKA', labelFa: 'تهران (IKA)' },
+  { city: 'Shiraz', iata: 'SYZ', labelFa: 'شیراز (SYZ)' },
+  { city: 'Isfahan', iata: 'IFN', labelFa: 'اصفهان (IFN)' },
+  { city: 'Mashhad', iata: 'MHD', labelFa: 'مشهد (MHD)' },
+  { city: 'Kish', iata: 'KIH', labelFa: 'کیش (KIH)' },
+];
+
 export default function SearchScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
+  const isPersian = i18n.language === 'fa';
+
   const [tab, setTab] = useState<'flights' | 'hotels'>('flights');
   const [from, setFrom] = useState('Tehran (IKA)');
   const [to, setTo] = useState('Shiraz (SYZ)');
+  const [departDate, setDepartDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().slice(0, 10);
+  });
+  const [returnDate, setReturnDate] = useState(() => {
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 4);
+    return nextWeek.toISOString().slice(0, 10);
+  });
   const [passengers, setPassengers] = useState(1);
+  const [datePickerTarget, setDatePickerTarget] = useState<'depart' | 'return' | null>(null);
 
-  const popularRoutes = [
-    { from: 'THR', to: 'SYZ', price: '$45', name: 'Tehran → Shiraz' },
-    { from: 'THR', to: 'IFN', price: '$38', name: 'Tehran → Isfahan' },
-    { from: 'THR', to: 'KIH', price: '$55', name: 'Tehran → Kish Island' },
-    { from: 'MHD', to: 'THR', price: '$42', name: 'Mashhad → Tehran' },
-  ];
+  const swapRoute = () => {
+    const temp = from;
+    setFrom(to);
+    setTo(temp);
+  };
+
+  const handleSearch = () => {
+    if (tab === 'flights') {
+      const originCode = extractIata(from, 'IKA');
+      const destCode = extractIata(to, 'SYZ');
+      router.push({
+        pathname: '/booking/results',
+        params: {
+          origin: originCode,
+          destination: destCode,
+          adults: String(passengers),
+        },
+      });
+    } else {
+      const cityName = to.replace(/\(.*?\)/g, '').trim() || 'Shiraz';
+      router.push({
+        pathname: '/booking/hotel-results',
+        params: {
+          city: cityName,
+          checkIn: departDate,
+          checkOut: returnDate,
+          guests: String(passengers),
+        },
+      });
+    }
+  };
 
   return (
     <ScrollView
@@ -98,6 +144,18 @@ export default function SearchScreen() {
                 </View>
               </View>
 
+              {/* Swap Button */}
+              <View className="items-center my--2 z-10">
+                <Pressable
+                  onPress={swapRoute}
+                  className="w-8 h-8 rounded-full bg-white border border-slate-200 items-center justify-center shadow-xs"
+                >
+                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2.5}>
+                    <Path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                  </Svg>
+                </Pressable>
+              </View>
+
               {/* Destination */}
               <View className="mb-4">
                 <Text className="text-xs font-semibold text-sub mb-1">{t('search.to')}</Text>
@@ -131,17 +189,40 @@ export default function SearchScreen() {
             </View>
           )}
 
+          {/* Quick Hub Chips */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">
+            <View className="flex-row gap-2">
+              {POPULAR_HUBS.map((h) => (
+                <Pressable
+                  key={h.iata}
+                  onPress={() => setTo(`${h.city} (${h.iata})`)}
+                  className="py-1 px-2.5 rounded-lg bg-slate-100 border border-slate-200"
+                >
+                  <Text className="text-xs text-ink font-medium">{isPersian ? h.labelFa : `${h.city} (${h.iata})`}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </ScrollView>
+
           {/* Dates & Passengers Row */}
           <View className="flex-row justify-between mb-5">
-            <View className="w-[48%] rounded-xl border border-slate-200 bg-soft p-3">
+            <Pressable
+              onPress={() => setDatePickerTarget('depart')}
+              className="w-[48%] rounded-xl border border-slate-200 bg-soft p-3"
+            >
               <Text className="text-xs text-sub">{t('search.departureDate')}</Text>
-              <Text className="text-sm font-bold text-ink mt-1">Tomorrow</Text>
-            </View>
+              <Text className="text-sm font-bold text-ink mt-1" style={{ writingDirection: 'ltr' }}>
+                {departDate}
+              </Text>
+              <Text className="text-[10px] text-brand font-medium">
+                {formatIsoToJalali(departDate, isPersian ? 'fa' : 'en')}
+              </Text>
+            </Pressable>
 
             <View className="w-[48%] rounded-xl border border-slate-200 bg-soft p-3">
               <Text className="text-xs text-sub">{t('search.passengersCount')}</Text>
-              <View className="flex-row items-center justify-between mt-0.5">
-                <Text className="text-sm font-bold text-ink">{passengers} Adult</Text>
+              <View className="flex-row items-center justify-between mt-1">
+                <Text className="text-sm font-bold text-ink">{passengers} Pax</Text>
                 <View className="flex-row">
                   <Pressable
                     onPress={() => setPassengers((p) => Math.max(1, p - 1))}
@@ -160,49 +241,27 @@ export default function SearchScreen() {
             </View>
           </View>
 
-          {/* Search Single-Action Button */}
+          {/* Search Action Button */}
           <Button
             variant="action"
             size="lg"
             title={tab === 'flights' ? t('search.searchFlights') : t('search.searchHotels')}
-            onPress={() => {
-              if (tab === 'flights') {
-                router.push({
-                  pathname: '/booking/results',
-                  params: {
-                    origin: extractIata(from, 'IKA'),
-                    destination: extractIata(to, 'SYZ'),
-                    adults: String(passengers),
-                  },
-                });
-              } else {
-                // Hotel search now flows into the hotel booking funnel.
-                router.push({
-                  pathname: '/booking/hotel-results',
-                  params: { city: to.replace(/\s*\([^)]*\)\s*$/, ''), guests: String(passengers) },
-                });
-              }
-            }}
+            onPress={handleSearch}
           />
         </Card>
       </View>
 
-      {/* Popular Routes */}
-      <View className="px-5">
-        <Text className="text-base font-bold text-ink mb-3">{t('search.popularRoutes')}</Text>
-        {popularRoutes.map((r, i) => (
-          <Card key={i} variant="flat" className="flex-row items-center justify-between mb-3 bg-surface border border-slate-100">
-            <View>
-              <Text className="text-sm font-bold text-ink">{r.name}</Text>
-              <Text className="text-xs text-sub mt-0.5">Mahan Air · Iran Air · Daily Flights</Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-base font-bold text-price">{r.price}</Text>
-              <Badge label="Direct" variant="brand" size="sm" />
-            </View>
-          </Card>
-        ))}
-      </View>
+      {/* Date Picker Modal */}
+      <DatePickerModal
+        visible={datePickerTarget !== null}
+        selectedDate={datePickerTarget === 'depart' ? departDate : returnDate}
+        onSelect={(d) => {
+          if (datePickerTarget === 'depart') setDepartDate(d);
+          else setReturnDate(d);
+          setDatePickerTarget(null);
+        }}
+        onClose={() => setDatePickerTarget(null)}
+      />
     </ScrollView>
   );
 }

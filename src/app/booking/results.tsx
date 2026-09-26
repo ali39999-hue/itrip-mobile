@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,9 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { OfflineBanner } from '@/components/ui/OfflineBanner';
-import { colors } from '@/styles/colors';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 /**
  * Flight results screen — Phase 2 booking funnel step 2.
@@ -44,7 +46,7 @@ export default function FlightResultsScreen() {
         adults,
         cabinClass: 'ECONOMY',
       }),
-    enabled: false, // manual trigger via refetch
+    enabled: true, // Auto-trigger search with navigation parameters
     retry: 1,
   });
 
@@ -63,6 +65,8 @@ export default function FlightResultsScreen() {
     selectOffer(offer, adults);
     router.push('/booking/passengers');
   };
+
+  const offers = search.data?.offers ?? [];
 
   return (
     <View className="flex-1 bg-soft" style={{ paddingTop: insets.top }}>
@@ -113,22 +117,51 @@ export default function FlightResultsScreen() {
           </View>
         </Card>
 
-        {/* States */}
+        {/* Loading Skeletons */}
         {search.isLoading ? (
-          <ActivityIndicator className="mt-10" size="large" color={colors.brand} />
+          <View className="mt-4 gap-3">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} variant="elevated" className="p-4">
+                <View className="flex-row justify-between mb-3">
+                  <Skeleton width={80} height={20} />
+                  <Skeleton width={50} height={20} />
+                </View>
+                <View className="flex-row justify-between my-2">
+                  <Skeleton width={60} height={30} />
+                  <Skeleton width={100} height={20} />
+                  <Skeleton width={60} height={30} />
+                </View>
+                <View className="pt-3 border-t border-slate-100 flex-row justify-between items-center">
+                  <Skeleton width={100} height={24} />
+                  <Skeleton width={70} height={32} borderRadius={10} />
+                </View>
+              </Card>
+            ))}
+          </View>
         ) : null}
 
+        {/* Error State */}
         {search.isError ? (
-          <Card variant="flat" className="mt-6 items-center">
-            <Text className="text-sm text-rose">{t('common.offline')}</Text>
-            <View className="mt-3">
-              <Button variant="outline" title={t('common.retry')} onPress={() => void search.refetch()} />
-            </View>
-          </Card>
+          <ErrorState
+            title={t('common.error')}
+            message="Unable to fetch live flight offers. Check your connection or retry."
+            onRetry={() => void search.refetch()}
+            retryTitle={t('common.retry')}
+          />
+        ) : null}
+
+        {/* Empty State */}
+        {!search.isLoading && !search.isError && offers.length === 0 ? (
+          <EmptyState
+            title="No Flights Found"
+            description={`No scheduled flights found between ${origin} and ${destination} on ${departDate}.`}
+            actionTitle="Adjust Search"
+            onAction={() => router.back()}
+          />
         ) : null}
 
         {/* Offer cards */}
-        {(search.data?.offers ?? []).map((offer) => {
+        {offers.map((offer) => {
           const seg = offer.segments[0];
           if (!seg) return null;
           const perPax = money(offer.priceAmount, offer.priceCurrency);
@@ -138,7 +171,7 @@ export default function FlightResultsScreen() {
               <View className="flex-row items-center justify-between mb-3">
                 <Badge label={`${seg.airlineCode} · ${seg.flightNumber}`} variant="brand" size="sm" />
                 {offer.seatsLeft != null && offer.seatsLeft <= 3 ? (
-                  <Badge label={`${offer.seatsLeft}`} variant="danger" size="sm" />
+                  <Badge label={`${offer.seatsLeft} left`} variant="danger" size="sm" />
                 ) : null}
               </View>
 
