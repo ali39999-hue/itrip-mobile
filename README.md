@@ -22,11 +22,11 @@
 - **نام فایل:** `iTRIP-Mobile-v0.2.0.apk`
 - **نسخه و بیلد:** `v0.2.0` (versionCode: 2)
 - **شناسه پکیج (Package ID):** `com.firuzo.itrip`
-- **حجم تقریبی:** ۳۸.۴ مگابایت
+- **حجم دقیق فایل:** ۱۰۱ مگابایت (105,939,419 بایت - Universal APK)
 - **حداقل اندروید مورد نیاز:** Android 8.0 (API 26+)
 - **شناسه هش اثرانگشت (SHA-256):**
   ```text
-  9f8b4a2e5d6c7b8a1f0e2d3c4b5a6f7e8d9c0b1a2f3e4d5c6b7a8f9e0d1c2b3a
+  2b8738a3adffe7d5bc13ccd5ecdd2ae1febe9793c2f2c3daa1f4e645dc6df0d4
   ```
 
 ### مراحل نصب بر روی گوشی اندروید:
