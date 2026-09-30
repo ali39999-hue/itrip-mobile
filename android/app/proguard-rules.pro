@@ -33,7 +33,6 @@
 # --- op-sqlite (JSI bindings — class names resolved natively) ---
 -keep class com.margelo.** { *; }
 -keep class cc.callisto.** { *; }
--if class @interface com.margelo.nitro.core.* { *; }
 -keep @com.margelo.nitro.core.NitroModule class * { *; }
 
 # --- SQLCipher / net.zetetic ---
