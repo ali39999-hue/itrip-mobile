@@ -138,9 +138,9 @@
     "semantic_hash": ""
   },
   "src/app/(tabs)/wallet.tsx": {
-    "mtime": 1790440374.2365851,
-    "seen": 1790440851.7863445,
-    "ast_hash": "a0cd1f9d7691a925b7ada2f01bb4c2c7",
+    "mtime": 1790766035.12435,
+    "seen": 1790766265.3256826,
+    "ast_hash": "480d159c1af25215ac2214fc65dd3ff2",
     "semantic_hash": ""
   },
   "src/app/_layout.tsx": {
@@ -1713,6 +1713,24 @@
     "mtime": 1790765539.4275484,
     "seen": 1790765693.910776,
     "ast_hash": "3e244110e2a051bdac866ae8341adf25",
+    "semantic_hash": ""
+  },
+  "src/domains/wallet/ledger.test.ts": {
+    "mtime": 1790765922.3760386,
+    "seen": 1790766265.3257349,
+    "ast_hash": "30d0985475d5643ba2f415c404498850",
+    "semantic_hash": ""
+  },
+  "src/domains/wallet/ledger.ts": {
+    "mtime": 1790765891.1675024,
+    "seen": 1790766265.3257363,
+    "ast_hash": "56c835198d97f211c8b3e57ab8408850",
+    "semantic_hash": ""
+  },
+  "WALLET_REPORT.md": {
+    "mtime": 1790766113.866431,
+    "seen": 1790766265.3258085,
+    "ast_hash": "3a3f62167687a3e464a6642e3a03bd09",
     "semantic_hash": ""
   }
 }
