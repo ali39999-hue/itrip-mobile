@@ -1684,5 +1684,35 @@
     "seen": 1790764954.3805752,
     "ast_hash": "a19eb2abb119a206b6acdc33b13ec3f2",
     "semantic_hash": ""
+  },
+  "src/domains/trip/expiry.test.ts": {
+    "mtime": 1790765325.4942286,
+    "seen": 1790765693.9106967,
+    "ast_hash": "09f4783a7f644fdc25db29e3c5f18e08",
+    "semantic_hash": ""
+  },
+  "src/domains/trip/expiry.ts": {
+    "mtime": 1790765385.7046597,
+    "seen": 1790765693.910698,
+    "ast_hash": "4bb50eb91923cb411b035e2f5370c214",
+    "semantic_hash": ""
+  },
+  "src/domains/trip/trip.test.ts": {
+    "mtime": 1790765465.2672298,
+    "seen": 1790765693.9106987,
+    "ast_hash": "a2809cc86508bb170e5e05c08a4133d9",
+    "semantic_hash": ""
+  },
+  "src/domains/trip/trip.ts": {
+    "mtime": 1790765154.9952378,
+    "seen": 1790765693.9106998,
+    "ast_hash": "f55780eb55a14b202d86618df67bca97",
+    "semantic_hash": ""
+  },
+  "TRIP_VAULT_REPORT.md": {
+    "mtime": 1790765539.4275484,
+    "seen": 1790765693.910776,
+    "ast_hash": "3e244110e2a051bdac866ae8341adf25",
+    "semantic_hash": ""
   }
 }
