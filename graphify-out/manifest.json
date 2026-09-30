@@ -414,9 +414,9 @@
     "semantic_hash": ""
   },
   "src/services/db/vault.ts": {
-    "mtime": 1790434675.6678555,
-    "seen": 1790436271.1876328,
-    "ast_hash": "70cdcac3b58d62d98cab5ce52300b79e",
+    "mtime": 1790760217.4777393,
+    "seen": 1790760447.803008,
+    "ast_hash": "41e8e09eaeec0982451cab725dc1a318",
     "semantic_hash": ""
   },
   "src/services/notifications/deviceToken.ts": {
@@ -462,9 +462,9 @@
     "semantic_hash": ""
   },
   "src/stores/authStore.ts": {
-    "mtime": 1790756097.411557,
-    "seen": 1790758432.7539315,
-    "ast_hash": "54bd88579bbb39e4d4c9308ee3970f5b",
+    "mtime": 1790759079.1912792,
+    "seen": 1790760447.803025,
+    "ast_hash": "5c36305a688b178d826966744cc4e1f8",
     "semantic_hash": ""
   },
   "src/stores/bookingStore.test.ts": {
@@ -528,9 +528,9 @@
     "semantic_hash": ""
   },
   "vitest.config.ts": {
-    "mtime": 1790435677.0632496,
-    "seen": 1790436271.187667,
-    "ast_hash": "bba7509f0d13218a69f16f24eec2da7d",
+    "mtime": 1790759783.5105586,
+    "seen": 1790760447.8030372,
+    "ast_hash": "c68f1cfafb320e0cbf3117f9b912eedb",
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
@@ -798,9 +798,9 @@
     "semantic_hash": ""
   },
   "src/services/sync/mutationQueue.ts": {
-    "mtime": 1790435419.5329604,
-    "seen": 1790436271.1876462,
-    "ast_hash": "a95787fa6d4e09322a870088b7ac0b15",
+    "mtime": 1790760202.2134943,
+    "seen": 1790760447.8030207,
+    "ast_hash": "4abdd484cef05c5e0e660bb85ab56637",
     "semantic_hash": ""
   },
   "src/services/telemetry/index.test.ts": {
@@ -816,8 +816,8 @@
     "semantic_hash": ""
   },
   "src/test/mocks/expo-secure-store.ts": {
-    "mtime": 1790435670.1303773,
-    "seen": 1790436271.1876628,
+    "mtime": 1790759735.2751422,
+    "seen": 1790760447.8030336,
     "ast_hash": "f301cd4021491fff08311af75db3d305",
     "semantic_hash": ""
   },
@@ -1569,6 +1569,60 @@
     "mtime": 1790758196.0030022,
     "seen": 1790758432.753994,
     "ast_hash": "eec5ead490aa1873b2a8fe8917cf3387",
+    "semantic_hash": ""
+  },
+  "src/services/db/vault.test.ts": {
+    "mtime": 1790760050.4547625,
+    "seen": 1790760447.8030062,
+    "ast_hash": "7c3c1c6d48bd5f2728446e7ed0bd9aba",
+    "semantic_hash": ""
+  },
+  "src/services/security/wipe.test.ts": {
+    "mtime": 1790759129.9829068,
+    "seen": 1790760447.8030138,
+    "ast_hash": "ee9a3a286ca3edd281674e5152945cd1",
+    "semantic_hash": ""
+  },
+  "src/services/security/wipe.ts": {
+    "mtime": 1790759241.9025402,
+    "seen": 1790760447.8030148,
+    "ast_hash": "6d671822a63864ca3633c87b6b573089",
+    "semantic_hash": ""
+  },
+  "src/services/sync/deadLetterQueue.test.ts": {
+    "mtime": 1790758871.7396681,
+    "seen": 1790760447.803018,
+    "ast_hash": "eb20d0f001414524c163de55663693a4",
+    "semantic_hash": ""
+  },
+  "src/services/sync/deadLetterQueue.ts": {
+    "mtime": 1790759354.2126918,
+    "seen": 1790760447.8030188,
+    "ast_hash": "81931750bd49f2b277e3a4af77620e91",
+    "semantic_hash": ""
+  },
+  "src/services/sync/syncState.test.ts": {
+    "mtime": 1790758979.2569618,
+    "seen": 1790760447.8030217,
+    "ast_hash": "14772d8fcff2025c58c87752422569b9",
+    "semantic_hash": ""
+  },
+  "src/services/sync/syncState.ts": {
+    "mtime": 1790759011.4028835,
+    "seen": 1790760447.8030224,
+    "ast_hash": "5b9cdf0b2f502a0ffbb3f93a167a5a56",
+    "semantic_hash": ""
+  },
+  "src/test/mocks/expo-crypto.ts": {
+    "mtime": 1790759767.7322636,
+    "seen": 1790760447.8030329,
+    "ast_hash": "afe55ee6acb48575f3ad9b995c1705ca",
+    "semantic_hash": ""
+  },
+  "SYNC_RELIABILITY_REPORT.md": {
+    "mtime": 1790760288.6986713,
+    "seen": 1790760447.803047,
+    "ast_hash": "f1ea5da4de5c8632b7dc254e13c206ab",
     "semantic_hash": ""
   }
 }
