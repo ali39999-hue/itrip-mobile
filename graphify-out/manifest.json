@@ -1732,5 +1732,23 @@
     "seen": 1790766265.3258085,
     "ast_hash": "3a3f62167687a3e464a6642e3a03bd09",
     "semantic_hash": ""
+  },
+  "src/domains/i18n/locale.test.ts": {
+    "mtime": 1790766523.3679569,
+    "seen": 1790766747.7619414,
+    "ast_hash": "7e28b5c3ac1fc980600d22feb4841930",
+    "semantic_hash": ""
+  },
+  "src/domains/i18n/locale.ts": {
+    "mtime": 1790766427.388278,
+    "seen": 1790766747.761943,
+    "ast_hash": "a541189c80ff47d9cc0332de2a4c0e26",
+    "semantic_hash": ""
+  },
+  "I18N_REPORT.md": {
+    "mtime": 1790766593.3004608,
+    "seen": 1790766747.7620254,
+    "ast_hash": "3ea5350f64166e06974c6b1456d3e2c4",
+    "semantic_hash": ""
   }
 }
