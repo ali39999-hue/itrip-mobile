@@ -47,7 +47,7 @@ function resolveBaseUrl(): string {
 export const apiConfig = {
   environment: resolveEnvironment(),
   baseURL: resolveBaseUrl(),
-  appVersion: '0.3.0',
+  appVersion: '0.4.0',
   platform: 'android',
   /**
    * Pinned domain policies with active + backup keys for zero-downtime certificate rotation.

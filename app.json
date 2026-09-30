@@ -1,61 +1,61 @@
 {
-  "expo": {
-    "name": "iTrip",
-    "slug": "itrip-mobile",
-    "version": "0.3.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "itrip",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#00A9A5"
-    },
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.firuzo.itrip"
-    },
-    "android": {
-      "package": "com.firuzo.itrip",
-      "versionCode": 3,
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#00A9A5"
-      },
-      "permissions": [
-        "INTERNET",
-        "USE_BIOMETRIC",
-        "USE_FINGERPRINT",
-        "POST_NOTIFICATIONS",
-        "WAKE_LOCK",
-        "RECEIVE_BOOT_COMPLETED"
-      ]
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-secure-store",
-        {
-          "faceIDPermission": "Allow iTrip to unlock your travel vault with biometrics"
-        }
-      ],
-      "expo-local-authentication",
-      "expo-font",
-      "expo-asset",
-      "expo-background-task",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/icon.png",
-          "color": "#00A9A5",
-          "defaultChannel": "travel-alerts"
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
-  }
+    "expo":  {
+                 "name":  "iTrip",
+                 "slug":  "itrip-mobile",
+                 "version":  "0.4.0",
+                 "orientation":  "portrait",
+                 "icon":  "./assets/images/icon.png",
+                 "scheme":  "itrip",
+                 "userInterfaceStyle":  "automatic",
+                 "newArchEnabled":  true,
+                 "splash":  {
+                                "image":  "./assets/images/splash.png",
+                                "resizeMode":  "contain",
+                                "backgroundColor":  "#00A9A5"
+                            },
+                 "ios":  {
+                             "supportsTablet":  false,
+                             "bundleIdentifier":  "com.firuzo.itrip"
+                         },
+                 "android":  {
+                                 "package":  "com.firuzo.itrip",
+                                 "versionCode":  4,
+                                 "adaptiveIcon":  {
+                                                      "foregroundImage":  "./assets/images/adaptive-icon.png",
+                                                      "backgroundColor":  "#00A9A5"
+                                                  },
+                                 "permissions":  [
+                                                     "INTERNET",
+                                                     "USE_BIOMETRIC",
+                                                     "USE_FINGERPRINT",
+                                                     "POST_NOTIFICATIONS",
+                                                     "WAKE_LOCK",
+                                                     "RECEIVE_BOOT_COMPLETED"
+                                                 ]
+                             },
+                 "plugins":  [
+                                 "expo-router",
+                                 [
+                                     "expo-secure-store",
+                                     {
+                                         "faceIDPermission":  "Allow iTrip to unlock your travel vault with biometrics"
+                                     }
+                                 ],
+                                 "expo-local-authentication",
+                                 "expo-font",
+                                 "expo-asset",
+                                 "expo-background-task",
+                                 [
+                                     "expo-notifications",
+                                     {
+                                         "icon":  "./assets/images/icon.png",
+                                         "color":  "#00A9A5",
+                                         "defaultChannel":  "travel-alerts"
+                                     }
+                                 ]
+                             ],
+                 "experiments":  {
+                                     "typedRoutes":  true
+                                 }
+             }
 }
