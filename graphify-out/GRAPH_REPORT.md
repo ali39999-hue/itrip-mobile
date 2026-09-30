@@ -1,23 +1,23 @@
 # Graph Report - firouzo_mobil  (2026-09-30)
 
 ## Corpus Check
-- 140 files · ~125,864 words
+- 146 files · ~128,185 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 27 file(s) not represented in the graph (top: .xml 13, .ttf 4, (none) 3)
 
 ## Summary
-- 1016 nodes · 1960 edges · 73 communities (63 shown, 10 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.9)
+- 1052 nodes · 2045 edges · 69 communities (59 shown, 10 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.92)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `380d5a70`
+- Built from commit: `cec6132f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - notifications/index.ts
-- voucher.ts
+- api/index.ts
 - react
 - money.ts
 - dependencies
@@ -29,11 +29,11 @@
 - compilerOptions
 - سند جامع معماری، نیازمندی‌ها و نقشه راه تولید اپلیکیشن اندروید پلتفرم iTrip (Firuzo)
 - stay.ts
-- i18n-parity.mjs
+- Toast.tsx
 - سند جامع معماری فنی اپلیکیشن موبایل iTrip (Firuzo Mobile)
 - scripts
 - iTrip Mobile (Firuzo) · گاوصندوق دیجیتال و همراه هوشمند سفر
-- (tabs)/_layout.tsx
+- wipe.ts
 - client.ts
 - devDependencies
 - ۸. پایپ‌لاین انتشار و کنترل کیفیت موبایل (Mobile Release Train Pipeline)
@@ -47,16 +47,14 @@
 - ۴. گاوصندوق آفلاین سفر (Offline-First Travel Vault)
 - expo-secure-store.ts
 - package.json
-- vitest
-- wipe.ts
-- wallet.ts
-- hotels.ts
+- useAuthStore
+- driver.ts
 - tour.ts
 - eslint.config.mjs
 - 5. Roadmap کامل با Taskهای اجرایی
 - rental.ts
 - i18n/index.ts
-- api/index.ts
+- telemetry/index.ts
 - app/_layout.tsx
 - serviceIcons.ts
 - iTRIP Mobile — Baseline Report (R0 — Baseline & Freeze)
@@ -72,29 +70,27 @@
 - 14. Contract بین iTRIP Mobile و Firuzo
 - 3. وضعیت مبنا و مهم‌ترین Gapها
 - mutationQueue.ts
-- vaultStore.ts
+- vault.ts
 - pricing.ts
-- bookingStore.ts
 - visa.ts
+- hotelStore.ts
 - money
-- escrow.ts
 - VaultDriver
 - syncState.ts
 - backgroundSync.ts
-- state.ts
 - expo-crypto.ts
 
 ## God Nodes (most connected - your core abstractions)
-1. `money` - 38 edges
-2. `react` - 36 edges
-3. `react-native` - 30 edges
-4. `vitest` - 30 edges
+1. `react` - 38 edges
+2. `money` - 38 edges
+3. `react-native` - 33 edges
+4. `vitest` - 31 edges
 5. `useAuthStore` - 24 edges
-6. `colors` - 21 edges
+6. `colors` - 23 edges
 7. `react-i18next` - 20 edges
-8. `expo-router` - 18 edges
-9. `react-native-safe-area-context` - 18 edges
-10. `11. Backlog پیشنهادی به صورت Epic` - 17 edges
+8. `react-native-safe-area-context` - 19 edges
+9. `expo-router` - 18 edges
+10. `Button()` - 17 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `3.1. Firuzo Color Tokens` --references--> `sub()`  [INFERRED]
@@ -103,27 +99,27 @@
   ARCHITECTURE.fa.md → src/domains/currency/money.ts
 - `3. Identity Hardening — وضعیت` --references--> `clearTokens()`  [INFERRED]
   SECURITY_BASELINE.md → src/services/secure/tokens.ts
-- `1. وضعیت تسک‌های R2 (Task-by-Task)` --references--> `OfflineBanner()`  [INFERRED]
-  SYNC_RELIABILITY_REPORT.md → src/components/ui/OfflineBanner.tsx
-- `1. وضعیت تسک‌های R2 (Task-by-Task)` --references--> `useNetworkStatus()`  [INFERRED]
-  SYNC_RELIABILITY_REPORT.md → src/hooks/useNetworkStatus.ts
+- `1. وضعیت تسک‌های R3` --references--> `EmptyState()`  [INFERRED]
+  DESIGN_SYSTEM_REPORT.md → src/components/ui/EmptyState.tsx
+- `1. وضعیت تسک‌های R3` --references--> `ErrorState()`  [INFERRED]
+  DESIGN_SYSTEM_REPORT.md → src/components/ui/ErrorState.tsx
 
 ## Import Cycles
 - None detected.
 
-## Communities (73 total, 10 thin omitted)
+## Communities (69 total, 10 thin omitted)
 
 ### Community 0 - "notifications/index.ts"
 Cohesion: 0.22
-Nodes (13): expo-device, expo-notifications, zod, usePushNotifications(), createDeviceTokenService(), DeviceTokenService, configureNotificationHandler(), ensureAndroidChannel() (+5 more)
+Nodes (13): expo-device, expo-notifications, usePushNotifications(), api, createDeviceTokenService(), DeviceTokenService, configureNotificationHandler(), ensureAndroidChannel() (+5 more)
 
-### Community 1 - "voucher.ts"
-Cohesion: 0.18
-Nodes (19): MyTripsScreen(), Passenger, buildFlightBarcodePayload(), buildHotelBarcodePayload(), buildTourBarcodePayload(), buildTransferBarcodePayload(), flightVoucherFromDraft(), getVoucherScheduleTime() (+11 more)
+### Community 1 - "api/index.ts"
+Cohesion: 0.05
+Nodes (62): vitest, PassengersScreen(), HomeScreen(), MyTripsScreen(), allowedTransitions, BookingStatus, canTransition(), FulfillmentStatus (+54 more)
 
 ### Community 2 - "react"
 Cohesion: 0.08
-Nodes (55): expo-router, react, react-i18next, react-native, react-native-qrcode-svg, react-native-safe-area-context, react-native-svg, @tanstack/react-query (+47 more)
+Nodes (56): expo-router, react, react-i18next, react-native, react-native-qrcode-svg, react-native-safe-area-context, react-native-svg, @tanstack/react-query (+48 more)
 
 ### Community 3 - "money.ts"
 Cohesion: 0.25
@@ -139,15 +135,15 @@ Nodes (32): 1.1. Core Tech Stack, 1.2. Architectural Principle: Maximum Synergy,
 
 ### Community 6 - "iTrip Mobile — Production Build & Hardening Guide"
 Cohesion: 0.07
-Nodes (26): MainActivity, DefaultReactActivityDelegate, iTrip Mobile — Production Build & Hardening Guide, اجرای دستی خط لوله از طریق CLI:, تنظیم در gradle, راه‌اندازی در کد (آماده است), راهنمای رفتار, ساخت keystore (یک‌بار، امن نگه دارید): (+18 more)
+Nodes (27): MainActivity, DefaultReactActivityDelegate, iTrip Mobile — Production Build & Hardening Guide, اجرای دستی خط لوله از طریق CLI:, تأیید در runtime, تنظیم در gradle, راه‌اندازی در کد (آماده است), راهنمای رفتار (+19 more)
 
 ### Community 7 - "expo"
 Cohesion: 0.07
 Nodes (26): backgroundColor, foregroundImage, adaptiveIcon, package, permissions, versionCode, typedRoutes, expo (+18 more)
 
 ### Community 8 - "booking.ts"
-Cohesion: 0.12
-Nodes (17): axios, BookingService, ConfirmPaymentParams, ConfirmPaymentParamsSchema, ConfirmPaymentResponse, ConfirmPaymentResponseSchema, createBookingService(), CreateDraftParams (+9 more)
+Cohesion: 0.06
+Nodes (34): axios, BookingService, ConfirmPaymentParams, ConfirmPaymentParamsSchema, ConfirmPaymentResponse, ConfirmPaymentResponseSchema, createBookingService(), CreateDraftParams (+26 more)
 
 ### Community 9 - "MainApplication.kt"
 Cohesion: 0.15
@@ -162,12 +158,12 @@ Cohesion: 0.17
 Nodes (12): تصمیم نهایی معمارانه (Architectural Decision Record):, دلایل این انتخاب برای پلتفرم فیروزو:, سند جامع معماری، نیازمندی‌ها و نقشه راه تولید اپلیکیشن اندروید پلتفرم iTrip (Firuzo), چالش‌های اختصاصی محیطی و میدانی در ایران:, ۱. تحلیل استراتژیک و نیازمندی‌های بنیادین محصول (Strategic Domain Context), ۲. ارزیابی و انتخاب استک فناوری (Technology Stack Evaluation & Decision), ۳. معماری لایه‌بندی نرم‌افزار (Clean Architecture & Layering), ۴. موتور همگام‌سازی آفلاین و گاوصندوق سفر (Offline-First Vault) (+4 more)
 
 ### Community 12 - "stay.ts"
-Cohesion: 0.21
-Nodes (13): addDays(), calculateTotalHotelGuests(), dayNumber(), HotelStayDetails, HotelStayDetailsSchema, nightsBetween(), RoomGuest, RoomGuestSchema (+5 more)
+Cohesion: 0.18
+Nodes (15): HotelResultsScreen(), addDays(), calculateTotalHotelGuests(), dayNumber(), HotelStayDetails, HotelStayDetailsSchema, nightsBetween(), RoomGuest (+7 more)
 
-### Community 13 - "i18n-parity.mjs"
-Cohesion: 0.13
-Nodes (11): ref_node_fs, ref_node_path, ref_vitest_config, booking, baseKeys, files, flatten(), localesDir (+3 more)
+### Community 13 - "Toast.tsx"
+Cohesion: 0.06
+Nodes (40): 1. وضعیت تسک‌های R3, 2. گیت دائمی — `src/test/design/designSystem.test.ts` (14 تست), 3. Exit Gate — R3, iTRIP Mobile — Design System Report (R3 — Navigation + Design System), ref_node_fs, ref_node_path, ref_vitest_config, booking (+32 more)
 
 ### Community 14 - "سند جامع معماری فنی اپلیکیشن موبایل iTrip (Firuzo Mobile)"
 Cohesion: 0.22
@@ -181,13 +177,13 @@ Nodes (10): scripts, android, build:bundle, i18n:parity, ios, lint, start, test 
 Cohesion: 0.17
 Nodes (11): iTrip Mobile (Firuzo) · گاوصندوق دیجیتال و همراه هوشمند سفر, 🛠 استک فناوری (Technology Stack), 📥 دانلود و نصب مستقیم (Download Android APK), دستورات توسعه و تضمین کیفیت (Quality Gates), 🚀 راه‌اندازی و توسعه (Getting Started), 📁 ساختار پوشه‌بندی (Directory Structure), 🌟 ستون‌های اصلی محصول (Key Pillars), 📄 مجوز و مالکیت (License) (+3 more)
 
-### Community 17 - "(tabs)/_layout.tsx"
-Cohesion: 0.36
-Nodes (6): AccountIcon(), HomeIcon(), SearchIcon(), TabIconProps, TripsIcon(), WalletIcon()
+### Community 17 - "wipe.ts"
+Cohesion: 0.31
+Nodes (7): expo-crypto, expo-secure-store, deleteDbKey(), USER_SCOPED_SECURE_KEYS, WipeResult, wipeSecureStoreKeys(), wipeUserDataForLogout()
 
 ### Community 18 - "client.ts"
 Cohesion: 0.19
-Nodes (17): AuthService, createAuthService(), SendOtpResponse, VerifyOtpResponse, ApiConfig, createApiClient(), doRefresh(), generateCorrelationId() (+9 more)
+Nodes (16): zod, AuthService, createAuthService(), SendOtpResponse, VerifyOtpResponse, ApiConfig, createApiClient(), doRefresh() (+8 more)
 
 ### Community 19 - "devDependencies"
 Cohesion: 0.29
@@ -233,21 +229,13 @@ Nodes (4): ۴. گاوصندوق آفلاین سفر (Offline-First Travel Vault)
 Cohesion: 0.07
 Nodes (27): description, engines, node, main, name, op-sqlite, sqlcipher, private (+19 more)
 
-### Community 31 - "vitest"
-Cohesion: 0.14
-Nodes (10): vitest, AirportSchema, createFlightService(), FlightOfferSchema, FlightSegment, FlightSegmentSchema, FlightService, SearchFlightsParamsSchema (+2 more)
+### Community 31 - "useAuthStore"
+Cohesion: 0.67
+Nodes (5): OtpScreen(), useAuthBootstrap(), useRequireAuth(), getAccessToken(), useAuthStore
 
-### Community 38 - "wipe.ts"
-Cohesion: 0.13
-Nodes (18): تأیید در runtime, expo-crypto, expo-secure-store, expo-sqlite, @op-engineering/op-sqlite, createDriver(), createExpoSqliteDriver(), getVaultDriver() (+10 more)
-
-### Community 39 - "wallet.ts"
-Cohesion: 0.18
-Nodes (10): createWalletService(), ServerTransaction, ServerTransactionSchema, TopUpIntentParams, TopUpIntentParamsSchema, TopUpIntentResponse, TopUpIntentResponseSchema, WalletBalances (+2 more)
-
-### Community 40 - "hotels.ts"
-Cohesion: 0.25
-Nodes (7): createHotelService(), Hotel, HotelSchema, HotelService, RoomOfferSchema, SearchHotelsParamsSchema, SearchHotelsResponseSchema
+### Community 38 - "driver.ts"
+Cohesion: 0.24
+Nodes (7): expo-sqlite, @op-engineering/op-sqlite, createDriver(), createExpoSqliteDriver(), OpSqliteDb, __setVaultDriverForTests(), tryCreateEncryptedDriver()
 
 ### Community 41 - "tour.ts"
 Cohesion: 0.13
@@ -265,9 +253,9 @@ Nodes (15): calculateRentalDays(), calculateRentalPricing(), CarModel, CarModelS
 Cohesion: 0.17
 Nodes (10): i18next, AppLanguage, LANGUAGE_NAMES, RTL_LANGUAGES, SUPPORTED_LANGUAGES, src_i18n_locales_ar, src_i18n_locales_en, src_i18n_locales_fa (+2 more)
 
-### Community 46 - "api/index.ts"
-Cohesion: 0.17
-Nodes (12): RFC-7469, apiConfig, DomainPinningPolicy, Environment, resolveBaseUrl(), resolveEnvironment(), hotelService, eventBuffer (+4 more)
+### Community 46 - "telemetry/index.ts"
+Cohesion: 0.19
+Nodes (11): RFC-7469, apiConfig, DomainPinningPolicy, Environment, resolveBaseUrl(), resolveEnvironment(), eventBuffer, sanitizeMetadata() (+3 more)
 
 ### Community 47 - "app/_layout.tsx"
 Cohesion: 0.24
@@ -283,7 +271,7 @@ Nodes (17): 11. Backlog پیشنهادی به صورت Epic, EPIC-01 Foundation,
 
 ### Community 51 - "authStore.ts"
 Cohesion: 0.26
-Nodes (8): zustand, api, ConflictResolutionPolicy, resolveBookingConflict(), resolvePreferenceConflict(), resolveProfileConflict(), AuthState, UserProfile
+Nodes (8): zustand, ConflictResolutionPolicy, resolveBookingConflict(), resolvePreferenceConflict(), resolveProfileConflict(), AuthState, AuthStatus, UserProfile
 
 ### Community 52 - "7. ساختار پیشنهادی Agent Skills — 10 Skill"
 Cohesion: 0.15
@@ -325,65 +313,57 @@ Nodes (3): 3. وضعیت مبنا و مهم‌ترین Gapها, P0 فعلی, P1 
 Cohesion: 0.17
 Nodes (13): buildDeadLetterEntry(), classifyFailure(), DEAD_LETTER_TABLE_DDL, DeadLetterEntry, DeadLetterRow, isPendingReview(), rowToDeadLetter(), calculateBackoffMs() (+5 more)
 
-### Community 62 - "vaultStore.ts"
-Cohesion: 0.23
-Nodes (12): FlightVoucher, HotelVoucher, TourVoucher, TransferVoucher, Voucher, FlightVoucherRow, HotelVoucherRow, migrate() (+4 more)
+### Community 62 - "vault.ts"
+Cohesion: 0.31
+Nodes (7): getVaultDriver(), FlightVoucherRow, HotelVoucherRow, migrate(), vaultEngine(), withDb(), reinitializeSchemaAfterWipe()
 
 ### Community 63 - "pricing.ts"
-Cohesion: 0.24
-Nodes (13): PassengersScreen(), FlightResultsScreen(), convertBreakdown(), CURRENCY_PRECISION, DEFAULT_RULES, priceBooking(), priceFromBase(), priceStay() (+5 more)
-
-### Community 64 - "bookingStore.ts"
-Cohesion: 0.18
-Nodes (12): isPassportValidForTravel(), PassengerSchema, Passport, PassportSchema, Airport, src_services_api_index_airport, src_services_api_index_flightoffer, src_services_api_index_searchflightsparams (+4 more)
+Cohesion: 0.27
+Nodes (11): FlightResultsScreen(), convertBreakdown(), CURRENCY_PRECISION, DEFAULT_RULES, priceBooking(), priceFromBase(), priceStay(), PricingRules (+3 more)
 
 ### Community 65 - "visa.ts"
 Cohesion: 0.17
 Nodes (14): calculateVisaTotal(), formatVisaProcessingTime(), mockVisa, validateVisaDocuments(), VisaApplicationDraft, VisaApplicationDraftSchema, VisaCatalogItem, VisaCatalogItemSchema (+6 more)
 
-### Community 66 - "money"
-Cohesion: 0.25
-Nodes (13): HotelResultsScreen(), FareBreakdown, money, RoomOffer, SearchHotelsParams, src_services_api_index_roomoffer, src_services_api_index_searchhotelsparams, emptyDraft (+5 more)
+### Community 66 - "hotelStore.ts"
+Cohesion: 0.31
+Nodes (9): FareBreakdown, RoomOffer, SearchHotelsParams, src_services_api_index_roomoffer, src_services_api_index_searchhotelsparams, emptyDraft, HotelDraft, HotelState (+1 more)
 
-### Community 67 - "escrow.ts"
-Cohesion: 0.20
-Nodes (12): allowedEscrowTransitions, calculateEscrowFee(), calculateTotalEscrowDeposit(), canTransitionEscrow(), DEFAULT_ESCROW_FEE_PERCENT, EscrowContract, EscrowContractSchema, EscrowDispute (+4 more)
+### Community 67 - "money"
+Cohesion: 0.19
+Nodes (14): money, allowedEscrowTransitions, calculateEscrowFee(), calculateTotalEscrowDeposit(), canTransitionEscrow(), DEFAULT_ESCROW_FEE_PERCENT, EscrowContract, EscrowContractSchema (+6 more)
 
 ### Community 68 - "VaultDriver"
 Cohesion: 0.14
-Nodes (3): VaultDriver, InMemoryVaultDriver, InMemoryDriver
+Nodes (3): VaultDriver, InMemoryDriver, MockVaultDriver
 
 ### Community 69 - "syncState.ts"
-Cohesion: 0.21
-Nodes (11): allowedSyncTransitions, canSyncTransition(), isFreshEnough(), SyncEvent, SyncState, syncTransition(), 2. Dead-Letter Queue — طراحی, 3. Sync State Machine — طراحی (+3 more)
+Cohesion: 0.19
+Nodes (12): allowedSyncTransitions, canSyncTransition(), isFreshEnough(), SyncEvent, SyncState, syncTransition(), 1. وضعیت تسک‌های R2 (Task-by-Task), 2. Dead-Letter Queue — طراحی (+4 more)
 
 ### Community 70 - "backgroundSync.ts"
-Cohesion: 0.20
-Nodes (9): expo-background-task, expo-task-manager, bookingService, flightService, syncAll(), SyncResult, syncVaultOnce(), VAULT_SYNC_TASK (+1 more)
-
-### Community 71 - "state.ts"
-Cohesion: 0.27
-Nodes (9): allowedTransitions, BookingStatus, canTransition(), FulfillmentStatus, isBookingActive(), isBookingPending(), isBookingTerminal(), PaymentStatus (+1 more)
+Cohesion: 0.22
+Nodes (8): expo-background-task, expo-task-manager, flightService, syncAll(), SyncResult, syncVaultOnce(), VAULT_SYNC_TASK, mutationQueue
 
 ## Knowledge Gaps
-- **470 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+465 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 546 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **479 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+474 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 557 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `sub()` connect `money.ts` to `Firuzo Mobile (itrip-mobile) — Agent Operating Guidelines & Architecture Invariants`, `۶. طراحی ارگونومیک موبایل و تجربه کاربری (Mobile-First UX & Ergonomics)`?**
-  _High betweenness centrality (0.139) - this node is a cross-community bridge._
-- **Why does `vitest` connect `vitest` to `notifications/index.ts`, `voucher.ts`, `money.ts`, `booking.ts`, `stay.ts`, `i18n-parity.mjs`, `jalali.ts`, `package.json`, `wipe.ts`, `wallet.ts`, `hotels.ts`, `tour.ts`, `rental.ts`, `api/index.ts`, `authStore.ts`, `mutationQueue.ts`, `vaultStore.ts`, `pricing.ts`, `bookingStore.ts`, `visa.ts`, `money`, `escrow.ts`, `syncState.ts`, `state.ts`?**
-  _High betweenness centrality (0.122) - this node is a cross-community bridge._
+  _High betweenness centrality (0.134) - this node is a cross-community bridge._
+- **Why does `vitest` connect `api/index.ts` to `notifications/index.ts`, `money.ts`, `booking.ts`, `stay.ts`, `Toast.tsx`, `wipe.ts`, `jalali.ts`, `package.json`, `driver.ts`, `tour.ts`, `rental.ts`, `telemetry/index.ts`, `authStore.ts`, `mutationQueue.ts`, `pricing.ts`, `visa.ts`, `hotelStore.ts`, `money`, `syncState.ts`?**
+  _High betweenness centrality (0.100) - this node is a cross-community bridge._
 - **Why does `۶.۴. سیستم سلسله‌مراتب کارت‌ها و توکن‌های بصری فیروزو` connect `۶. طراحی ارگونومیک موبایل و تجربه کاربری (Mobile-First UX & Ergonomics)` to `money.ts`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _470 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _479 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `api/index.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.05269497139415839 - nodes in this community are weakly interconnected._
 - **Should `react` be split into smaller, more focused modules?**
-  _Cohesion score 0.08350491878288721 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07872807017543859 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
-- **Should `Firuzo Mobile (itrip-mobile) — Agent Operating Guidelines & Architecture Invariants` be split into smaller, more focused modules?**
-  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
