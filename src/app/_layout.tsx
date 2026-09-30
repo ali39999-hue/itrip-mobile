@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useVaultStore } from '@/stores/vaultStore';
 import { useAppFonts } from '@/hooks/useAppFonts';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { ToastHost } from '@/components/ui/Toast';
 import { registerBackgroundSync, syncAll } from '@/services/sync/backgroundSync';
 import type { NotificationPayload } from '@/services/notifications';
 import i18n from '@/i18n';
@@ -105,6 +106,8 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           </Stack>
+          {/* R3: single app-level toast/snackbar slot */}
+          <ToastHost />
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

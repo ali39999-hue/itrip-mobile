@@ -7,7 +7,9 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { colors } from '@/styles/colors';
+import { touchTarget } from '@/styles/tokens';
 
 export interface ButtonProps extends Omit<PressableProps, 'style'> {
   variant?: 'brand' | 'action' | 'outline' | 'ghost';
@@ -18,6 +20,33 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   className?: string;
+  /** Haptic feedback on press (R3 haptic policy). Default: light impact. */
+  haptic?: 'none' | 'light' | 'medium' | 'success' | 'warning' | 'error';
+}
+
+const HAPTIC_MAP = {
+  none: null,
+  light: Haptics.ImpactFeedbackStyle.Light,
+  medium: Haptics.ImpactFeedbackStyle.Medium,
+} as const;
+
+async function fireHaptic(kind: NonNullable<ButtonProps['haptic']>): Promise<void> {
+  try {
+    if (kind === 'none') return;
+    if (kind === 'success' || kind === 'warning' || kind === 'error') {
+      const map = {
+        success: Haptics.NotificationFeedbackType.Success,
+        warning: Haptics.NotificationFeedbackType.Warning,
+        error: Haptics.NotificationFeedbackType.Error,
+      } as const;
+      await Haptics.notificationAsync(map[kind]);
+      return;
+    }
+    const impact = HAPTIC_MAP[kind];
+    if (impact) await Haptics.impactAsync(impact);
+  } catch {
+    // Haptics unsupported on this device — never block the press.
+  }
 }
 
 export function Button({
@@ -28,14 +57,17 @@ export function Button({
   title,
   children,
   className = '',
+  haptic = 'light',
+  onPress,
   ...rest
 }: ButtonProps) {
   const baseClasses = 'flex-row items-center justify-center rounded-xl active:opacity-85';
 
+  // R3 touch-target policy: md/lg buttons guarantee the 44pt minimum height.
   const sizeClasses = {
     sm: 'px-3 py-2',
-    md: 'px-4 py-3.5',
-    lg: 'px-6 py-4',
+    md: 'px-4 py-3.5 min-h-[44px]',
+    lg: 'px-6 py-4 min-h-[52px]',
   }[size];
 
   const variantClasses = {
@@ -54,6 +86,11 @@ export function Button({
       disabled={disabled || loading}
       className={`${baseClasses} ${sizeClasses} ${variantClasses} ${disabledClass} ${className}`}
       accessibilityRole="button"
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
+      onPress={(e) => {
+        void fireHaptic(haptic);
+        onPress?.(e);
+      }}
       {...rest}
     >
       {loading ? (
@@ -78,3 +115,5 @@ export function Button({
     </Pressable>
   );
 }
+
+export { touchTarget };
