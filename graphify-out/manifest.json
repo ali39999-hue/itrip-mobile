@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/OfflineBanner.tsx": {
-    "mtime": 1790233096.2848473,
-    "seen": 1790426271.4886892,
-    "ast_hash": "932d80593b14f18ea7f4cc66aac497ef",
+    "mtime": 1790767460.4042919,
+    "seen": 1790767826.4079075,
+    "ast_hash": "b3091b58624aa766bd733c84d7914814",
     "semantic_hash": ""
   },
   "src/components/ui/TabIcons.tsx": {
@@ -1767,6 +1767,24 @@
     "mtime": 1790767127.3189042,
     "seen": 1790767256.5828557,
     "ast_hash": "ba4b0516f7415aa0b0ab86beac9281e4",
+    "semantic_hash": ""
+  },
+  "src/domains/perf/budgets.ts": {
+    "mtime": 1790767383.007149,
+    "seen": 1790767826.407933,
+    "ast_hash": "d2f10d8fd5d7cc52f0b2fb839b8ea327",
+    "semantic_hash": ""
+  },
+  "src/test/perf/performance.test.ts": {
+    "mtime": 1790767635.157983,
+    "seen": 1790767826.4080024,
+    "ast_hash": "510b25d239db89ded87f526776c9f676",
+    "semantic_hash": ""
+  },
+  "PERF_A11Y_REPORT.md": {
+    "mtime": 1790767695.537493,
+    "seen": 1790767826.4080172,
+    "ast_hash": "e05320eb45486755440acbcd0188c689",
     "semantic_hash": ""
   }
 }
