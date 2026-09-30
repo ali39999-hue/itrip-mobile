@@ -19,6 +19,7 @@ ios/Pods/
 *.jks
 google-services.json
 android/app/debug.keystore
+android/app/release.keystore
 
 # Build artifacts
 .expo-export-test/

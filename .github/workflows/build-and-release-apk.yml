@@ -43,19 +43,23 @@ jobs:
       - name: Run Quality Gate Verifications
         run: npm run verify
 
-      - name: Ensure Android Signing Keystore Exists
+      - name: Ensure Release Signing Keystore Exists
+        env:
+          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEY_ALIAS: ${{ secrets.ITRIP_RELEASE_KEY_ALIAS || 'itrip-release' }}
+          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD || 'itrip-release-2026' }}
         run: |
-          if [ ! -f "android/app/debug.keystore" ]; then
-            echo "Generating Android release signing keystore..."
+          if [ ! -f "android/app/release.keystore" ]; then
+            echo "Generating dedicated Android release signing keystore..."
             keytool -genkeypair -v \
-              -keystore android/app/debug.keystore \
-              -alias androiddebugkey \
-              -storepass android \
-              -keypass android \
+              -keystore android/app/release.keystore \
+              -alias "$ITRIP_RELEASE_KEY_ALIAS" \
+              -storepass "$ITRIP_RELEASE_KEYSTORE_PASSWORD" \
+              -keypass "$ITRIP_RELEASE_KEY_PASSWORD" \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
-              -dname "CN=iTRIP Mobile, OU=Mobile Engineering, O=Firuzo iTrip, L=Tehran, ST=Tehran, C=IR"
+              -dname "CN=iTRIP Mobile Release, OU=Mobile Engineering, O=Firuzo iTrip, L=Tehran, ST=Tehran, C=IR"
           fi
 
       - name: Make Gradle Wrapper Executable
@@ -66,6 +70,10 @@ jobs:
         env:
           EXPO_PUBLIC_API_URL: https://itrip-platform.vercel.app/api
           EXPO_PUBLIC_APP_ENV: production
+          ITRIP_RELEASE_KEYSTORE_PATH: release.keystore
+          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEY_ALIAS: ${{ secrets.ITRIP_RELEASE_KEY_ALIAS || 'itrip-release' }}
+          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD || 'itrip-release-2026' }}
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Prepare Release Artifacts & Calculate Checksum

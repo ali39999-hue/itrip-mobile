@@ -10,8 +10,7 @@
   <!-- Production Backend Domain Pinning (Phase 12 — Native Certificate Pinning) -->
   <domain-config cleartextTrafficPermitted="false">
     <domain includeSubdomains="true">itrip-platform.vercel.app</domain>
-    <domain includeSubdomains="true">vercel.app</domain>
-    <domain includeSubdomains="true">itrip.example.com</domain>
+    <domain includeSubdomains="true">api.itrip.ir</domain>
 
     <pin-set expiration="2027-12-31">
       <!-- Primary SPKI Pin (Vercel Edge Leaf Certificate) -->

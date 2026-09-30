@@ -70,6 +70,13 @@ export const apiConfig = {
       ],
     },
   ] as DomainPinningPolicy[],
-  /** Whether SSL certificate pinning is enforced (production builds only) */
+  /**
+   * SSL pinning enforcement policy (R1 hardening):
+   * - The JS-level check only validates the pin *configuration*, never the
+   *   TLS handshake itself. The actual transport pinning happens natively
+   *   via Android Network Security Configuration (res/xml/network_security_config.xml)
+   *   with the same pin set — that layer cannot be bypassed from JS.
+   * - This flag records whether the config is complete enough to enforce.
+   */
   pinningEnforced: resolveEnvironment() === 'production',
 } as const;
