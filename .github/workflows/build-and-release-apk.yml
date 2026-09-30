@@ -102,6 +102,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Uploading ${BUILT_APK_NAME} to GitHub release ${ARTIFACT_TAG}..."
+          if ! gh release view "${ARTIFACT_TAG}" >/dev/null 2>&1; then
+            echo "Creating GitHub Release ${ARTIFACT_TAG}..."
+            gh release create "${ARTIFACT_TAG}" \
+              --title "Release ${ARTIFACT_TAG}" \
+              --generate-notes
+          fi
           gh release upload "${ARTIFACT_TAG}" \
             "dist-apk/${BUILT_APK_NAME}" \
             "dist-apk/${BUILT_APK_NAME}.sha256" \
