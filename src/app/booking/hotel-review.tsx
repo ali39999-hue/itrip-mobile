@@ -80,8 +80,17 @@ export default function HotelReviewScreen() {
         return;
       }
 
-      // 2. Create authoritative server booking draft with soft lock
-      const userPhone = authState.phone || '09120000000';
+      // 2. Create authoritative server booking draft with soft lock.
+      // A verified phone is required — never fabricate a placeholder number.
+      const userPhone = authState.phone?.trim();
+      if (!userPhone) {
+        setProcessing(false);
+        Alert.alert(
+          t('common.error'),
+          t('booking.phoneRequired'),
+        );
+        return;
+      }
       const draftResult = await createAuthoritativeDraft(userPhone);
 
       // 3. Confirm payment on backend

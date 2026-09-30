@@ -141,7 +141,8 @@
     "successTitle": "预订已确认",
     "successBody": "机票已出票，可在「我的行程」中查看。",
     "noDraft": "暂无进行中的预订，请先搜索航班。",
-    "seatNotFound": "请选择其他座位"
+    "seatNotFound": "请选择其他座位",
+    "phoneRequired": "完成此预订需要已验证的手机号码。"
   },
   "notifications": {
     "flightDelayTitle": "航班延误",

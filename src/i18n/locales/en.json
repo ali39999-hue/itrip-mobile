@@ -141,7 +141,8 @@
     "successTitle": "Booking confirmed",
     "successBody": "Your ticket has been issued and is available in My Trips.",
     "noDraft": "No active booking. Search for a flight first.",
-    "seatNotFound": "Please choose another seat"
+    "seatNotFound": "Please choose another seat",
+    "phoneRequired": "A verified phone number is required to complete this booking."
   },
   "notifications": {
     "flightDelayTitle": "Flight delayed",

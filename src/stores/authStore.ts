@@ -65,7 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           kycApproved: false,
           profileComplete: false,
           loyaltyTier: 'BRONZE',
-          loyaltyPoints: 120,
+          loyaltyPoints: 0,
         },
       },
     }),
@@ -83,7 +83,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               kycApproved: false,
               profileComplete: false,
               loyaltyTier: 'BRONZE',
-              loyaltyPoints: 120,
+              loyaltyPoints: 0,
               ...updates,
             },
       },
@@ -113,22 +113,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const token = await getAccessToken();
       if (token) {
+        // No demo identity: session is marked authenticated with an empty
+        // profile shell; real identity is fetched from the authoritative
+        // /user/profile endpoint (fetchProfile) — never hard-coded here.
         set({
           auth: {
             state: 'authenticated',
-            userId: 'usr_active',
+            userId: 'pending_profile',
             displayLanguage: 'fa',
-            profile: {
-              phone: '09120000000',
-              firstName: 'Traveler',
-              lastName: 'Firuzo',
-              kycApproved: true,
-              profileComplete: true,
-              loyaltyTier: 'BRONZE',
-              loyaltyPoints: 120,
-            },
+            profile: undefined,
           },
         });
+        await get().fetchProfile();
       } else {
         set({ auth: { state: 'guest' } });
       }
