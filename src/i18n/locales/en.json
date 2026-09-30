@@ -29,6 +29,10 @@
     "hotels": "Hotels & Stays",
     "tours": "Tours & Trips",
     "cip": "Airport CIP Lounge",
+    "trains": "Trains",
+    "visas": "Visas",
+    "rentals": "Car & Taxi",
+    "esim": "eSIM Data",
     "upcomingTrip": "Upcoming Trip",
     "noUpcomingTrip": "No active trip found",
     "exploreIran": "Top Destinations in Iran",
@@ -180,5 +184,41 @@
     "in1Month": "+1 Month",
     "selectedDate": "Selected Date",
     "quickSelect": "Quick Select"
+  },
+  "tour": {
+    "title": "Tours & Guided Experiences",
+    "itinerary": "Daily Itinerary",
+    "included": "Included Services",
+    "excluded": "Excluded Services",
+    "departures": "Available Departures",
+    "hotelTier": "Hotel Tier",
+    "groupTour": "Group Tour",
+    "privateTour": "Private Tour",
+    "deposit": "Deposit Required"
+  },
+  "visa": {
+    "title": "International Visa Services",
+    "requiredDocs": "Required Documents",
+    "processingTime": "Processing Time",
+    "govFee": "Government Fee",
+    "serviceFee": "Service Fee",
+    "applyNow": "Apply Now",
+    "uploadDoc": "Upload Document"
+  },
+  "rental": {
+    "title": "Car Rental & Airport Transfers",
+    "dailyRate": "Daily Rate",
+    "deposit": "Security Deposit",
+    "withDriver": "With Driver",
+    "selfDrive": "Self Drive",
+    "kmLimit": "Daily KM Limit",
+    "insurance": "Insurance Tier"
+  },
+  "escrow": {
+    "title": "Escrow & Buyer Protection",
+    "contract": "Escrow Contract",
+    "dispute": "Dispute Arbitration",
+    "inspectionPeriod": "Inspection Period",
+    "buyerProtection": "100% Protected Funds"
   }
 }

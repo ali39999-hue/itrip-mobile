@@ -15,6 +15,7 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { formatIsoToJalali } from '@/domains/calendar/jalali';
 import {
   buildFlightBarcodePayload,
+  getVoucherScheduleTime,
   type FlightVoucher,
   type HotelVoucher,
 } from '@/domains/voucher/voucher';
@@ -69,12 +70,12 @@ export default function MyTripsScreen() {
     // Filter by tab
     if (activeTab === 'upcoming') {
       list = list.filter((v) => {
-        const time = v.kind === 'flight' ? new Date(v.departureTime).getTime() : new Date(v.checkIn).getTime();
+        const time = new Date(getVoucherScheduleTime(v)).getTime();
         return time >= now;
       });
     } else if (activeTab === 'completed') {
       list = list.filter((v) => {
-        const time = v.kind === 'flight' ? new Date(v.departureTime).getTime() : new Date(v.checkIn).getTime();
+        const time = new Date(getVoucherScheduleTime(v)).getTime();
         return time < now;
       });
     }
@@ -91,13 +92,26 @@ export default function MyTripsScreen() {
             v.airline.toLowerCase().includes(q) ||
             v.flightNumber.toLowerCase().includes(q)
           );
-        } else {
+        } else if (v.kind === 'hotel') {
           return (
             v.hotelName.toLowerCase().includes(q) ||
             v.hotelNameFa.includes(q) ||
             v.addressFa.includes(q)
           );
+        } else if (v.kind === 'tour') {
+          return (
+            v.tourTitle.toLowerCase().includes(q) ||
+            v.tourTitleFa.includes(q) ||
+            v.city.toLowerCase().includes(q)
+          );
+        } else if (v.kind === 'transfer') {
+          return (
+            v.carTitle.toLowerCase().includes(q) ||
+            v.pickupLocation.toLowerCase().includes(q) ||
+            v.dropoffLocation.toLowerCase().includes(q)
+          );
         }
+        return false;
       });
     }
 

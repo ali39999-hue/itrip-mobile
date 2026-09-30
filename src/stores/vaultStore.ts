@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import {
   sortVouchers,
+  getVoucherScheduleTime,
   type Voucher,
   type FlightVoucher,
   type HotelVoucher,
+  type TourVoucher,
+  type TransferVoucher,
 } from '@/domains/voucher/voucher';
 import { vault } from '@/services/db/vault';
 
@@ -21,9 +24,13 @@ interface VaultState {
   load: () => Promise<void>;
   addFlightVoucher: (v: FlightVoucher) => Promise<void>;
   addHotelVoucher: (v: HotelVoucher) => Promise<void>;
+  addTourVoucher: (v: TourVoucher) => Promise<void>;
+  addTransferVoucher: (v: TransferVoucher) => Promise<void>;
   remove: (bookingRef: string) => Promise<void>;
   flightVouchers: () => FlightVoucher[];
   hotelVouchers: () => HotelVoucher[];
+  tourVouchers: () => TourVoucher[];
+  transferVouchers: () => TransferVoucher[];
   upcoming: () => Voucher[];
 }
 
@@ -57,6 +64,20 @@ export const useVaultStore = create<VaultState>((set, get) => ({
     }));
   },
 
+  addTourVoucher: async (v) => {
+    await vault.saveVoucher(v);
+    set((s) => ({
+      vouchers: sortVouchers([v, ...s.vouchers.filter((x) => x.bookingRef !== v.bookingRef)]),
+    }));
+  },
+
+  addTransferVoucher: async (v) => {
+    await vault.saveVoucher(v);
+    set((s) => ({
+      vouchers: sortVouchers([v, ...s.vouchers.filter((x) => x.bookingRef !== v.bookingRef)]),
+    }));
+  },
+
   remove: async (bookingRef) => {
     await vault.deleteVoucher(bookingRef);
     set((s) => ({ vouchers: s.vouchers.filter((v) => v.bookingRef !== bookingRef) }));
@@ -64,10 +85,13 @@ export const useVaultStore = create<VaultState>((set, get) => ({
 
   flightVouchers: () => get().vouchers.filter((v): v is FlightVoucher => v.kind === 'flight'),
   hotelVouchers: () => get().vouchers.filter((v): v is HotelVoucher => v.kind === 'hotel'),
+  tourVouchers: () => get().vouchers.filter((v): v is TourVoucher => v.kind === 'tour'),
+  transferVouchers: () => get().vouchers.filter((v): v is TransferVoucher => v.kind === 'transfer'),
   upcoming: () => {
     const now = Date.now();
     return get().vouchers.filter((v) => {
-      const at = v.kind === 'flight' ? new Date(v.departureTime).getTime() : new Date(v.checkIn).getTime();
+      const scheduleTime = getVoucherScheduleTime(v);
+      const at = new Date(scheduleTime).getTime();
       return at >= now;
     });
   },

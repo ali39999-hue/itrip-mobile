@@ -29,6 +29,10 @@
     "hotels": "酒店住宿",
     "tours": "旅行团与导览",
     "cip": "机场贵宾CIP",
+    "trains": "火车票",
+    "visas": "签证服务",
+    "rentals": "租车与接送",
+    "esim": "eSIM流量",
     "upcomingTrip": "即将出行的行程",
     "noUpcomingTrip": "暂无有效行程",
     "exploreIran": "伊朗热门目的地",
@@ -180,5 +184,41 @@
     "in1Month": "+1个月",
     "selectedDate": "已选日期",
     "quickSelect": "快速选择"
+  },
+  "tour": {
+    "title": "精品跟团游",
+    "itinerary": "行程安排",
+    "included": "费用包含",
+    "excluded": "费用不含",
+    "departures": "发团日期",
+    "hotelTier": "酒店标准",
+    "groupTour": "拼团游",
+    "privateTour": "独立包团",
+    "deposit": "定金支付"
+  },
+  "visa": {
+    "title": "国际签证办理",
+    "requiredDocs": "所需材料",
+    "processingTime": "办理周期",
+    "govFee": "使领馆规费",
+    "serviceFee": "服务费",
+    "applyNow": "立即申请",
+    "uploadDoc": "上传材料"
+  },
+  "rental": {
+    "title": "租车与机场接送",
+    "dailyRate": "日租价格",
+    "deposit": "押金担保",
+    "withDriver": "带司机",
+    "selfDrive": "自驾租车",
+    "kmLimit": "每日限程",
+    "insurance": "保险套餐"
+  },
+  "escrow": {
+    "title": "资金托管与交易担保",
+    "contract": "托管合约",
+    "dispute": "争议仲裁",
+    "inspectionPeriod": "验货/确认期",
+    "buyerProtection": "100%资金保障"
   }
 }

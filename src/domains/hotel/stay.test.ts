@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { nightsBetween, addDays, validateStay, StayDatesSchema } from './stay';
+import {
+  nightsBetween,
+  addDays,
+  validateStay,
+  StayDatesSchema,
+  calculateTotalHotelGuests,
+  RoomGuestSchema,
+} from './stay';
 
 describe('hotel stay domain', () => {
   it('counts whole nights between check-in and check-out', () => {
@@ -47,5 +54,30 @@ describe('hotel stay domain', () => {
   it('StayDatesSchema accepts a valid range', () => {
     const result = StayDatesSchema.safeParse({ checkIn: '2026-11-12', checkOut: '2026-11-15' });
     expect(result.success).toBe(true);
+  });
+
+  it('validates multi-room occupancy and calculates total guests', () => {
+    const occupancies = [
+      { adults: 2, children: 1 },
+      { adults: 1, children: 0 },
+      { adults: 2, children: 2 },
+    ];
+    const totals = calculateTotalHotelGuests(occupancies);
+    expect(totals.totalAdults).toBe(5);
+    expect(totals.totalChildren).toBe(3);
+    expect(totals.totalGuests).toBe(8);
+  });
+
+  it('validates RoomGuest schema with lead guest flag', () => {
+    const guest = RoomGuestSchema.parse({
+      roomId: 'room-deluxe-1',
+      roomIndex: 0,
+      firstName: 'Sarah',
+      lastName: 'Karimi',
+      phone: '09123456789',
+      isLeadGuest: true,
+    });
+    expect(guest.isLeadGuest).toBe(true);
+    expect(guest.lastName).toBe('Karimi');
   });
 });

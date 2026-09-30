@@ -48,3 +48,51 @@ export function validateStay(checkIn: string, checkOut: string): number {
   if (nights < 1) throw new Error('Stay must be at least one night');
   return nights;
 }
+
+/**
+ * Multi-room occupancy configuration.
+ * Mirrored from eCardo/eTrip TravelHotelSearch specifications.
+ */
+export const RoomOccupancySchema = z.object({
+  adults: z.number().int().min(1).max(6).default(1),
+  children: z.number().int().min(0).max(4).default(0),
+});
+export type RoomOccupancy = z.infer<typeof RoomOccupancySchema>;
+
+export const RoomGuestSchema = z.object({
+  roomId: z.string().min(1),
+  roomIndex: z.number().int().min(0),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  phone: z.string().optional(),
+  email: z.string().email().optional(),
+  isLeadGuest: z.boolean().default(false),
+});
+export type RoomGuest = z.infer<typeof RoomGuestSchema>;
+
+export const HotelStayDetailsSchema = z.object({
+  stayDates: StayDatesSchema,
+  occupancies: z.array(RoomOccupancySchema).min(1),
+  guests: z.array(RoomGuestSchema).default([]),
+  specialRequests: z.string().optional(),
+});
+export type HotelStayDetails = z.infer<typeof HotelStayDetailsSchema>;
+
+/** Calculates total guest count across all rooms */
+export function calculateTotalHotelGuests(occupancies: RoomOccupancy[]): {
+  totalAdults: number;
+  totalChildren: number;
+  totalGuests: number;
+} {
+  let totalAdults = 0;
+  let totalChildren = 0;
+  for (const occ of occupancies) {
+    totalAdults += occ.adults;
+    totalChildren += occ.children;
+  }
+  return {
+    totalAdults,
+    totalChildren,
+    totalGuests: totalAdults + totalChildren,
+  };
+}

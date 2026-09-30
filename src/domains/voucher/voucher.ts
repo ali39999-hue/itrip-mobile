@@ -13,7 +13,7 @@ import type { FlightOffer, SearchFlightsParams } from '@/services/api/flights';
 import type { Passenger } from '@/domains/identity/passenger';
 import { money, type Money } from '@/domains/currency/money';
 
-export type VoucherKind = 'flight' | 'hotel';
+export type VoucherKind = 'flight' | 'hotel' | 'tour' | 'transfer';
 
 export interface FlightVoucher {
   kind: 'flight';
@@ -60,7 +60,37 @@ export interface HotelVoucher {
   total: { amount: string; currency: string };
 }
 
-export type Voucher = FlightVoucher | HotelVoucher;
+export interface TourVoucher {
+  kind: 'tour';
+  bookingRef: string;
+  createdAt: string;
+  tourTitle: string;
+  tourTitleFa: string;
+  city: string;
+  departureDate: string;
+  durationDays: number;
+  executionModel: string;
+  hotelTier: string;
+  travelers: number;
+  leadPassengerName: string;
+  total: { amount: string; currency: string };
+}
+
+export interface TransferVoucher {
+  kind: 'transfer';
+  bookingRef: string;
+  createdAt: string;
+  carTitle: string;
+  pickupLocation: string;
+  dropoffLocation: string;
+  pickupDateTime: string;
+  withDriver: boolean;
+  passengerName: string;
+  passengerPhone: string;
+  total: { amount: string; currency: string };
+}
+
+export type Voucher = FlightVoucher | HotelVoucher | TourVoucher | TransferVoucher;
 
 /** Builds a BCBP-style barcode payload: M1SURNAME/GIVENNAME ECODE Y 14A. */
 export function buildFlightBarcodePayload(
@@ -85,6 +115,16 @@ export function buildFlightBarcodePayload(
 /** Unique payload for hotel vouchers (scannable by hotel reception). */
 export function buildHotelBarcodePayload(voucher: HotelVoucher): string {
   return `ITR:HOTEL:${voucher.bookingRef}:${voucher.checkIn.slice(0, 10)}`;
+}
+
+/** Unique payload for tour vouchers (scannable by tour guide). */
+export function buildTourBarcodePayload(voucher: TourVoucher): string {
+  return `ITR:TOUR:${voucher.bookingRef}:${voucher.departureDate}`;
+}
+
+/** Unique payload for transfer vouchers (scannable by driver). */
+export function buildTransferBarcodePayload(voucher: TransferVoucher): string {
+  return `ITR:TRANSFER:${voucher.bookingRef}`;
 }
 
 /** Converts a confirmed booking funnel state into a persisted voucher. */
@@ -129,11 +169,24 @@ export function voucherTotal(v: Voucher): Money {
   return money(v.total.amount, v.total.currency as Parameters<typeof money>[1]);
 }
 
+export function getVoucherScheduleTime(v: Voucher): string {
+  switch (v.kind) {
+    case 'flight':
+      return v.departureTime;
+    case 'hotel':
+      return v.checkIn;
+    case 'tour':
+      return v.departureDate;
+    case 'transfer':
+      return v.pickupDateTime;
+  }
+}
+
 /** Sorts upcoming (departure >= now) first, then by departure time. */
 export function sortVouchers(vouchers: Voucher[]): Voucher[] {
   return [...vouchers].sort((a, b) => {
-    const at = a.kind === 'flight' ? a.departureTime : a.checkIn;
-    const bt = b.kind === 'flight' ? b.departureTime : b.checkIn;
+    const at = getVoucherScheduleTime(a);
+    const bt = getVoucherScheduleTime(b);
     return at.localeCompare(bt);
   });
 }

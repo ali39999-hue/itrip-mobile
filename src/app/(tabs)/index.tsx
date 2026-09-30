@@ -26,10 +26,46 @@ export default function HomeScreen() {
   const nextFlight = vouchers.find((v): v is FlightVoucher => v.kind === 'flight') ?? null;
 
   const services = [
-    { id: 'flights', label: t('home.flights'), iconPath: 'M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z' },
-    { id: 'hotels', label: t('home.hotels'), iconPath: 'M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 7h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1' },
-    { id: 'tours', label: t('home.tours'), iconPath: 'M12 2a8 8 0 1 0 8 8 8 8 0 0 0-8-8zm1 12.93V17a1 1 0 0 1-2 0v-2.07A4 4 0 0 1 8 11a4 4 0 0 1 8 0 4 4 0 0 1-3 3.93z' },
-    { id: 'cip', label: t('home.cip'), iconPath: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' },
+    {
+      id: 'flights',
+      label: t('home.flights'),
+      iconPath: 'M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z',
+    },
+    {
+      id: 'hotels',
+      label: t('home.hotels'),
+      iconPath: 'M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 7h1m4 0h1m-6 4h1m4 0h1m-6 4h1m4 0h1',
+    },
+    {
+      id: 'tours',
+      label: t('home.tours'),
+      iconPath: 'M12 2a8 8 0 1 0 8 8 8 8 0 0 0-8-8zm1 12.93V17a1 1 0 0 1-2 0v-2.07A4 4 0 0 1 8 11a4 4 0 0 1 8 0 4 4 0 0 1-3 3.93z',
+    },
+    {
+      id: 'trains',
+      label: t('home.trains'),
+      iconPath: 'M4 15.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V5c0-3.5-3.58-4-8-4s-8 .5-8 4v10.5zm8-11.5c4.5 0 6 .5 6 2v5H6V6c0-1.5 1.5-2 6-2zm-3.5 13a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z',
+    },
+    {
+      id: 'visas',
+      label: t('home.visas'),
+      iconPath: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zm-3 9h4v2h-4v-2zm0 4h4v2h-4v-2z',
+    },
+    {
+      id: 'rentals',
+      label: t('home.rentals'),
+      iconPath: 'M19 17h2c.55 0 1-.45 1-1v-3c0-1.3-.84-2.4-2-2.82V7c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v3.18C2.84 10.6 2 11.7 2 13v3c0 .55.45 1 1 1h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3zm-13-8h12v2H6V9zm2 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm10 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z',
+    },
+    {
+      id: 'cip',
+      label: t('home.cip'),
+      iconPath: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    },
+    {
+      id: 'esim',
+      label: t('home.esim'),
+      iconPath: 'M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4zm3 2v4h6V6H9zm0 6v6h6v-6H9z',
+    },
   ];
 
   const destinations = [
@@ -97,7 +133,7 @@ export default function HomeScreen() {
       {/* Service Shortcuts Grid */}
       <View className="px-5 mb-6">
         <Text className="text-base font-bold text-ink mb-3">{t('home.services')}</Text>
-        <View className="flex-row justify-between">
+        <View className="flex-row flex-wrap justify-between gap-y-4">
           {services.map((s) => (
             <Pressable
               key={s.id}

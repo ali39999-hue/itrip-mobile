@@ -2,11 +2,15 @@ import { describe, it, expect } from 'vitest';
 import {
   buildFlightBarcodePayload,
   buildHotelBarcodePayload,
+  buildTourBarcodePayload,
+  buildTransferBarcodePayload,
   flightVoucherFromDraft,
   sortVouchers,
   voucherTotal,
   type FlightVoucher,
   type HotelVoucher,
+  type TourVoucher,
+  type TransferVoucher,
 } from './voucher';
 import { money } from '@/domains/currency/money';
 import type { FlightOffer, SearchFlightsParams } from '@/services/api/flights';
@@ -135,6 +139,40 @@ describe('voucher domain', () => {
       total: { amount: '2', currency: 'USD' },
     };
     expect(sortVouchers([late, early]).map((v) => v.bookingRef)).toEqual(['A', 'B']);
+  });
+
+  it('builds tour and transfer barcode payloads', () => {
+    const tv: TourVoucher = {
+      kind: 'tour',
+      bookingRef: 'ITR-T99',
+      createdAt: '2026-09-30T00:00:00Z',
+      tourTitle: 'Isfahan Cultural Heritage Tour',
+      tourTitleFa: 'تور فرهنگی اصفهان',
+      city: 'Isfahan',
+      departureDate: '2026-10-10',
+      durationDays: 3,
+      executionModel: 'group',
+      hotelTier: 'STD',
+      travelers: 2,
+      leadPassengerName: 'Ali Rezaei',
+      total: { amount: '30000000', currency: 'IRR' },
+    };
+    expect(buildTourBarcodePayload(tv)).toBe('ITR:TOUR:ITR-T99:2026-10-10');
+
+    const trv: TransferVoucher = {
+      kind: 'transfer',
+      bookingRef: 'ITR-TR55',
+      createdAt: '2026-09-30T00:00:00Z',
+      carTitle: 'Hyundai Tucson 2024',
+      pickupLocation: 'IKA Airport',
+      dropoffLocation: 'Espinas Palace Hotel',
+      pickupDateTime: '2026-10-10T18:00:00Z',
+      withDriver: true,
+      passengerName: 'Ali Rezaei',
+      passengerPhone: '09121111111',
+      total: { amount: '25000000', currency: 'IRR' },
+    };
+    expect(buildTransferBarcodePayload(trv)).toBe('ITR:TRANSFER:ITR-TR55');
   });
 
   it('voucherTotal returns a Money object', () => {

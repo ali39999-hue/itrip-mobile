@@ -2,7 +2,7 @@
   "expo": {
     "name": "iTrip",
     "slug": "itrip-mobile",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "itrip",
@@ -19,7 +19,7 @@
     },
     "android": {
       "package": "com.firuzo.itrip",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#00A9A5"
