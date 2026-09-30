@@ -58,6 +58,21 @@ async function migrate(db: VaultDriver): Promise<void> {
       updated_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS idx_server_bookings_status ON server_bookings(status);
+
+    CREATE TABLE IF NOT EXISTS dead_letter_queue (
+      id TEXT PRIMARY KEY NOT NULL,
+      original_id TEXT NOT NULL,
+      mutation_type TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL,
+      failure_reason TEXT NOT NULL,
+      attempts INTEGER NOT NULL,
+      first_failed_at INTEGER NOT NULL,
+      last_attempt_at INTEGER,
+      resolved_at INTEGER,
+      resolution TEXT NOT NULL DEFAULT 'PENDING_REVIEW'
+    );
+    CREATE INDEX IF NOT EXISTS idx_dlq_resolution ON dead_letter_queue(resolution);
   `);
   migrated = true;
 }
@@ -113,6 +128,40 @@ export const vault = {
 
   async clear(): Promise<void> {
     await withDb((db) => db.run(`DELETE FROM vouchers`, []));
+  },
+
+  /**
+   * R2 stale-data policy: removes terminal vouchers older than the TTL.
+   * A voucher is terminal when its booking reached CANCELLED/REFUNDED —
+   * those have no in-trip value. Completed trips (CONFIRMED/ISSUED in the
+   * past) are kept for records until their TTL expires as well.
+   * Returns the number of purged rows.
+   */
+  async purgeExpired(maxAgeMs = 90 * 24 * 60 * 60 * 1000): Promise<number> {
+    return withDb(async (db) => {
+      const cutoff = new Date(Date.now() - maxAgeMs).toISOString();
+      const rows = await db.all<{ booking_ref: string; payload: string }>(
+        `SELECT booking_ref, payload FROM vouchers WHERE created_at < ?`,
+        [cutoff],
+      );
+      let purged = 0;
+      for (const row of rows) {
+        try {
+          const voucher = JSON.parse(row.payload) as { status?: string };
+          // Only purge terminal/no-longer-relevant vouchers; active or
+          // unclassified vouchers are retained (conservative eviction).
+          if (voucher.status === 'CANCELLED' || voucher.status === 'REFUNDED') {
+            await db.run(`DELETE FROM vouchers WHERE booking_ref = ?`, [row.booking_ref]);
+            purged++;
+          }
+        } catch {
+          // Unparseable payload — treat as corrupt, purge defensively.
+          await db.run(`DELETE FROM vouchers WHERE booking_ref = ?`, [row.booking_ref]);
+          purged++;
+        }
+      }
+      return purged;
+    });
   },
 };
 

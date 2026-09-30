@@ -139,6 +139,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch {
       await clearTokens();
     }
+    // R2: full local wipe — tokens, vouchers, queues, caches and the DB key.
+    // The next account must never inherit any previous user's state.
+    try {
+      const { wipeUserDataForLogout } = await import('@/services/security/wipe');
+      await wipeUserDataForLogout();
+    } catch {
+      // Wipe is best-effort per layer; token removal above already succeeded.
+    }
     set({ auth: { state: 'guest' } });
   },
 }));

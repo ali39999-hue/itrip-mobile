@@ -1,5 +1,6 @@
 import { getVaultDriver, type VaultDriver } from '@/services/db/driver';
 import { bookingService, api } from '@/services/api';
+import { buildDeadLetterEntry } from './deadLetterQueue';
 
 /**
  * Offline Mutation Queue (Phase 5 — Offline-First Implementation).
@@ -219,6 +220,34 @@ export class MutationQueueEngine {
         `UPDATE mutation_queue SET status = ?, retry_count = ?, failure_reason = ? WHERE id = ?`,
         [nextStatus, nextRetries, errorMsg, item.id],
       );
+
+      // R2: when retries are exhausted, preserve a durable forensic record in
+      // the dead-letter queue. Replay keeps the original idempotency key, so a
+      // retry can never double-apply on the server.
+      if (nextStatus === 'failed') {
+        try {
+          const entry = buildDeadLetterEntry({ ...item, retryCount: nextRetries }, errorMsg);
+          await db.run(
+            `INSERT OR REPLACE INTO dead_letter_queue
+             (id, original_id, mutation_type, payload, idempotency_key, failure_reason, attempts, first_failed_at, last_attempt_at, resolved_at, resolution)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'PENDING_REVIEW')`,
+            [
+              entry.id,
+              entry.originalId,
+              entry.mutationType,
+              JSON.stringify(entry.payload),
+              entry.idempotencyKey,
+              entry.failureReason,
+              entry.attempts,
+              entry.firstFailedAt,
+              entry.lastAttemptAt,
+            ],
+          );
+        } catch {
+          // DLQ table may not exist on un-migrated installs — the live
+          // queue row still records the failure.
+        }
+      }
       return false;
     }
   }
