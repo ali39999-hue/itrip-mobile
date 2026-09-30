@@ -85,29 +85,35 @@ export default function WalletScreen() {
       Alert.alert(t('common.error'), 'Please enter a valid amount');
       return;
     }
+    // R6 anti-double-submit: one in-flight top-up per screen instance.
+    // The button is also disabled while processing, but state guards the
+    // race where two taps land before the first re-render.
+    if (isTopUpProcessing) return;
 
     setIsTopUpProcessing(true);
+    const idempotencyKey = `topup-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     try {
       const res = await walletService.initiateTopUp({
         amount: topUpAmount,
         currency: 'USD',
         method: topUpRail,
-        idempotencyKey: `topup-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        idempotencyKey,
       });
 
       setIsTopUpProcessing(false);
       setTopUpModal(false);
 
       if (res.success) {
-        // Optimistically record credit and refresh server
+        // R6: an intent is NOT money in the wallet. Record it as PENDING —
+        // the server ledger confirms the SETTLED row on the next sync.
         credit(money(topUpAmount, 'USD'), {
           id: res.intentId || `tx-${Date.now()}`,
           title: `NewCash Top-up (${topUpRail.toUpperCase()})`,
           date: new Date().toISOString(),
           category: 'topup',
-          status: 'SETTLED',
+          status: 'PENDING',
         });
-        Alert.alert('Top-up Successful', `Added $${topUpAmount} USD to your NewCash wallet.`);
+        Alert.alert('Top-up Initiated', `$${topUpAmount} USD pending confirmation.`);
         void syncWithServer();
       } else {
         Alert.alert(t('common.error'), res.error || 'Top-up initiation failed');
