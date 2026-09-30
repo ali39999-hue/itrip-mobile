@@ -142,7 +142,9 @@
     "successBody": "Your ticket has been issued and is available in My Trips.",
     "noDraft": "No active booking. Search for a flight first.",
     "seatNotFound": "Please choose another seat",
-    "phoneRequired": "A verified phone number is required to complete this booking."
+    "phoneRequired": "A verified phone number is required to complete this booking.",
+    "paymentPendingVerify": "Payment status is being verified with the bank. Please check My Trips in a few minutes before trying again — do not pay twice.",
+    "redirectRequired": "Your bank requires additional verification (3D Secure). Complete it in the browser window, then check My Trips."
   },
   "notifications": {
     "flightDelayTitle": "Flight delayed",

@@ -97,6 +97,65 @@ export default function ReviewScreen() {
 
       if (!payResult.success) {
         setProcessing(false);
+        if (payResult.outcome === 'UNKNOWN') {
+          // Anti-double-charge: the server may still capture. The user must
+          // verify the booking status — re-submitting payment blindly is
+          // exactly how duplicate charges happen. Poll the authoritative
+          // booking state; if it already confirms, treat as success.
+          const bookingId = draft.bookingId;
+          const verified = bookingId ? await bookingService.getBooking(bookingId) : null;
+          if (verified?.status === 'CONFIRMED' || verified?.status === 'PAYMENT_CONFIRMED') {
+            // Payment actually captured before the network dropped.
+            const bookingRef = verified.reference || draftResult.reference;
+            const verifiedPnr =
+              (verified.voucher as { pnr?: string } | undefined)?.pnr ?? '';
+            const voucher = flightVoucherFromDraft({
+              bookingRef,
+              offer: draft.offer,
+              search: draft.search,
+              passengers: draft.passengers,
+              total: draft.breakdown.total,
+            });
+            await useVaultStore.getState().addFlightVoucher(voucher);
+            void useWalletStore.getState().syncWithServer();
+            setProcessing(false);
+            router.replace({
+              pathname: '/booking/confirmation' as never,
+              params: {
+                bookingRef,
+                pnr: verifiedPnr,
+                title: `${seg?.airlineCode} ${seg?.flightNumber}`,
+                origin: draft.search.origin,
+                destination: draft.search.destination,
+                date: draft.search.departDate,
+                totalAmount: draft.breakdown.total.amount.toFixed(2),
+                currency: draft.breakdown.total.currency,
+                kind: 'flight',
+              },
+            });
+            return;
+          }
+          Alert.alert(
+            t('common.error'),
+            t('booking.paymentPendingVerify'),
+          );
+          return;
+        }
+        if (payResult.outcome === 'REDIRECT_REQUIRED' && payResult.redirectUrl) {
+          // 3DS / bank redirect flow — open the redirect and pause checkout.
+          const url = payResult.redirectUrl;
+          const { Linking } = await import('react-native');
+          try {
+            await Linking.openURL(url);
+          } catch {
+            // Redirect blocked — surface the URL in the alert instead.
+          }
+          Alert.alert(
+            t('common.error'),
+            t('booking.redirectRequired'),
+          );
+          return;
+        }
         Alert.alert(t('common.error'), payResult.error || 'Payment declined by server');
         return;
       }

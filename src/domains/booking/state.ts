@@ -101,3 +101,33 @@ export function isBookingTerminal(status: BookingStatus): boolean {
     status === BookingStatus.EXPIRED
   );
 }
+
+/**
+ * R4 — Payment outcome classification for the checkout step.
+ *
+ * A payment attempt ends in exactly one of these outcomes. The critical
+ * safety property: when the server is unreachable mid-capture, the result
+ * is UNKNOWN — never FAILED. Declaring failure when the server may still
+ * capture is how double charges happen; the unknown path keeps the draft
+ * in PENDING_PAYMENT and requires the user to poll/verify with the server.
+ */
+export type PaymentOutcome = 'CAPTURED' | 'DECLINED' | 'REDIRECT_REQUIRED' | 'UNKNOWN';
+
+export function classifyPaymentOutcome(params: {
+  serverResponded: boolean;
+  success?: boolean;
+  redirectUrl?: string | null;
+  paymentStatus?: string | null;
+}): PaymentOutcome {
+  if (!params.serverResponded) return 'UNKNOWN';
+  if (params.redirectUrl) return 'REDIRECT_REQUIRED';
+  if (params.success === true) return 'CAPTURED';
+  if (params.success === false) {
+    const ps = (params.paymentStatus ?? '').toUpperCase();
+    // A server rejection with a definitive status is DECLINED; anything
+    // ambiguous ("PENDING", "PROCESSING") stays UNKNOWN.
+    if (ps === 'FAILED' || ps === 'DECLINED' || ps === 'REJECTED') return 'DECLINED';
+    return 'UNKNOWN';
+  }
+  return 'UNKNOWN';
+}

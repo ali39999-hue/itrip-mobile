@@ -4,7 +4,9 @@ import { Passenger } from '@/domains/identity/passenger';
 import {
   BookingStatus,
   canTransition,
+  classifyPaymentOutcome,
   type BookingStatus as Status,
+  type PaymentOutcome,
 } from '@/domains/booking/state';
 import {
   priceBooking,
@@ -75,6 +77,8 @@ interface BookingState {
   ) => Promise<{
     success: boolean;
     bookingStatus: string;
+    /** R4 anti-double-charge: CAPTURED / DECLINED / REDIRECT_REQUIRED / UNKNOWN */
+    outcome?: PaymentOutcome;
     pnr?: string;
     redirectUrl?: string;
     error?: string;
@@ -216,15 +220,58 @@ export const useBookingStore = create<BookingState>((set, get) => ({
         paymentInstrument: options?.paymentInstrument,
       });
 
-      if (!res.success) {
-        set({ isSubmitting: false, lastError: res.error || 'Payment rejected by server' });
+      // R4: classify the outcome before touching state. When the network
+      // dropped mid-capture, `confirmPayment` returns success=false with an
+      // error string — that is NOT a server DECLINE. Treating it as failure
+      // while the server may still capture is how double charges happen.
+      const serverResponded = !(
+        res.error?.includes('unreachable') ||
+        res.error?.includes('Network') ||
+        res.error?.includes('timeout')
+      );
+      const outcome: PaymentOutcome = classifyPaymentOutcome({
+        serverResponded,
+        success: res.success,
+        redirectUrl: res.redirectUrl,
+        paymentStatus: res.paymentStatus,
+      });
+
+      if (outcome === 'UNKNOWN') {
+        // Keep the draft in PENDING_PAYMENT: the user must verify with the
+        // server (getBooking) instead of blindly re-submitting payment.
+        set({ isSubmitting: false, lastError: null });
         return {
           success: false,
           bookingStatus: BookingStatus.PENDING_PAYMENT,
-          error: res.error || 'Payment failed',
+          outcome,
+          error: res.error || 'Payment status unknown — verifying with server',
         };
       }
 
+      if (outcome === 'REDIRECT_REQUIRED') {
+        set((s) => ({
+          isSubmitting: false,
+          draft: { ...s.draft, status: BookingStatus.PENDING_PAYMENT },
+        }));
+        return {
+          success: false,
+          bookingStatus: BookingStatus.PENDING_PAYMENT,
+          outcome,
+          redirectUrl: res.redirectUrl,
+        };
+      }
+
+      if (outcome === 'DECLINED') {
+        set({ isSubmitting: false, lastError: res.error || 'Payment declined by server' });
+        return {
+          success: false,
+          bookingStatus: BookingStatus.PENDING_PAYMENT,
+          outcome,
+          error: res.error || 'Payment declined by server',
+        };
+      }
+
+      // outcome === 'CAPTURED'
       const pnr = res.pnr || `PNR-${Date.now().toString(36).toUpperCase()}`;
 
       set((s) => ({
@@ -239,15 +286,18 @@ export const useBookingStore = create<BookingState>((set, get) => ({
       return {
         success: true,
         bookingStatus: BookingStatus.CONFIRMED,
+        outcome,
         pnr,
         redirectUrl: res.redirectUrl,
       };
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Payment confirmation failed';
       set({ isSubmitting: false, lastError: message });
+      // Exceptions here are transport-level (axios threw) → UNKNOWN.
       return {
         success: false,
         bookingStatus: BookingStatus.PENDING_PAYMENT,
+        outcome: 'UNKNOWN' as PaymentOutcome,
         error: message,
       };
     }
