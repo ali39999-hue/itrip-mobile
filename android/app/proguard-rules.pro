@@ -30,10 +30,10 @@
 -keep class expo.modules.** { *; }
 -keep class versioned.host.exp.exponent.** { *; }
 
-# --- op-sqlite (JSI bindings — class names resolved natively) ---
--keep class com.margelo.** { *; }
--keep class cc.callisto.** { *; }
--keep @com.margelo.nitro.core.NitroModule class * { *; }
+# --- op-sqlite v11 (@op-engineering/op-sqlite): JSI bindings resolved natively.
+#     Real package is com.op.sqlite (android/src/main/java/com/op/sqlite).
+#     (com.margelo / cc.callisto / Nitro rules were dead — no such dependency.)
+-keep class com.op.sqlite.** { *; }
 
 # --- SQLCipher / net.zetetic ---
 -keep class net.sqlcipher.** { *; }

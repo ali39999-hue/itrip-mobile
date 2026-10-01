@@ -142,26 +142,35 @@ const { engine, encrypted } = await vaultEngine();
 
 برای انتشار در Google Play / کافه بازار / مایکت باید AAB را با keystore خودتان امضا کنید (نه debug keystore).
 
+### هویت امضای canonical (یک جفت واحد در کل پروژه)
+
+فایل `android/app/release.keystore` با alias `itrip-release` — همان چیزی که CI (`.github/workflows/build-and-release-apk.yml`) از secret ما می‌سازد و [`android/app/build.gradle`](android/app/build.gradle) به‌عنوان پیش‌فرض می‌خواند. هر فایل/alias دیگری نباید استفاده شود.
+
 ### ساخت keystore (یک‌بار، امن نگه دارید):
 
 ```bash
 keytool -genkeypair -v -storetype PKCS12 \
-  -keystore itrip-release.keystore \
-  -alias itrip -keyalg RSA -keysize 2048 -validity 10000
+  -keystore release.keystore \
+  -alias itrip-release -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-> **هشدار:** این فایل را **در git نگذارید** و در مکان امن (password manager / vault شرکت) نگه دارید. گم کردنش به معنای عدم امکان به‌روزرسانی اپ است.
+فایل خروجی را در `android/app/release.keystore` قرار دهید.
 
-### تنظیم در gradle
+> **هشدار:** این فایل توسط `.gitignore` رد می‌شود (`*.keystore`) — آن را **در git نگذارید** و در مکان امن (password manager / vault شرکت) نگه دارید. گم کردنش به معنای عدم امکان به‌روزرسانی اپ است.
 
-در [`android/gradle.properties`](android/gradle.properties) (این فایل در `.gitignore` است):
+### تنظیم در gradle (بیلد محلی)
+
+⚠️ [`android/gradle.properties`](android/gradle.properties) **یک فایل tracked است و در git کامیت می‌شود** — پس رمز واقعی هرگز نباید در آن نوشته شود (فقط مقدارهای placeholder بدون رمز بمانند). رمزهای واقعی را در فایل محلیِ خارج از ریپو `~/.gradle/gradle.properties` بگذارید یا از طریق environment بدهید:
 
 ```properties
-MYAPP_UPLOAD_STORE_FILE=itrip-release.keystore
-MYAPP_UPLOAD_KEY_ALIAS=itrip
+# در ~/.gradle/gradle.properties محلی — نه در android/gradle.properties
+MYAPP_UPLOAD_STORE_FILE=release.keystore
+MYAPP_UPLOAD_KEY_ALIAS=itrip-release
 MYAPP_UPLOAD_STORE_PASSWORD=••••••
 MYAPP_UPLOAD_KEY_PASSWORD=••••••
 ```
+
+> **هشدار نشت رمز:** نوشتن `MYAPP_UPLOAD_STORE_PASSWORD` واقعی در `android/gradle.properties`ِ tracked با یک `git add -A` به مخزن نشت می‌کند؛ اگر مخزن عمومی یا اشتراکی باشد، رمز امضای release عمومی‌شده است. مسیر امن فقط `~/.gradle/gradle.properties` (محلی و untracked) یا متغیر محیطی است.
 
 در [`android/app/build.gradle`](android/app/build.gradle)، بخش `signingConfigs` را تکمیل کنید:
 
@@ -208,7 +217,9 @@ android.enableShrinkResourcesInReleaseBuilds=true
 ```proguard
 # Keep SQLCipher native methods
 -keep class net.sqlcipher.** { *; }
--keep class com.opsqlite.** { *; }
+
+# Keep op-sqlite v11 JSI classes (real package: com.op.sqlite — نه com.opsqlite)
+-keep class com.op.sqlite.** { *; }
 
 # Keep Decimal.js math precision (reflection-based libs)
 -keep class com.decimaljs.** { *; }
@@ -247,6 +258,17 @@ android.enableShrinkResourcesInReleaseBuilds=true
 ```bash
 gh workflow run "Build & Release Android APK" -f release_tag=v0.2.0
 ```
+
+### Secretهای لازم CI (در تنظیمات GitHub Actions ریپو)
+
+| Secret | نقش |
+|---|---|
+| `ITRIP_RELEASE_KEYSTORE_BASE64` | (ترجیحی) کل فایل keystore پایدار به‌صورت base64 — decode شده و در `android/app/release.keystore` نوشته می‌شود؛ هویت امضا بین ریلیزها ثابت می‌ماند |
+| `ITRIP_RELEASE_KEYSTORE_PASSWORD` | رمز keystore — **الزامی**؛ نبودش بیلد fail-closed می‌شود |
+| `ITRIP_RELEASE_KEY_PASSWORD` | رمز key — **الزامی** |
+| `ITRIP_RELEASE_KEY_ALIAS` | (اختیاری) پیش‌فرض `itrip-release` |
+
+بدون `ITRIP_RELEASE_KEYSTORE_BASE64`، CI فقط با هشدار صریح «EPHEMERAL SIGNING IDENTITY - not for store releases» یک keystore موقتی می‌سازد (در هر بیلد هویت امضا عوض می‌شود و برای انتشار در استور معتبر نیست). بدون هیچ secret امضایی، بیلد با خطای واضح متوقف می‌شود — هیچ fallback رمز هاردکد وجود ندارد.
 
 ---
 

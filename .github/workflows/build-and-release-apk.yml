@@ -43,19 +43,41 @@ jobs:
       - name: Run Quality Gate Verifications
         run: npm run verify
 
+      # Fail-closed signing: never fall back to a hardcoded or shared password.
+      # Canonical identity: android/app/release.keystore + alias "itrip-release".
+      # Prefer ITRIP_RELEASE_KEYSTORE_BASE64 (stable identity across releases);
+      # generation without it is ephemeral and NOT valid for store releases.
       - name: Ensure Release Signing Keystore Exists
         env:
-          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEYSTORE_BASE64: ${{ secrets.ITRIP_RELEASE_KEYSTORE_BASE64 }}
+          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD }}
           ITRIP_RELEASE_KEY_ALIAS: ${{ secrets.ITRIP_RELEASE_KEY_ALIAS || 'itrip-release' }}
-          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD }}
         run: |
-          if [ ! -f "android/app/release.keystore" ]; then
-            echo "Generating dedicated Android release signing keystore..."
+          set -euo pipefail
+
+          if [ -z "${ITRIP_RELEASE_KEYSTORE_PASSWORD:-}" ] || [ -z "${ITRIP_RELEASE_KEY_PASSWORD:-}" ]; then
+            echo "::error::Release signing secrets are missing."
+            echo "::error::Configure ITRIP_RELEASE_KEYSTORE_BASE64 (stable keystore, preferred) plus"
+            echo "::error::ITRIP_RELEASE_KEYSTORE_PASSWORD / ITRIP_RELEASE_KEY_PASSWORD / ITRIP_RELEASE_KEY_ALIAS."
+            echo "::error::Refusing to sign a release without real signing material (fail-closed)."
+            exit 1
+          fi
+
+          if [ -n "${ITRIP_RELEASE_KEYSTORE_BASE64:-}" ]; then
+            echo "Decoding canonical release keystore from ITRIP_RELEASE_KEYSTORE_BASE64..."
+            echo "${ITRIP_RELEASE_KEYSTORE_BASE64}" | base64 -d > android/app/release.keystore
+          elif [ ! -f "android/app/release.keystore" ]; then
+            echo "::warning::EPHEMERAL SIGNING IDENTITY - not for store releases."
+            echo "::warning::No ITRIP_RELEASE_KEYSTORE_BASE64 secret found, so a one-off keystore is"
+            echo "::warning::generated for this run only. Every build gets a different signature and"
+            echo "::warning::users cannot upgrade between such builds. Provide the base64 keystore"
+            echo "::warning::secret before shipping to Google Play / Cafe Bazaar / Myket."
             keytool -genkeypair -v \
               -keystore android/app/release.keystore \
-              -alias "$ITRIP_RELEASE_KEY_ALIAS" \
-              -storepass "$ITRIP_RELEASE_KEYSTORE_PASSWORD" \
-              -keypass "$ITRIP_RELEASE_KEY_PASSWORD" \
+              -alias "${ITRIP_RELEASE_KEY_ALIAS}" \
+              -storepass "${ITRIP_RELEASE_KEYSTORE_PASSWORD}" \
+              -keypass "${ITRIP_RELEASE_KEY_PASSWORD}" \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
@@ -71,9 +93,9 @@ jobs:
           EXPO_PUBLIC_API_URL: https://itrip-platform.vercel.app/api
           EXPO_PUBLIC_APP_ENV: production
           ITRIP_RELEASE_KEYSTORE_PATH: release.keystore
-          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEYSTORE_PASSWORD }}
           ITRIP_RELEASE_KEY_ALIAS: ${{ secrets.ITRIP_RELEASE_KEY_ALIAS || 'itrip-release' }}
-          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD || 'itrip-release-2026' }}
+          ITRIP_RELEASE_KEY_PASSWORD: ${{ secrets.ITRIP_RELEASE_KEY_PASSWORD }}
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Prepare Release Artifacts & Calculate Checksum
