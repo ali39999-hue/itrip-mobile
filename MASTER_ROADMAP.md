@@ -6,6 +6,12 @@
 
 > وضعیت مبنا: این سند برای ساخت نسخه هدف طراحی شده است و باید در هر release cycle با وضعیت واقعی repository، backend contract و native build دوباره validate شود.
 
+### Snapshot تأییدشده در 2026-09-30
+
+بررسی دوباره `main` نشان داد repository همچنان عمومی و فعال است و در زمان بررسی 13 commit و ساختار native/Expo کامل دارد. مهم‌ترین نکته جدید این است که `app.json` و Android `build.gradle` روی **0.4.0 / versionCode 4** هستند، در حالی که `package.json` هنوز **0.3.0** است؛ بنابراین version drift فعلی باید به‌عنوان P0 Release Integrity ثبت شود. README و release notes نیز هنوز متن‌های v0.3.0 را حمل می‌کنند. همچنین release signing اکنون در Gradle به `signingConfigs.release` متصل شده و fail-closed طراحی شده است، پس task مربوط به signing از «پیاده‌سازی» به «ممیزی و CI validation» منتقل شده است. Auth نیز mock user قبلی را ندارد و از `/user/profile` استفاده می‌کند، اما در صورت شکست profile fetch، session با `pending_profile` باقی می‌ماند و این حالت باید در R1 صریحاً حل شود. Wallet هم اکنون با `balances: null` و ledger خالی شروع می‌شود و داده مالی synthetic ندارد.
+
+منبع وضعیت فعلی: GitHub `main` و فایل‌های `app.json`، `package.json`، `android/app/build.gradle`، `src/stores/authStore.ts` و `src/stores/walletStore.ts`.
+
 ---
 
 ## 1. تعریف مقصد نهایی
@@ -86,10 +92,11 @@
 
 ### P0 فعلی
 
-- حذف Demo Identity / hard-coded active user از auth bootstrap.
+- حذف کامل Demo Identity / hard-coded active user از auth bootstrap و جلوگیری از باقی‌ماندن `pending_profile` در session معتبر.
 - حذف Seed Financial Data و هر wallet transaction نمایشی از production path.
+- رفع version drift فعلی بین `package.json` (0.3.0) و `app.json`/Android Gradle (0.4.0 / versionCode 4) و هم‌تراز کردن README/release notes.
 - یکسان‌سازی نسخه package/app/Android Gradle.
-- اصلاح release signing و جلوگیری از debug signing در production.
+- ممیزی release signing و CI enforcement؛ configuration فعلی باید در هر release با keystore واقعی validate شود.
 - fail-closed کردن secure storage / encrypted database در production.
 - اصلاح ادعای SSL pinning و تفکیک guard از pinning واقعی.
 - بازبینی placeholder host و network security configuration.
@@ -801,6 +808,8 @@ Release Agent
 
 > این فهرست برای **reference / pattern mining / architecture study / selective dependency adoption** است. قرار نیست همه repositoryها وارد پروژه شوند. قبل از استفاده مستقیم، compatibility، license، maintenance status، security advisories و version matrix بررسی شود.
 
+> شمارش اصلی این کتابخانه دقیقاً **100 مورد شماره‌گذاری‌شده** است. دو لینک بالای سند (`itrip-mobile` و `itrip-platform`) پروژه‌های خودمان هستند و جزو 100 مرجع حساب نمی‌شوند.
+
 ## A. React Native / Expo / Navigation / Native UI
 
 1. [facebook/react-native](https://github.com/facebook/react-native) — React Native core و معماری New Architecture.
@@ -817,12 +826,12 @@ Release Agent
 12. [mrousavy/react-native-vision-camera](https://github.com/mrousavy/react-native-vision-camera) — camera/QR/vision.
 13. [software-mansion/react-native-svg](https://github.com/software-mansion/react-native-svg) — SVG rendering.
 14. [Shopify/react-native-skia](https://github.com/Shopify/react-native-skia) — advanced 2D rendering.
-15. [airbnb/lottie-react-native](https://github.com/lottie-react/lottie-react-native) — motion assets.
+15. [lottie-react/lottie-react-native](https://github.com/lottie-react/lottie-react-native) — motion assets.
 16. [nativewind/nativewind](https://github.com/nativewind/nativewind) — utility-first RN styling patterns.
 17. [tamagui/tamagui](https://github.com/tamagui/tamagui) — cross-platform design system ideas.
 18. [gluestack/gluestack-ui](https://github.com/gluestack/gluestack-ui) — component system patterns.
 19. [storybookjs/react-native](https://github.com/storybookjs/react-native) — component-driven development.
-20. [Shopify/react-native-performance](https://github.com/Shopify/react-native-performance) — historical RN performance instrumentation reference; archived, so use for patterns only, not as a new dependency.
+20. [oblador/react-native-performance](https://github.com/oblador/react-native-performance) — React Native Performance API, render/network/TTI instrumentation و performance tooling.
 
 ## B. State / Data Fetching / Validation / Forms
 
@@ -854,7 +863,7 @@ Release Agent
 
 41. [oblador/react-native-keychain](https://github.com/oblador/react-native-keychain) — iOS Keychain / Android Keystore.
 42. [invertase/react-native-firebase](https://github.com/invertase/react-native-firebase) — Auth/App Check/Crashlytics/FCM and native Firebase integration.
-43. [punith1811/react-native-biometrics](https://github.com/SelfLender/react-native-biometrics) — biometric auth patterns.
+43. [SelfLender/react-native-biometrics](https://github.com/SelfLender/react-native-biometrics) — biometric auth patterns.
 44. [OWASP/owasp-masvs](https://github.com/OWASP/owasp-masvs) — mobile application security verification standard.
 45. [OWASP/owasp-mastg](https://github.com/OWASP/owasp-mastg) — mobile application security testing guide.
 46. [MobSF/Mobile-Security-Framework-MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF) — automated mobile security analysis.
