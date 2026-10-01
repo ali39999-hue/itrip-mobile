@@ -11,6 +11,7 @@ import {
   type CurrencyCode,
 } from '@/domains/currency/money';
 import { walletService, type ServerTransaction } from '@/services/api';
+import { vault } from '@/services/db/vault';
 
 /**
  * Wallet store — NewCash balances and transaction history.
@@ -20,6 +21,10 @@ import { walletService, type ServerTransaction } from '@/services/api';
  * - NO FAKE SEED TRANSACTIONS: Transaction ledger populated exclusively from server ledger.
  * - OFFLINE SEMANTICS: Retains the last known server balance with lastSyncedAt timestamp.
  * - Every amount is a Money object backed by Decimal (never raw float).
+ * - PENDING ledger entries are intents, not money: they never move balances.
+ * - The last authoritative snapshot (balances + recent transactions) is
+ *   cached in the encrypted vault so an offline restart still shows the
+ *   last server-known state. Ledger data only — never tokens or keys.
  */
 
 export interface WalletTransaction {
@@ -35,6 +40,59 @@ export interface WalletTransaction {
 
 const FALLBACK_USD_IRR_RATE = '600000';
 
+/** Max transactions kept in the offline wallet cache (FIFO by recency). */
+const SNAPSHOT_TX_LIMIT = 200;
+
+interface WalletSnapshot {
+  v: 1;
+  balances: Record<string, { amount: string; currency: string }> | null;
+  transactions: Array<{
+    id: string;
+    title: string;
+    date: string;
+    amount: { amount: string; currency: string };
+    category: WalletTransaction['category'];
+    status?: WalletTransaction['status'];
+  }>;
+  lastSyncedAt: string | null;
+}
+
+/** Serializes the current wallet state to the vault cache (best-effort). */
+export async function persistWalletSnapshot(): Promise<void> {
+  const { balances, transactions, lastSyncedAt } = useWalletStore.getState();
+  const snapshot: WalletSnapshot = {
+    v: 1,
+    balances: balances
+      ? Object.fromEntries(
+          Object.entries(balances).map(([code, m]) => [code, { amount: m.amount.toString(), currency: m.currency }]),
+        )
+      : null,
+    transactions: transactions.slice(0, SNAPSHOT_TX_LIMIT).map((t) => ({
+      id: t.id,
+      title: t.title,
+      date: t.date,
+      amount: { amount: t.amount.amount.toString(), currency: t.amount.currency },
+      category: t.category,
+      status: t.status,
+    })),
+    lastSyncedAt,
+  };
+  try {
+    await vault.saveWalletCache(snapshot);
+  } catch {
+    // Cache write is best-effort; wallet operations must never block on it.
+  }
+}
+
+/** A credit only moves the display balance once it is settled. */
+function isSettledCredit(status: WalletTransaction['status']): boolean {
+  // Legacy callers (and server-synced rows) may omit the status — treated
+  // as settled for backwards compatibility. PENDING/FAILED/REFUNDED rows
+  // are recorded in the ledger but never credited to the balance here;
+  // refunds reach the balance through the authoritative server sync.
+  return status === undefined || status === 'SETTLED';
+}
+
 interface WalletState {
   balances: Record<CurrencyCode, Money> | null;
   /** Rate: 1 USD in IRR. Refreshed from API when online. */
@@ -48,6 +106,8 @@ interface WalletState {
   loyaltyPoints: number;
   loyaltyTier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM';
   setUnlocked: (v: boolean) => void;
+  /** Restores the last cached wallet snapshot (offline boot); no-op when already initialized. */
+  hydrate: () => Promise<void>;
   /** Syncs balances and transaction ledger with the backend server */
   syncWithServer: () => Promise<void>;
   /** Credits the wallet; returns the new balance. */
@@ -74,10 +134,42 @@ export const useWalletStore = create<WalletState>((set, get) => ({
 
   setUnlocked: (v) => set({ unlocked: v }),
 
+  hydrate: async () => {
+    // Server truth (or an already-initialized wallet) always wins over the
+    // local cache; hydration only fills the offline gap after a restart.
+    if (get().balances) return;
+    try {
+      const raw = await vault.loadWalletCache();
+      if (!raw || get().balances) return;
+      const snap = raw as WalletSnapshot;
+      if (snap?.v !== 1 || !snap.balances) return;
+      const balances = {} as Record<CurrencyCode, Money>;
+      for (const [code, m] of Object.entries(snap.balances)) {
+        balances[code as CurrencyCode] = money(m.amount, m.currency as CurrencyCode);
+      }
+      set({
+        balances,
+        transactions: (snap.transactions ?? []).map((t) => ({
+          id: t.id,
+          title: t.title,
+          date: t.date,
+          amount: money(t.amount.amount, t.amount.currency as CurrencyCode),
+          category: t.category,
+          status: t.status,
+        })),
+        lastSyncedAt: snap.lastSyncedAt ?? null,
+      });
+    } catch {
+      // Hydration is best-effort; the wallet stays uninitialized.
+    }
+  },
+
   syncWithServer: async () => {
     if (get().isSyncing) return;
     set({ isSyncing: true, syncError: null });
     try {
+      await get().hydrate();
+
       const [serverBalances, serverTxs] = await Promise.all([
         walletService.getBalances(),
         walletService.getTransactions(),
@@ -111,6 +203,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         isSyncing: false,
         syncError: null,
       });
+      void persistWalletSnapshot();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Server synchronization failed';
       set({ isSyncing: false, syncError: message });
@@ -122,12 +215,16 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     if (!balances) {
       throw new Error('Wallet not initialized from server ledger');
     }
+    // Ledger invariant: a PENDING entry is an intent, not money — it must
+    // never appear in the display balance. Only settled credits move it.
+    const movesBalance = isSettledCredit(tx.status);
     const current = balances[amount.currency] ?? zero(amount.currency);
-    const next = add(current, amount);
+    const next = movesBalance ? add(current, amount) : current;
     set((s) => ({
       balances: s.balances ? { ...s.balances, [amount.currency]: next } : null,
       transactions: [{ ...tx, amount }, ...s.transactions],
     }));
+    void persistWalletSnapshot();
     return next;
   },
 
@@ -145,6 +242,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       balances: s.balances ? { ...s.balances, [amount.currency]: next } : null,
       transactions: [{ ...tx, amount }, ...s.transactions],
     }));
+    void persistWalletSnapshot();
     return next;
   },
 

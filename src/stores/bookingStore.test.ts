@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useBookingStore } from './bookingStore';
+import { bookingService } from '@/services/api';
 import type { FlightOffer, SearchFlightsParams } from '@/services/api';
 import { PassengerSchema } from '@/domains/identity/passenger';
 
@@ -100,5 +101,36 @@ describe('BookingStore — draft lifecycle', () => {
     s.reset();
     expect(useBookingStore.getState().draft.offer).toBeNull();
     expect(useBookingStore.getState().draft.passengers).toHaveLength(0);
+  });
+});
+
+describe('BookingStore — server PNR handling (NO FAKE CAPTURE)', () => {
+  beforeEach(() => {
+    useBookingStore.getState().reset();
+  });
+
+  it('stores the server-issued PNR verbatim on capture', async () => {
+    vi.spyOn(bookingService, 'confirmPayment').mockResolvedValueOnce({
+      success: true,
+      bookingStatus: 'CONFIRMED',
+      pnr: 'W5X9ZT',
+    });
+    useBookingStore.getState().selectOffer(offer, 1);
+    const res = await useBookingStore.getState().confirmAuthoritativePayment('wallet_irr');
+    expect(res.success).toBe(true);
+    expect(res.pnr).toBe('W5X9ZT');
+    expect(useBookingStore.getState().draft.pnr).toBe('W5X9ZT');
+  });
+
+  it('never fabricates a PNR when the server has not issued one yet', async () => {
+    vi.spyOn(bookingService, 'confirmPayment').mockResolvedValueOnce({
+      success: true,
+      bookingStatus: 'CONFIRMED',
+    });
+    useBookingStore.getState().selectOffer(offer, 1);
+    const res = await useBookingStore.getState().confirmAuthoritativePayment('wallet_irr');
+    expect(res.success).toBe(true);
+    expect(res.pnr).toBeUndefined();
+    expect(useBookingStore.getState().draft.pnr).toBeNull();
   });
 });

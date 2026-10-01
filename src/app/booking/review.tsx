@@ -104,8 +104,9 @@ export default function ReviewScreen() {
           // booking state; if it already confirms, treat as success.
           const bookingId = draft.bookingId;
           const verified = bookingId ? await bookingService.getBooking(bookingId) : null;
-          if (verified?.status === 'CONFIRMED' || verified?.status === 'PAYMENT_CONFIRMED') {
-            // Payment actually captured before the network dropped.
+          if (verified?.status === 'CONFIRMED') {
+            // Payment actually captured AND the booking is confirmed —
+            // only now may a voucher enter the offline vault.
             const bookingRef = verified.reference || draftResult.reference;
             const verifiedPnr =
               (verified.voucher as { pnr?: string } | undefined)?.pnr ?? '';
@@ -135,6 +136,10 @@ export default function ReviewScreen() {
             });
             return;
           }
+          // PAYMENT_CONFIRMED (or still pending): the capture went through
+          // but supplier confirmation is in flight — the FSM allows
+          // PAYMENT_CONFIRMED → CANCELLED, so no voucher is minted yet.
+          void useWalletStore.getState().syncWithServer();
           Alert.alert(
             t('common.error'),
             t('booking.paymentPendingVerify'),
@@ -160,8 +165,11 @@ export default function ReviewScreen() {
         return;
       }
 
-      // 4. Save confirmed voucher to local offline vault
-      const bookingRef = draftResult.reference || `ITR-FL-${Date.now().toString(36).toUpperCase()}`;
+      // 4. Save confirmed voucher to local offline vault.
+      // The reference is server-issued (createDraft guarantees it); nothing
+      // is fabricated locally.
+      const bookingRef = draftResult.reference || draft.serverReference;
+      if (!bookingRef) throw new Error('Server booking reference missing');
       const voucher = flightVoucherFromDraft({
         bookingRef,
         offer: draft.offer,
@@ -176,12 +184,13 @@ export default function ReviewScreen() {
 
       setProcessing(false);
 
-      // 6. Navigate to dedicated Confirmation Screen
+      // 6. Navigate to dedicated Confirmation Screen. A PNR may legitimately
+      // be absent right after capture (issuance pending) — no fabrication.
       router.replace({
         pathname: '/booking/confirmation' as never,
         params: {
           bookingRef,
-          pnr: payResult.pnr || voucher.flightNumber,
+          pnr: payResult.pnr ?? '',
           title: `${seg?.airlineCode} ${seg?.flightNumber}`,
           origin: draft.search.origin,
           destination: draft.search.destination,
@@ -266,7 +275,7 @@ export default function ReviewScreen() {
           <Text className="text-sm font-bold text-ink mb-2">{t('booking.passengersTitle')}</Text>
           {draft.passengers.map((p) => (
             <View key={p.id} className="flex-row items-center justify-between py-2 border-b border-slate-100 last:border-0">
-              <View className="flex-1 pr-3">
+              <View className="flex-1 pe-3">
                 <Text className="text-sm font-semibold text-ink" style={{ writingDirection: 'ltr' }}>
                   {p.firstNameLatin} {p.lastNameLatin}
                 </Text>
@@ -290,7 +299,7 @@ export default function ReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
                     <Path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
                     <Path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
@@ -314,7 +323,7 @@ export default function ReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.ink} strokeWidth={2}>
                     <Path d="M2 10h20M2 14h20M2 6h20v12H2z" />
                   </Svg>
@@ -336,7 +345,7 @@ export default function ReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.action} strokeWidth={2}>
                     <Path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A4 4 0 0 1 8 13h2a2 2 0 1 0 4 0c0-1.5-1.5-2-3-2.5S8 9 8 7a4 4 0 0 1 3-3.93V3a1 1 0 0 1 2 0v.07A4 4 0 0 1 16 7h-2a2 2 0 0 0-4 0c0 1.5 1.5 2 3 2.5s3 1.5 3 3.5a4 4 0 0 1-3 3.93z" />
                   </Svg>

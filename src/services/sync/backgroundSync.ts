@@ -3,6 +3,9 @@ import * as TaskManager from 'expo-task-manager';
 import { vault } from '@/services/db/vault';
 import { bookingService, walletService, flightService } from '@/services/api';
 import { mutationQueue } from '@/services/sync/mutationQueue';
+import { BookingStatus } from '@/domains/booking/state';
+import { parseVoucher } from '@/domains/voucher/schema';
+import { telemetry } from '@/services/telemetry';
 
 /**
  * Production Sync Engine (Phase 6 — Sync Engine).
@@ -25,6 +28,8 @@ export const VAULT_SYNC_TASK = 'itrip-vault-sync';
 
 export interface SyncResult {
   vouchersFetched: number;
+  /** Server payloads rejected by the voucher schema (local row kept intact). */
+  vouchersSkipped: number;
   mutationsProcessed: number;
   mutationsSucceeded: number;
   balancesUpdated: boolean;
@@ -51,6 +56,7 @@ export async function syncAll(): Promise<SyncResult> {
   if (isSyncInProgress) {
     return {
       vouchersFetched: 0,
+      vouchersSkipped: 0,
       mutationsProcessed: 0,
       mutationsSucceeded: 0,
       balancesUpdated: false,
@@ -61,6 +67,7 @@ export async function syncAll(): Promise<SyncResult> {
   isSyncInProgress = true;
   const result: SyncResult = {
     vouchersFetched: 0,
+    vouchersSkipped: 0,
     mutationsProcessed: 0,
     mutationsSucceeded: 0,
     balancesUpdated: false,
@@ -77,11 +84,37 @@ export async function syncAll(): Promise<SyncResult> {
     try {
       const bookings = await bookingService.listUserBookings();
       for (const b of bookings) {
-        if (b.voucher && typeof b.voucher === 'object' && 'kind' in b.voucher && 'bookingRef' in b.voucher) {
-          await vault.saveVoucher(b.voucher as unknown as Parameters<typeof vault.saveVoucher>[0]);
+        // FSM guard: only CONFIRMED bookings carry an in-trip voucher.
+        // PAYMENT_CONFIRMED can still transition to CANCELLED, and
+        // CANCELLED/EXPIRED bookings have no in-trip value — their payloads
+        // must never overwrite a good local voucher.
+        if (b.status === BookingStatus.CONFIRMED && b.voucher) {
+          // Schema gate: an incomplete server payload would produce a vault
+          // row that breaks the whole voucher load on boot. Skip it and keep
+          // the local voucher intact.
+          const parsed = parseVoucher(b.voucher);
+          if (!parsed) {
+            result.vouchersSkipped++;
+            telemetry.record('SYNC_EVENT', 'vault_voucher_skipped', {
+              bookingRef: b.reference,
+              serverStatus: b.status,
+            });
+            continue;
+          }
+          await vault.saveVoucher(parsed);
           result.vouchersFetched++;
+        } else if (
+          b.status === BookingStatus.CANCELLED ||
+          b.status === BookingStatus.EXPIRED ||
+          b.status === BookingStatus.REFUNDED
+        ) {
+          // Terminal booking — evict any stale local voucher for it.
+          await vault.deleteVoucher(b.reference);
         }
       }
+      // Bounded post-sync housekeeping: evict vouchers whose trip ended
+      // beyond the retention grace (fire-and-forget, never blocks the sync).
+      void vault.purgeExpired().catch(() => {});
     } catch {
       // Bookings sync is best-effort if network flakes
     }

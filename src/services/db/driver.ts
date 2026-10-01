@@ -40,7 +40,31 @@ export function __setVaultDriverForTests(driver: VaultDriver | null): void {
 async function createDriver(): Promise<VaultDriver> {
   const encrypted = await tryCreateEncryptedDriver();
   if (encrypted) return encrypted;
+  await reportPlaintextFallback();
   return createExpoSqliteDriver();
+}
+
+let fallbackReported = false;
+
+/**
+ * Plaintext degradation must never be silent: traveler vault data would sit
+ * unencrypted without anyone knowing. Warn once per session and emit a
+ * telemetry event so builds without SQLCipher are visible server-side.
+ * No sensitive data is included — only the engine identifier.
+ */
+async function reportPlaintextFallback(): Promise<void> {
+  if (fallbackReported) return;
+  fallbackReported = true;
+  console.warn('[vault] SQLCipher unavailable — falling back to plaintext expo-sqlite vault engine');
+  try {
+    const { telemetry } = await import('@/services/telemetry');
+    telemetry.record('SYNC_EVENT', 'vault_engine_fallback', {
+      engine: 'expo-sqlite',
+      encrypted: false,
+    });
+  } catch {
+    // Telemetry is best-effort; the console warning already surfaced it.
+  }
 }
 
 // ---------------------------------------------------------------------------

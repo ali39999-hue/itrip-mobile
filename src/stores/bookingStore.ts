@@ -272,14 +272,17 @@ export const useBookingStore = create<BookingState>((set, get) => ({
       }
 
       // outcome === 'CAPTURED'
-      const pnr = res.pnr || `PNR-${Date.now().toString(36).toUpperCase()}`;
+      // NO FAKE CAPTURE: the PNR is issued by the airline/server only. When
+      // the server has not issued one yet, it stays absent — the UI falls
+      // back to the real booking reference; nothing is fabricated here.
+      const pnr = res.pnr;
 
       set((s) => ({
         isSubmitting: false,
         draft: {
           ...s.draft,
           status: BookingStatus.CONFIRMED,
-          pnr,
+          pnr: pnr ?? null,
         },
       }));
 
