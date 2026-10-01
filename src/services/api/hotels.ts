@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { AxiosInstance } from 'axios';
+import { normalizeLegacyPrice, readTaggedCurrency } from '@/domains/currency/rates';
 
 /**
  * Hotel search API — Zod contracts mirrored from the web platform
@@ -8,6 +9,12 @@ import type { AxiosInstance } from 'axios';
  * Strict Production Invariants:
  * - Real API integration with the authoritative hotel catalog.
  * - No fabricated fallback hotels on network failure.
+ * - No fabricated rates: legacy records without a usable positive
+ *   pricePerNight are skipped, never defaulted (the former `|| 60` is gone).
+ * - Zero float arithmetic on money (AGENTS.md §5.3): legacy rate
+ *   normalization runs through Decimal (see @/domains/currency/rates) with
+ *   ROUND_HALF_UP at CURRENCY_PRECISION of the target currency; nightlyRate
+ *   stays a decimal string (never float over the wire).
  */
 
 export const HotelSchema = z.object({
@@ -53,6 +60,49 @@ const SearchHotelsResponseSchema = z.object({
   priceValidUntil: z.string(),
 });
 
+/**
+ * Adapts one legacy web-platform hotel record into a RoomOffer.
+ * Price rule (see @/domains/currency/rates.normalizeLegacyPrice):
+ * - Explicit `currency` tag from the payload is used verbatim (server is
+ *   authoritative) — including IRR, which is kept in IRR.
+ * - Untagged IRR-scale rates convert to USD at the documented fallback rate;
+ *   untagged smaller rates are already USD per the web payload convention.
+ * Returns null when the record carries no usable positive pricePerNight —
+ * such hotels are skipped instead of being rated with a fabricated default.
+ */
+function buildRoomOfferFromWebHotel(h: Record<string, unknown>, query: SearchHotelsParams): RoomOffer | null {
+  const priced = normalizeLegacyPrice(h.pricePerNight, readTaggedCurrency(h.currency));
+  if (!priced) return null;
+
+  const hotelId = String(h.id || 'ht-unknown');
+  const name = String(h.name || 'Boutique Hotel');
+  const nameFa = String(h.nameFa || h.name || 'هتل اقامتی');
+  const addressFa = String(h.addressFa || h.address || `ایران، ${query.city}`);
+  const phone = String(h.phone || '+98 21 8888 8888');
+  const stars = Math.min(Math.max(Number(h.stars || 4), 1), 5);
+
+  return {
+    id: `room-${hotelId}-std`,
+    hotel: {
+      id: hotelId,
+      name,
+      nameFa,
+      addressFa,
+      city: String(h.city || query.city),
+      phone,
+      stars,
+      imageUrl: (h.heroImage || h.imageUrl) as string | undefined,
+    },
+    roomType: 'Standard Room',
+    board: 'BB',
+    freeCancellation: Boolean(h.freeCancellation ?? true),
+    maxGuests: query.guests,
+    nightlyRate: priced.amount,
+    currency: priced.currency,
+    roomsLeft: 5,
+  };
+}
+
 export function createHotelService(client: AxiosInstance) {
   return {
     async searchHotels(params: SearchHotelsParams): Promise<{
@@ -78,38 +128,9 @@ export function createHotelService(client: AxiosInstance) {
         // 2. Next.js web route format: { success: true, data: { hotels: Hotel[] } }
         const webHotels = res.data?.data?.hotels || (Array.isArray(res.data?.data) ? res.data.data : null);
         if (Array.isArray(webHotels)) {
-          const offers: RoomOffer[] = [];
-          for (const h of webHotels as Array<Record<string, unknown>>) {
-            const hotelId = String(h.id || 'ht-unknown');
-            const name = String(h.name || 'Boutique Hotel');
-            const nameFa = String(h.nameFa || h.name || 'هتل اقامتی');
-            const addressFa = String(h.addressFa || h.address || `ایران، ${query.city}`);
-            const phone = String(h.phone || '+98 21 8888 8888');
-            const stars = Math.min(Math.max(Number(h.stars || 4), 1), 5);
-            const rawRate = Number(h.pricePerNight || 60);
-            const nightlyRate = rawRate > 10000 ? (rawRate / 600000).toFixed(2) : rawRate.toFixed(2);
-
-            offers.push({
-              id: `room-${hotelId}-std`,
-              hotel: {
-                id: hotelId,
-                name,
-                nameFa,
-                addressFa,
-                city: String(h.city || query.city),
-                phone,
-                stars,
-                imageUrl: (h.heroImage || h.imageUrl) as string | undefined,
-              },
-              roomType: 'Standard Room',
-              board: 'BB',
-              freeCancellation: Boolean(h.freeCancellation ?? true),
-              maxGuests: query.guests,
-              nightlyRate,
-              currency: 'USD',
-              roomsLeft: 5,
-            });
-          }
+          const offers: RoomOffer[] = (webHotels as Array<Record<string, unknown>>)
+            .map((h) => buildRoomOfferFromWebHotel(h, query))
+            .filter((offer): offer is RoomOffer => offer !== null);
 
           return {
             offers,

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { AxiosInstance } from 'axios';
+import { BookingStatus } from '@/domains/booking/state';
 
 /**
  * Server-authoritative Booking API Service.
@@ -9,7 +10,15 @@ import type { AxiosInstance } from 'axios';
  * - NO FAKE DRAFTS: Booking IDs and references originate exclusively from the authoritative server.
  * - NO FAKE CAPTURE: Payment confirmation and PNR generation require server-side financial capture.
  * - Idempotency keys protect against double-charging and duplicate bookings.
+ * - Financial Invariant (AGENTS.md §5.3): monetary amounts cross the wire as
+ *   decimal strings (never float), matching the wallet contract and the
+ *   RoomOffer/FlightOffer decimal-string convention.
+ * - Booking lifecycle statuses are constrained to the canonical FSM set in
+ *   src/domains/booking/state.ts (BookingStatus) — never an open string.
  */
+
+/** Decimal amount string over the wire (non-negative; never a float). */
+const DecimalAmount = z.string().regex(/^\d+(\.\d+)?$/);
 
 export const ServerBookingSchema = z.object({
   id: z.string().min(1),
@@ -17,10 +26,10 @@ export const ServerBookingSchema = z.object({
   type: z.enum(['FLIGHT', 'HOTEL', 'TOUR', 'TRANSFER', 'CIP']),
   itemId: z.string().min(1),
   itemTitle: z.string().min(1),
-  totalAmount: z.number().positive(),
-  discountAmount: z.number().nonnegative().optional(),
+  totalAmount: DecimalAmount,
+  discountAmount: DecimalAmount.optional(),
   currency: z.string().min(3),
-  status: z.string(),
+  status: z.nativeEnum(BookingStatus),
   paymentStatus: z.string().optional(),
   travelDate: z.string(),
   contactPhone: z.string().optional(),
@@ -50,10 +59,10 @@ export const CreateDraftResponseSchema = z.object({
   success: z.boolean(),
   bookingId: z.string().min(1),
   reference: z.string().min(1),
-  totalAmount: z.number(),
-  discountAmount: z.number().optional(),
+  totalAmount: DecimalAmount,
+  discountAmount: DecimalAmount.optional(),
   currency: z.string(),
-  status: z.string(),
+  status: z.nativeEnum(BookingStatus),
   error: z.string().optional(),
 });
 export type CreateDraftResponse = z.infer<typeof CreateDraftResponseSchema>;
@@ -88,7 +97,7 @@ export type ConfirmPaymentParams = z.infer<typeof ConfirmPaymentParamsSchema>;
 export const ConfirmPaymentResponseSchema = z.object({
   success: z.boolean(),
   bookingId: z.string().optional(),
-  bookingStatus: z.string().optional(),
+  bookingStatus: z.nativeEnum(BookingStatus).optional(),
   paymentStatus: z.string().optional(),
   pnr: z.string().optional(),
   voucher: z.record(z.unknown()).optional(),

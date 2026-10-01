@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import Decimal from 'decimal.js';
 import { money, type Money } from '@/domains/currency/money';
+import { CURRENCY_PRECISION } from '@/domains/booking/pricing';
 
 /**
  * Escrow Domain — secure payment vault, supplier escrow, and dispute arbitration.
@@ -79,9 +80,16 @@ export type EscrowContract = z.infer<typeof EscrowContractSchema>;
 /** Standard 1.5% escrow platform fee */
 export const DEFAULT_ESCROW_FEE_PERCENT = 1.5;
 
+/**
+ * Calculates the escrow platform fee with currency-aware rounding
+ * (AGENTS.md §5.3): ROUND_HALF_UP at CURRENCY_PRECISION of the principal
+ * currency — 0 decimals for IRR, 2 for USD/EUR/AED/CNY/RUB — so fractional
+ * cents in non-IRR currencies are preserved instead of being truncated.
+ */
 export function calculateEscrowFee(principal: Money, feePercent = DEFAULT_ESCROW_FEE_PERCENT): Money {
+  const dp = CURRENCY_PRECISION[principal.currency] ?? 2;
   const factor = new Decimal(feePercent).dividedBy(100);
-  const fee = principal.amount.times(factor).toDecimalPlaces(0, Decimal.ROUND_HALF_UP);
+  const fee = principal.amount.times(factor).toDecimalPlaces(dp, Decimal.ROUND_HALF_UP);
   return money(fee, principal.currency);
 }
 

@@ -56,7 +56,7 @@ describe('Booking API Service (Server-Authoritative)', () => {
           success: true,
           bookingId: 'bk_srv_99182',
           reference: 'ITR-FL-89X2',
-          totalAmount: 45.0,
+          totalAmount: '45.00',
           currency: 'USD',
           status: 'HELD',
         },

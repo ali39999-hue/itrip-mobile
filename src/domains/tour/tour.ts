@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import Decimal from 'decimal.js';
 import { money, type Money, type CurrencyCode } from '@/domains/currency/money';
+import { CURRENCY_PRECISION } from '@/domains/booking/pricing';
 
 /**
  * Tour domain — guided itineraries, departures, and experiential packages.
@@ -95,7 +96,9 @@ export function calculateTourTotal(
   const depMult = dep ? new Decimal(dep.priceModifier) : new Decimal(1.0);
 
   const unitPrice = base.times(tierMult).times(execMult).times(depMult);
-  const total = unitPrice.times(draft.travelers).toDecimalPlaces(0, Decimal.ROUND_HALF_UP);
+  // Currency-aware rounding (AGENTS.md §5.3): 0 dp for IRR, 2 dp for USD/EUR/AED/CNY/RUB.
+  const dp = CURRENCY_PRECISION[tour.currency as CurrencyCode] ?? 2;
+  const total = unitPrice.times(draft.travelers).toDecimalPlaces(dp, Decimal.ROUND_HALF_UP);
 
   return money(total, tour.currency as CurrencyCode);
 }
@@ -106,7 +109,9 @@ export function calculateTourDeposit(total: Money, depositPercent: number): Mone
     return total;
   }
   const factor = new Decimal(depositPercent).dividedBy(100);
-  const deposit = total.amount.times(factor).toDecimalPlaces(0, Decimal.ROUND_HALF_UP);
+  // Currency-aware rounding so fractional cents in non-IRR currencies survive.
+  const dp = CURRENCY_PRECISION[total.currency] ?? 2;
+  const deposit = total.amount.times(factor).toDecimalPlaces(dp, Decimal.ROUND_HALF_UP);
   return money(deposit, total.currency);
 }
 

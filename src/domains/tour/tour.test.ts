@@ -139,6 +139,25 @@ describe('Tour Domain', () => {
     expect(deposit.amount.toString()).toBe('9000000');
   });
 
+  it('rounds USD totals and deposits at 2 decimals so cents are preserved', () => {
+    const usdTour: TourModel = { ...mockTour, basePrice: '100.10', currency: 'USD' };
+    const draft = {
+      tourId: usdTour.id,
+      departureDate: '2026-10-10',
+      travelers: 3,
+      executionModel: 'group' as const,
+      hotelTier: 'STD' as const,
+    };
+    const total = calculateTourTotal(usdTour, draft);
+    // 100.10 * 1.0 (STD) * 1.0 (group) * 1.0 (dep) * 3 = 300.30 → rounded at 2 dp (never integer truncation to 300)
+    expect(total.amount.toFixed(2)).toBe('300.30');
+    expect(total.currency).toBe('USD');
+
+    const deposit = calculateTourDeposit(total, 30);
+    // 300.30 * 30% = 90.09 → ROUND_HALF_UP at 2 dp
+    expect(deposit.amount.toString()).toBe('90.09');
+  });
+
   it('checks departure availability accurately', () => {
     const dep1 = mockTour.departures[0]!;
     expect(isTourDepartureAvailable(dep1, 5)).toBe(true);

@@ -49,6 +49,14 @@ describe('Escrow Domain', () => {
     expect(fee.currency).toBe('IRR');
   });
 
+  it('rounds non-IRR fees to 2 decimals so cents are preserved', () => {
+    const principal = money('1000.50', 'USD');
+    const fee = calculateEscrowFee(principal, 1.5);
+    // 1000.50 * 1.5% = 15.0075 → ROUND_HALF_UP at 2 dp = 15.01 (never the old integer truncation to 15)
+    expect(fee.amount.toString()).toBe('15.01');
+    expect(fee.currency).toBe('USD');
+  });
+
   it('calculates total deposit required from buyer', () => {
     const principal = money('50000000', 'IRR');
     const fee = calculateEscrowFee(principal, 1.5); // 750,000

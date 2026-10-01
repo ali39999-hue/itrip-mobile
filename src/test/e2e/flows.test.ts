@@ -119,7 +119,7 @@ describe('Required E2E Critical Journeys (Phase 22)', () => {
       success: true,
       bookingId: 'bk_server_998',
       reference: 'ITR-FL-998',
-      totalAmount: 51.3,
+      totalAmount: '51.30',
       currency: 'USD',
       status: 'HELD',
     });
@@ -206,7 +206,7 @@ describe('Required E2E Critical Journeys (Phase 22)', () => {
       success: true,
       bookingId: 'bk_declined_1',
       reference: 'ITR-FL-DECLINED',
-      totalAmount: 45,
+      totalAmount: '45.00',
       currency: 'USD',
       status: 'HELD',
     });

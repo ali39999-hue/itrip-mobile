@@ -51,6 +51,75 @@ describe('Flight Service Web-to-Mobile Contract Convergence', () => {
     expect(offer.baggageKg).toBe(20);
   });
 
+  it('normalizes legacy prices without float math and without the 10k misclassification', async () => {
+    const mockAxios = {
+      get: vi.fn().mockResolvedValue({
+        data: {
+          success: true,
+          data: [
+            // Untagged USD-scale: high-value fare must stay USD (old bug: 12000 / 600000 = 0.02)
+            { id: 'fl-usd-12k', flightNo: 'IR12', price: 12000 },
+            // Untagged IRR-scale integer: converted at the documented fallback rate
+            { id: 'fl-irr-48m', flightNo: 'IR48', price: 48000000 },
+            // Explicit IRR tag: server is authoritative, kept in IRR without conversion
+            { id: 'fl-tagged-irr', flightNo: 'IR49', price: 48000000, currency: 'IRR' },
+            // Fractional untagged price is USD by payload convention
+            { id: 'fr-usd-frac', flightNo: 'IR50', price: '1,250.50' },
+          ],
+        },
+      }),
+    } as unknown as AxiosInstance;
+
+    const service = createFlightService(mockAxios);
+    const res = await service.searchFlights({
+      origin: 'IKA',
+      destination: 'SYZ',
+      departDate: '2026-11-01',
+      adults: 1,
+      cabinClass: 'ECONOMY',
+    });
+
+    expect(res.offers).toHaveLength(4);
+    const byId = new Map(res.offers.map((o) => [o.id, o]));
+    expect(byId.get('fl-usd-12k')?.priceAmount).toBe('12000.00');
+    expect(byId.get('fl-usd-12k')?.priceCurrency).toBe('USD');
+    // 48,000,000 / 600,000 = 80.00 USD — Decimal, ROUND_HALF_UP at 2 dp
+    expect(byId.get('fl-irr-48m')?.priceAmount).toBe('80.00');
+    expect(byId.get('fl-irr-48m')?.priceCurrency).toBe('USD');
+    expect(byId.get('fl-tagged-irr')?.priceAmount).toBe('48000000');
+    expect(byId.get('fl-tagged-irr')?.priceCurrency).toBe('IRR');
+    expect(byId.get('fr-usd-frac')?.priceAmount).toBe('1250.50');
+    expect(byId.get('fr-usd-frac')?.priceCurrency).toBe('USD');
+  });
+
+  it('skips legacy records without a usable positive price instead of fabricating one', async () => {
+    const mockAxios = {
+      get: vi.fn().mockResolvedValue({
+        data: {
+          success: true,
+          data: [
+            { id: 'fl-priced', flightNo: 'IR60', price: 45 },
+            { id: 'fl-no-price', flightNo: 'IR61' },
+            { id: 'fl-zero-price', flightNo: 'IR62', price: 0 },
+          ],
+        },
+      }),
+    } as unknown as AxiosInstance;
+
+    const service = createFlightService(mockAxios);
+    const res = await service.searchFlights({
+      origin: 'IKA',
+      destination: 'SYZ',
+      departDate: '2026-11-01',
+      adults: 1,
+      cabinClass: 'ECONOMY',
+    });
+
+    expect(res.offers).toHaveLength(1);
+    expect(res.offers[0]?.id).toBe('fl-priced');
+    expect(res.offers[0]?.priceAmount).toBe('45.00');
+  });
+
   it('handles direct mobile format { offers: [...] }', async () => {
     const mockAxios = {
       get: vi.fn().mockResolvedValue({
