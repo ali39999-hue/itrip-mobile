@@ -4,7 +4,7 @@ import {
   resolveProfileConflict,
   resolvePreferenceConflict,
 } from './conflictResolver';
-import type { UserProfile } from '@/stores/authStore';
+import type { UserProfile } from '@/services/api/authTypes';
 
 describe('Conflict Resolution Engine (Phase 9)', () => {
   it('enforces server-authoritative rule on booking status', () => {

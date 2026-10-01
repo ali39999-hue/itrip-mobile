@@ -2,37 +2,17 @@ import { create } from 'zustand';
 import { getAccessToken, clearTokens } from '@/services/secure/tokens';
 import { authService, api } from '@/services/api';
 
-/**
- * User Profile interface aligned with itrip-platform canonical identity domain.
- */
-export interface UserProfile {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone: string;
-  nationalId?: string;
-  passportNumber?: string;
-  kycApproved: boolean;
-  profileComplete: boolean;
-  loyaltyTier: 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM';
-  loyaltyPoints: number;
-}
+import type { AuthStatus, UserProfile } from '@/services/api/authTypes';
 
 /**
  * Auth store — session state and profile.
  * Tokens themselves live exclusively in SecureStore (Keystore-backed),
  * never in this store, logs, or AsyncStorage.
+ *
+ * Session contract types live beside the API client so the infrastructure
+ * layer never imports from the state layer (§5.1); re-exported for consumers.
  */
-export type AuthStatus =
-  | { state: 'loading' }
-  | { state: 'guest' }
-  | {
-      state: 'authenticated';
-      userId: string;
-      displayLanguage: string;
-      phone?: string;
-      profile?: UserProfile;
-    };
+export type { AuthStatus, UserProfile };
 
 interface AuthState {
   auth: AuthStatus;

@@ -1,7 +1,7 @@
 import type { AxiosInstance } from 'axios';
 import { z } from 'zod';
 import { saveTokens, clearTokens, type StoredTokens } from '@/services/secure/tokens';
-import type { AuthStatus } from '@/stores/authStore';
+import type { AuthStatus } from './authTypes';
 
 /** Auth API — OTP-based login with PKCE-ready token exchange. */
 

@@ -13,7 +13,7 @@ import {
   type TransferVoucher,
 } from './voucher';
 import { money } from '@/domains/currency/money';
-import type { FlightOffer, SearchFlightsParams } from '@/services/api/flights';
+import type { FlightOffer, SearchFlightsParams } from '@/domains/booking/offerTypes';
 import type { Passenger } from '@/domains/identity/passenger';
 
 const offer: FlightOffer = {

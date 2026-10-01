@@ -1,5 +1,5 @@
 import type { BookingStatus } from '@/domains/booking/state';
-import type { UserProfile } from '@/stores/authStore';
+import type { UserProfile } from '@/services/api/authTypes';
 
 /**
  * Domain-specific Conflict Resolution Engine (Phase 9 — Conflict Resolution).

@@ -9,7 +9,7 @@
  *   and re-rendered with zero network access.
  */
 
-import type { FlightOffer, SearchFlightsParams } from '@/services/api/flights';
+import type { FlightOffer, SearchFlightsParams } from '@/domains/booking/offerTypes';
 import type { Passenger } from '@/domains/identity/passenger';
 import { money, type Money } from '@/domains/currency/money';
 
