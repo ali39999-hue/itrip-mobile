@@ -251,7 +251,7 @@ export default function HotelReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-brand/10 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
                     <Path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
                     <Path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
@@ -275,7 +275,7 @@ export default function HotelReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.ink} strokeWidth={2}>
                     <Path d="M2 10h20M2 14h20M2 6h20v12H2z" />
                   </Svg>
@@ -297,7 +297,7 @@ export default function HotelReviewScreen() {
               }`}
             >
               <View className="flex-row items-center">
-                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-lg bg-slate-100 items-center justify-center me-3">
                   <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={colors.action} strokeWidth={2}>
                     <Path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A4 4 0 0 1 8 13h2a2 2 0 1 0 4 0c0-1.5-1.5-2-3-2.5S8 9 8 7a4 4 0 0 1 3-3.93V3a1 1 0 0 1 2 0v.07A4 4 0 0 1 16 7h-2a2 2 0 0 0-4 0c0 1.5 1.5 2 3 2.5s3 1.5 3 3.5a4 4 0 0 1-3 3.93z" />
                   </Svg>

@@ -96,7 +96,7 @@ export default function PassengersScreen() {
       className="flex-1 bg-soft"
       style={{ paddingTop: insets.top }}
     >
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: insets.bottom + 32 }}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 24 }}>
         <Text className="text-2xl font-bold text-ink">{t('booking.passengersTitle')}</Text>
         <Text className="mt-1 text-sm text-sub">
           {t('booking.passengersProgress', { done: currentCount, total: requiredPax })}
@@ -106,8 +106,8 @@ export default function PassengersScreen() {
         {draft.passengers.map((p, idx) => (
           <Card key={p.id} variant="mint" className="mt-3">
             <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center flex-1 mr-2">
-                <View className="w-7 h-7 rounded-full bg-brand/20 items-center justify-center mr-2.5">
+              <View className="flex-row items-center flex-1 me-2">
+                <View className="w-7 h-7 rounded-full bg-brand/20 items-center justify-center me-2.5">
                   <Text className="text-xs font-bold text-brand">{idx + 1}</Text>
                 </View>
                 <View>
@@ -122,11 +122,14 @@ export default function PassengersScreen() {
                   </Text>
                 </View>
               </View>
+              {/* 44dp hit target (AGENTS §2.3); icon stays 14dp */}
               <Pressable
                 onPress={() => {
                   if (p.id) removePassenger(p.id);
                 }}
-                className="p-1.5 rounded-lg bg-rose-50"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityRole="button"
+                className="w-11 h-11 rounded-lg bg-rose-50 items-center justify-center"
               >
                 <Svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={colors.rose} strokeWidth={2}>
                   <Path d="M18 6L6 18M6 6l12 12" />
@@ -143,12 +146,12 @@ export default function PassengersScreen() {
               {t('booking.passengersProgress', { done: currentCount + 1, total: requiredPax })}
             </Text>
 
-            <Input label={t('booking.firstNameLatin')} value={form.firstNameLatin} onChangeText={set('firstNameLatin')} autoCapitalize="words" placeholder="e.g. Sarah" />
-            <Input label={t('booking.lastNameLatin')} value={form.lastNameLatin} onChangeText={set('lastNameLatin')} autoCapitalize="words" placeholder="e.g. Jenkins" />
+            <Input label={t('booking.firstNameLatin')} value={form.firstNameLatin} onChangeText={set('firstNameLatin')} autoCapitalize="words" placeholder={t('booking.firstNameExample')} />
+            <Input label={t('booking.lastNameLatin')} value={form.lastNameLatin} onChangeText={set('lastNameLatin')} autoCapitalize="words" placeholder={t('booking.lastNameExample')} />
 
             {/* Gender Toggle */}
             <View className="mb-3">
-              <Text className="text-xs font-semibold text-sub mb-1">Gender</Text>
+              <Text className="text-xs font-semibold text-sub mb-1">{t('booking.gender')}</Text>
               <View className="flex-row gap-2">
                 {(['MALE', 'FEMALE'] as const).map((g) => (
                   <Pressable
@@ -159,7 +162,7 @@ export default function PassengersScreen() {
                     }`}
                   >
                     <Text className={`text-xs font-bold ${gender === g ? 'text-brand' : 'text-sub'}`}>
-                      {g === 'MALE' ? 'Male / آقا' : 'Female / خانم'}
+                      {g === 'MALE' ? t('booking.male') : t('booking.female')}
                     </Text>
                   </Pressable>
                 ))}
@@ -178,19 +181,22 @@ export default function PassengersScreen() {
             </View>
           </Card>
         ) : null}
-
-        {/* Action Button */}
-        {canProceed ? (
-          <View className="mt-4">
-            <Button
-              variant="action"
-              size="lg"
-              title={t('common.confirm')}
-              onPress={() => router.push('/booking/review')}
-            />
-          </View>
-        ) : null}
       </ScrollView>
+
+      {/* Sticky confirm CTA — thumb zone (AGENTS §2.1); single `action` button (§3.2) */}
+      {canProceed ? (
+        <View
+          className="border-t border-slate-200 bg-surface px-5 pt-3"
+          style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+        >
+          <Button
+            variant="action"
+            size="lg"
+            title={t('common.confirm')}
+            onPress={() => router.push('/booking/review')}
+          />
+        </View>
+      ) : null}
     </KeyboardAvoidingView>
   );
 }

@@ -16,6 +16,7 @@ import { OfflineBanner } from '@/components/ui/OfflineBanner';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { ltrIsolate } from '@/i18n';
 
 /**
  * Flight results screen — Phase 2 booking funnel step 2.
@@ -144,7 +145,7 @@ export default function FlightResultsScreen() {
         {search.isError ? (
           <ErrorState
             title={t('common.error')}
-            message="Unable to fetch live flight offers. Check your connection or retry."
+            message={t('search.errorFetch')}
             onRetry={() => void search.refetch()}
             retryTitle={t('common.retry')}
           />
@@ -153,9 +154,9 @@ export default function FlightResultsScreen() {
         {/* Empty State */}
         {!search.isLoading && !search.isError && offers.length === 0 ? (
           <EmptyState
-            title="No Flights Found"
-            description={`No scheduled flights found between ${origin} and ${destination} on ${departDate}.`}
-            actionTitle="Adjust Search"
+            title={t('search.noFlights')}
+            description={t('search.noFlightsDesc', { origin, destination, date: departDate })}
+            actionTitle={t('search.adjustSearch')}
             onAction={() => router.back()}
           />
         ) : null}
@@ -169,26 +170,33 @@ export default function FlightResultsScreen() {
           return (
             <Card key={offer.id} variant="elevated" className="mt-4">
               <View className="flex-row items-center justify-between mb-3">
-                <Badge label={`${seg.airlineCode} · ${seg.flightNumber}`} variant="brand" size="sm" />
+                {/* §4.3: flight number is LTR-invariant data; isolated inside the Badge */}
+                <Badge label={ltrIsolate(`${seg.airlineCode} · ${seg.flightNumber}`)} variant="brand" size="sm" />
                 {offer.seatsLeft != null && offer.seatsLeft <= 3 ? (
-                  <Badge label={`${offer.seatsLeft} left`} variant="danger" size="sm" />
+                  <Badge label={t('search.seatsLeft', { count: offer.seatsLeft })} variant="danger" size="sm" />
                 ) : null}
               </View>
 
-              {/* Route row — always LTR (airport codes invariant) */}
+              {/* Route row — always LTR (airport codes invariant, §4.3) */}
               <View className="flex-row items-center justify-between py-2">
                 <View className="items-start">
-                  <Text className="text-xl font-bold text-ink">{origin.toUpperCase()}</Text>
-                  <Text className="text-[11px] text-sub">
+                  <Text className="text-xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                    {origin.toUpperCase()}
+                  </Text>
+                  <Text className="text-[11px] text-sub" style={{ writingDirection: 'ltr' }}>
                     {seg.departureTime.slice(11, 16)}
                   </Text>
                 </View>
                 <Text className="text-[11px] text-sub px-3">
-                  {seg.durationMinutes}m · {seg.cabinClass === 'ECONOMY' ? 'ECO' : seg.cabinClass}
+                  {t('search.durationMin', { minutes: seg.durationMinutes })} · {seg.cabinClass === 'ECONOMY' ? 'ECO' : seg.cabinClass}
                 </Text>
                 <View className="items-end">
-                  <Text className="text-xl font-bold text-ink">{destination.toUpperCase()}</Text>
-                  <Text className="text-[11px] text-sub">{seg.arrivalTime.slice(11, 16)}</Text>
+                  <Text className="text-xl font-bold text-ink" style={{ writingDirection: 'ltr' }}>
+                    {destination.toUpperCase()}
+                  </Text>
+                  <Text className="text-[11px] text-sub" style={{ writingDirection: 'ltr' }}>
+                    {seg.arrivalTime.slice(11, 16)}
+                  </Text>
                 </View>
               </View>
 

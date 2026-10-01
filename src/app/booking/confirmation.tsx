@@ -32,8 +32,11 @@ export default function ConfirmationScreen() {
     kind?: 'flight' | 'hotel';
   }>();
 
-  const bookingRef = params.bookingRef || 'ITR-CONFIRMED';
-  const pnr = params.pnr || bookingRef;
+  const bookingRef = params.bookingRef || '';
+  // A PNR may legitimately be absent right after capture (issuance still in
+  // flight). Fall back to the real booking reference — never fabricate one.
+  const hasPnr = Boolean(params.pnr);
+  const pnr = hasPnr ? (params.pnr as string) : bookingRef;
   const isFlight = params.kind !== 'hotel';
 
   return (
@@ -58,7 +61,7 @@ export default function ConfirmationScreen() {
       </View>
 
       {/* Authoritative Booking Reference Card */}
-      <Card variant="elevated" className="border-t-4 border-t-brand p-5 mb-4">
+      <Card variant="elevated" className="border-s-4 border-s-brand p-5 mb-4">
         <View className="flex-row items-center justify-between pb-3 border-b border-slate-100">
           <View>
             <Text className="text-xs text-sub">{t('myTrips.bookingRef')}</Text>
@@ -66,12 +69,18 @@ export default function ConfirmationScreen() {
               {bookingRef}
             </Text>
           </View>
-          <Badge label={isFlight ? `PNR: ${pnr}` : 'CONFIRMED'} variant="success" size="sm" />
+          <Badge
+            label={isFlight ? (hasPnr ? `PNR: ${pnr}` : bookingRef) : t('myTrips.confirmed')}
+            variant="success"
+            size="sm"
+          />
         </View>
 
         <View className="py-3">
-          <Text className="text-base font-bold text-ink">{params.title || (isFlight ? 'Flight Ticket' : 'Hotel Reservation')}</Text>
-          <Text className="text-xs text-sub mt-0.5">
+          <Text className="text-base font-bold text-ink">
+            {params.title || t(isFlight ? 'booking.flightTicket' : 'booking.hotelReservation')}
+          </Text>
+          <Text className="text-xs text-sub mt-0.5" style={{ writingDirection: 'ltr' }}>
             {params.origin} → {params.destination} · {params.date}
           </Text>
           <View className="flex-row items-center justify-between mt-3 pt-3 border-t border-slate-100">
@@ -97,7 +106,8 @@ export default function ConfirmationScreen() {
           />
         </View>
         <Text className="text-[11px] text-slate-400 mt-3 font-mono" style={{ writingDirection: 'ltr' }}>
-          {bookingRef} · {pnr}
+          {bookingRef}
+          {hasPnr ? ` · ${pnr}` : ''}
         </Text>
       </Card>
 
@@ -106,10 +116,10 @@ export default function ConfirmationScreen() {
         <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth={2}>
           <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </Svg>
-        <View className="flex-1 ml-3">
-          <Text className="text-xs font-bold text-emerald-900">Saved to Offline Vault</Text>
+        <View className="flex-1 ms-3">
+          <Text className="text-xs font-bold text-emerald-900">{t('voucher.savedOfflineTitle')}</Text>
           <Text className="text-[11px] text-emerald-700 mt-0.5">
-            This pass is encrypted and readable without internet connection or cellular data.
+            {t('voucher.savedOfflineBody')}
           </Text>
         </View>
       </View>

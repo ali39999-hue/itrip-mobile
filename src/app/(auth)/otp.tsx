@@ -98,7 +98,8 @@ export default function OtpScreen() {
       style={{ paddingTop: insets.top + 24, paddingHorizontal: 24, paddingBottom: insets.bottom + 24 }}
     >
       <Text className="text-2xl font-bold text-ink">{t('auth.otpTitle')}</Text>
-      <Text className="mt-2 text-base text-sub" style={{ textAlign: 'left' }}>
+      {/* §4.3: phone numbers are LTR-invariant regardless of app direction */}
+      <Text className="mt-2 text-base text-sub" style={{ writingDirection: 'ltr' }}>
         {phone}
       </Text>
 

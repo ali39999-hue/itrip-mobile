@@ -10,10 +10,12 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useAuthStore } from '@/stores/authStore';
 import { useVaultStore } from '@/stores/vaultStore';
+import { dirArrow, isRTL, ltrIsolate } from '@/i18n';
 import type { FlightVoucher } from '@/domains/voucher/voucher';
 
 export default function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const rtl = isRTL(i18n.language);
   const insets = useSafeAreaInsets();
   const auth = useAuthStore((s) => s.auth);
   const vouchers = useVaultStore((s) => s.vouchers);
@@ -69,11 +71,11 @@ export default function HomeScreen() {
   ];
 
   const destinations = [
-    { name: t('home.tehran'), tag: 'Capital & Museums' },
-    { name: t('home.isfahan'), tag: 'Half of the World' },
-    { name: t('home.shiraz'), tag: 'Culture & Wine' },
-    { name: t('home.yazd'), tag: 'Desert Architecture' },
-    { name: t('home.kish'), tag: 'Coral Island Beach' },
+    { name: t('home.tehran'), tag: t('home.tagTehran') },
+    { name: t('home.isfahan'), tag: t('home.tagIsfahan') },
+    { name: t('home.shiraz'), tag: t('home.tagShiraz') },
+    { name: t('home.yazd'), tag: t('home.tagYazd') },
+    { name: t('home.kish'), tag: t('home.tagKish') },
   ];
 
   return (
@@ -106,14 +108,14 @@ export default function HomeScreen() {
             onPress={() => router.push('/(auth)/login')}
           />
         ) : (
-          <Badge label="NewCash Active" variant="brand" />
+          <Badge label={t('home.newcashActive')} variant="brand" />
         )}
       </View>
 
       {/* Hero Card */}
       <View className="px-5 mb-6">
         <View className="rounded-3xl bg-brand p-5 shadow-sm">
-          <Badge label="Digital Travel Vault" variant="neutral" className="bg-white/20 text-white mb-2" />
+          <Badge label={t('home.digitalVault')} variant="neutral" className="bg-white/20 text-white mb-2" />
           <Text className="text-xl font-bold text-white mb-1">
             {t('home.welcome')}
           </Text>
@@ -163,14 +165,15 @@ export default function HomeScreen() {
         </View>
 
         {nextFlight ? (
-          <Card variant="elevated" className="border-l-4 border-l-brand">
+          // border-s = border-inline-start — logical (RTL-safe) border accent (§4.1)
+          <Card variant="elevated" className="border-s-4 border-s-brand">
             <View className="flex-row items-center justify-between mb-2">
               <Badge
-                label={`${nextFlight.airlineCode}-${nextFlight.flightNumber}`}
+                label={ltrIsolate(`${nextFlight.airlineCode}-${nextFlight.flightNumber}`)}
                 variant="brand"
                 size="sm"
               />
-              <Badge label="CONFIRMED" variant="success" size="sm" />
+              <Badge label={t('myTrips.confirmed')} variant="success" size="sm" />
             </View>
 
             <View className="flex-row items-center justify-between py-2 border-b border-slate-100">
@@ -188,7 +191,7 @@ export default function HomeScreen() {
                   {nextFlight.durationMinutes}m
                 </Text>
                 <Text className="text-xs text-sub">────────✈</Text>
-                <Text className="text-[10px] text-emerald-600 font-medium">Direct Flight</Text>
+                <Text className="text-[10px] text-emerald-600 font-medium">{t('home.directFlight')}</Text>
               </View>
 
               <View className="items-end">
@@ -210,7 +213,7 @@ export default function HomeScreen() {
                   </Text>
                 </Text>
                 <Text className="text-[11px] text-emerald-600 font-medium mt-0.5">
-                  ● Offline Vault Ready
+                  {t('home.vaultReady')}
                 </Text>
               </View>
 
@@ -241,14 +244,14 @@ export default function HomeScreen() {
                 <Path d="M12 2 1 21h22L12 2zm0 6 7.53 13H4.47L12 8zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z" />
               </Svg>
             </View>
-            <View className="ml-3">
+            <View className="ms-3">
               <Text className="text-sm font-bold text-rose">SOS</Text>
               <Text className="text-[11px] text-rose-700/80">
-                Emergency tools · offline
+                {t('sos.subtitle')}
               </Text>
             </View>
           </View>
-          <Text className="text-xs font-semibold text-rose">{t('common.back')} →</Text>
+          <Text className="text-xs font-semibold text-rose">{t('common.back')} {dirArrow(rtl)}</Text>
         </Pressable>
       </View>
 
@@ -260,7 +263,7 @@ export default function HomeScreen() {
             <Card
               key={i}
               variant="flat"
-              className="mr-3 w-40 p-3.5 bg-surface border border-slate-100"
+              className="me-3 w-40 p-3.5 bg-surface border border-slate-100"
             >
               <View className="h-20 rounded-xl bg-mint items-center justify-center mb-2.5">
                 <Text className="text-2xl font-bold text-brand">{d.name[0]}</Text>

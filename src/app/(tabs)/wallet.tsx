@@ -17,6 +17,14 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { format, money } from '@/domains/currency/money';
 import { walletService } from '@/services/api';
 
+type TopUpRail = 'shetab' | 'ecardo_card' | 'ecardo_crypto';
+
+const RAIL_LABEL_KEYS: Record<TopUpRail, string> = {
+  shetab: 'wallet.railShetab',
+  ecardo_card: 'wallet.railCard',
+  ecardo_crypto: 'wallet.railCrypto',
+};
+
 export default function WalletScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -82,7 +90,7 @@ export default function WalletScreen() {
   const handleTopUpSubmit = async () => {
     const num = parseFloat(topUpAmount);
     if (isNaN(num) || num <= 0) {
-      Alert.alert(t('common.error'), 'Please enter a valid amount');
+      Alert.alert(t('common.error'), t('wallet.invalidAmount'));
       return;
     }
     // R6 anti-double-submit: one in-flight top-up per screen instance.
@@ -108,15 +116,15 @@ export default function WalletScreen() {
         // the server ledger confirms the SETTLED row on the next sync.
         credit(money(topUpAmount, 'USD'), {
           id: res.intentId || `tx-${Date.now()}`,
-          title: `NewCash Top-up (${topUpRail.toUpperCase()})`,
+          title: t('wallet.topUpTxTitle', { rail: t(RAIL_LABEL_KEYS[topUpRail]) }),
           date: new Date().toISOString(),
           category: 'topup',
           status: 'PENDING',
         });
-        Alert.alert('Top-up Initiated', `$${topUpAmount} USD pending confirmation.`);
+        Alert.alert(t('wallet.topUpInitiatedTitle'), t('wallet.topUpPending', { amount: topUpAmount }));
         void syncWithServer();
       } else {
-        Alert.alert(t('common.error'), res.error || 'Top-up initiation failed');
+        Alert.alert(t('common.error'), res.error || t('wallet.topUpFailed'));
       }
     } catch (e: unknown) {
       setIsTopUpProcessing(false);
@@ -187,7 +195,7 @@ export default function WalletScreen() {
           <Text className="text-xs text-sub mt-0.5">{t('wallet.subtitle')}</Text>
         </View>
         <Badge
-          label={`${loyaltyTier} · ${loyaltyPoints} pts`}
+          label={`${loyaltyTier} · ${t('account.loyaltyPoints', { points: loyaltyPoints })}`}
           variant="brand"
           size="sm"
         />
@@ -203,16 +211,19 @@ export default function WalletScreen() {
               <View className="flex-row items-center justify-between mb-4">
                 <View>
                   <Text className="text-xs font-semibold text-slate-400">{t('wallet.newcashBalance')}</Text>
-                  <Text className="text-3xl font-bold text-white mt-1">
+                  <Text
+                    className="text-3xl font-bold text-white mt-1"
+                    style={{ writingDirection: 'ltr' }}
+                  >
                     ${usd.amount.toFixed(2)}
                   </Text>
                   {lastSyncedAt ? (
                     <Text className="text-[10px] text-slate-400 mt-1">
-                      Last synced: {new Date(lastSyncedAt).toLocaleTimeString()}
+                      {t('wallet.lastSynced', { time: new Date(lastSyncedAt).toLocaleTimeString() })}
                     </Text>
                   ) : null}
                 </View>
-                <Badge label="NewCash Verified" variant="brand" className="bg-teal-500/20 text-teal-300" />
+                <Badge label={t('wallet.newcashVerified')} variant="brand" className="bg-teal-500/20 text-teal-300" />
               </View>
 
               {irr ? (
@@ -231,13 +242,13 @@ export default function WalletScreen() {
               <View className="flex-row justify-between">
                 <Pressable
                   onPress={() => setTopUpModal(true)}
-                  className="flex-1 items-center bg-brand rounded-xl py-3 mr-2 active:opacity-90"
+                  className="flex-1 items-center bg-brand rounded-xl py-3 me-2 active:opacity-90"
                 >
                   <Text className="text-sm font-semibold text-white">{t('wallet.charge')}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => setConvertModal(true)}
-                  className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 mr-2 active:opacity-90"
+                  className="flex-1 items-center bg-slate-800 border border-slate-700 rounded-xl py-3 me-2 active:opacity-90"
                 >
                   <Text className="text-sm font-semibold text-white">{t('wallet.convert')}</Text>
                 </Pressable>
@@ -253,15 +264,15 @@ export default function WalletScreen() {
             <View className="items-center py-2">
               <Text className="text-xs font-semibold text-slate-400 mb-1">{t('wallet.newcashBalance')}</Text>
               <Text className="text-xl font-bold text-white mb-2">
-                {isSyncing ? 'Synchronizing Ledger...' : 'Balance Unavailable'}
+                {isSyncing ? t('wallet.syncingLedger') : t('wallet.balanceUnavailable')}
               </Text>
               <Text className="text-xs text-slate-400 text-center mb-4">
-                Connect to the internet to fetch your authoritative balance from the financial ledger.
+                {t('wallet.balanceOfflineHint')}
               </Text>
               <Button
                 variant="action"
                 size="md"
-                title={isSyncing ? 'Syncing...' : 'Sync Ledger Now'}
+                title={isSyncing ? t('wallet.syncing') : t('wallet.syncNow')}
                 onPress={syncWithServer}
                 disabled={isSyncing || !isOnline}
               />
@@ -277,10 +288,13 @@ export default function WalletScreen() {
         <Card variant="mint" className="p-5 border-teal-200">
           <View className="flex-row items-center justify-between mb-3">
             <Badge label={t('wallet.cardIssued')} variant="brand" size="sm" />
-            <Text className="text-xs font-bold text-brand-dark">Shetab Network / شتاب</Text>
+            <Text className="text-xs font-bold text-brand-dark">{t('wallet.shetabNetwork')}</Text>
           </View>
 
-          <Text className="text-lg font-mono font-bold text-ink tracking-wider mb-2">
+          <Text
+            className="text-lg font-mono font-bold text-ink tracking-wider mb-2"
+            style={{ writingDirection: 'ltr' }}
+          >
             6037 ···· ···· 8841
           </Text>
 
@@ -300,7 +314,7 @@ export default function WalletScreen() {
           <Text className="text-base font-bold text-ink">{t('wallet.transactions')}</Text>
           {lastSyncedAt ? (
             <Text className="text-[10px] text-sub">
-              Synced {new Date(lastSyncedAt).toLocaleTimeString()}
+              {t('wallet.lastSynced', { time: new Date(lastSyncedAt).toLocaleTimeString() })}
             </Text>
           ) : null}
         </View>
@@ -308,7 +322,7 @@ export default function WalletScreen() {
         {transactions.length === 0 ? (
           <EmptyState
             title={t('wallet.noTransactions')}
-            description="Transactions will appear here once verified on the double-entry financial ledger."
+            description={t('wallet.transactionsHint')}
           />
         ) : (
           transactions.map((tx) => {
@@ -321,7 +335,7 @@ export default function WalletScreen() {
               >
                 <View className="flex-row items-center">
                   <View
-                    className={`w-10 h-10 rounded-xl items-center justify-center mr-3 ${
+                    className={`w-10 h-10 rounded-xl items-center justify-center me-3 ${
                       isCredit ? 'bg-emerald-50' : 'bg-slate-100'
                     }`}
                   >
@@ -366,7 +380,7 @@ export default function WalletScreen() {
               </Pressable>
             </View>
 
-            <Text className="text-xs text-sub mb-2">Select Amount (USD)</Text>
+            <Text className="text-xs text-sub mb-2">{t('wallet.selectAmount')}</Text>
             <View className="flex-row gap-2 mb-4">
               {['50', '100', '250', '500'].map((amt) => (
                 <Pressable
@@ -381,12 +395,12 @@ export default function WalletScreen() {
               ))}
             </View>
 
-            <Text className="text-xs text-sub mb-2">Payment Method</Text>
+            <Text className="text-xs text-sub mb-2">{t('wallet.paymentMethod')}</Text>
             <View className="gap-2 mb-6">
               {[
-                { id: 'shetab' as const, label: 'Shetab Card (Shaparak)', desc: 'Iranian debit card' },
-                { id: 'ecardo_card' as const, label: 'Visa / Mastercard', desc: 'International bank card' },
-                { id: 'ecardo_crypto' as const, label: 'Crypto (USDT)', desc: 'TRC-20 / ERC-20' },
+                { id: 'shetab' as const, label: t('wallet.railShetab'), desc: t('wallet.railShetabDesc') },
+                { id: 'ecardo_card' as const, label: t('wallet.railCard'), desc: t('wallet.railCardDesc') },
+                { id: 'ecardo_crypto' as const, label: t('wallet.railCrypto'), desc: t('wallet.railCryptoDesc') },
               ].map((m) => (
                 <Pressable
                   key={m.id}
@@ -409,7 +423,7 @@ export default function WalletScreen() {
             <Button
               variant="action"
               size="lg"
-              title={isTopUpProcessing ? 'Processing...' : `Pay $${topUpAmount} USD`}
+              title={isTopUpProcessing ? t('wallet.processing') : t('wallet.payAmount', { amount: topUpAmount })}
               onPress={handleTopUpSubmit}
               disabled={isTopUpProcessing || !isOnline}
             />
@@ -428,13 +442,18 @@ export default function WalletScreen() {
               </Pressable>
             </View>
             <View className="p-4 rounded-2xl bg-soft border border-slate-100 mb-4">
-              <Text className="text-xs text-sub mb-1">Live USD / IRR Reference Rate</Text>
-              <Text className="text-xl font-bold text-ink">1 USD ≈ {useWalletStore.getState().usdIrrRate.toString()} IRR</Text>
+              <Text className="text-xs text-sub mb-1">{t('wallet.referenceRate')}</Text>
+              <Text
+                className="text-xl font-bold text-ink"
+                style={{ writingDirection: 'ltr' }}
+              >
+                {t('wallet.usdIrrRate', { rate: useWalletStore.getState().usdIrrRate.toString() })}
+              </Text>
             </View>
             <Button
               variant="action"
               size="md"
-              title="Open SOS Currency Tool"
+              title={t('wallet.openSosTool')}
               onPress={() => {
                 setConvertModal(false);
                 router.push('/sos');

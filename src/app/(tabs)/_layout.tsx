@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '@/styles/colors';
 import {
   HomeIcon,
@@ -12,6 +13,11 @@ import {
 
 export default function TabsLayout() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  // §2.4: a custom tabBar height overrides @react-navigation's built-in
+  // paddingBottom: insets.bottom, so the Home Indicator / gesture-bar inset
+  // must be re-added explicitly (minimum 8 on devices without one).
+  const bottomInset = Math.max(insets.bottom, 8);
 
   return (
     <Tabs
@@ -22,9 +28,9 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: '#E2E8F0',
-          height: 60,
-          paddingBottom: 8,
           paddingTop: 8,
+          paddingBottom: bottomInset,
+          height: 60 + bottomInset,
         },
         tabBarLabelStyle: {
           fontSize: 11,

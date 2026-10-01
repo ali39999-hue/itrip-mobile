@@ -40,10 +40,10 @@ const PHRASES: Array<{ fa: string; en: string; translit: string }> = [
 ];
 
 const EMERGENCY_NUMBERS = [
-  { label: 'Tourist Police', fa: 'پلیس گردشگری', tel: '110' },
-  { label: 'Medical Emergency', fa: 'اورژانس', tel: '115' },
-  { label: 'Fire & Rescue', fa: 'آتش‌نشانی', tel: '125' },
-];
+  { labelKey: 'sos.touristPolice', tel: '110' },
+  { labelKey: 'sos.medical', tel: '115' },
+  { labelKey: 'sos.fireRescue', tel: '125' },
+] as const;
 
 export default function SosScreen() {
   const { t } = useTranslation();
@@ -78,7 +78,7 @@ export default function SosScreen() {
         <View className="px-5 mb-5 flex-row items-center justify-between">
           <View>
             <Text className="text-2xl font-bold text-rose">SOS</Text>
-            <Text className="text-xs text-sub mt-0.5">Emergency tools — offline ready</Text>
+            <Text className="text-xs text-sub mt-0.5">{t('sos.subtitle')}</Text>
           </View>
           <Pressable onPress={() => router.back()} className="rounded-xl bg-white border border-slate-200 px-3 py-2">
             <Text className="text-xs font-semibold text-ink">{t('common.back')}</Text>
@@ -87,7 +87,7 @@ export default function SosScreen() {
 
         {/* Emergency Dialer */}
         <View className="px-5 mb-6">
-          <Text className="text-sm font-bold text-ink mb-2.5">Emergency / تماس اضطراری</Text>
+          <Text className="text-sm font-bold text-ink mb-2.5">{t('sos.emergency')}</Text>
           <View className="gap-2.5">
             {EMERGENCY_NUMBERS.map((e) => (
               <Pressable
@@ -96,8 +96,7 @@ export default function SosScreen() {
                 className="rounded-2xl bg-white border border-rose-100 p-4 flex-row items-center justify-between"
               >
                 <View>
-                  <Text className="text-sm font-bold text-ink">{e.label}</Text>
-                  <Text className="text-xs text-sub mt-0.5">{e.fa}</Text>
+                  <Text className="text-sm font-bold text-ink">{t(e.labelKey)}</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
                   <Text className="text-lg font-bold text-rose" style={{ writingDirection: 'ltr' }}>
@@ -114,10 +113,10 @@ export default function SosScreen() {
 
         {/* Offline Currency Converter */}
         <View className="px-5 mb-6">
-          <Text className="text-sm font-bold text-ink mb-2.5">Currency / مبدل ارز</Text>
+          <Text className="text-sm font-bold text-ink mb-2.5">{t('sos.currencyConverter')}</Text>
           <Card variant="elevated" className="p-4">
             <View className="flex-row items-center justify-between mb-3">
-              <Badge label="OFFLINE" variant="success" size="sm" />
+              <Badge label={t('sos.offlineBadge')} variant="success" size="sm" />
               <Text className="text-[11px] text-sub" style={{ writingDirection: 'ltr' }}>
                 1 USD ≈ {rate.toFixed(0)} IRR
               </Text>
@@ -129,7 +128,7 @@ export default function SosScreen() {
                 className={`flex-1 rounded-xl border px-3 py-2 items-center ${direction === 'usd2irr' ? 'bg-brand border-brand' : 'bg-soft border-slate-200'}`}
               >
                 <Text className={`text-xs font-semibold ${direction === 'usd2irr' ? 'text-white' : 'text-ink'}`}>
-                  USD → IRR
+                  {t('sos.pairUsdIrr')}
                 </Text>
               </Pressable>
               <Pressable
@@ -137,7 +136,7 @@ export default function SosScreen() {
                 className={`flex-1 rounded-xl border px-3 py-2 items-center ${direction === 'irr2usd' ? 'bg-brand border-brand' : 'bg-soft border-slate-200'}`}
               >
                 <Text className={`text-xs font-semibold ${direction === 'irr2usd' ? 'text-white' : 'text-ink'}`}>
-                  IRR → USD
+                  {t('sos.pairIrrUsd')}
                 </Text>
               </Pressable>
             </View>
@@ -160,7 +159,7 @@ export default function SosScreen() {
 
         {/* Phrasebook */}
         <View className="px-5">
-          <Text className="text-sm font-bold text-ink mb-2.5">Persian Phrasebook / جملات ضروری</Text>
+          <Text className="text-sm font-bold text-ink mb-2.5">{t('sos.phrasebook')}</Text>
           <View className="gap-2.5">
             {PHRASES.map((p) => (
               <Card key={p.en} variant="flat" className="p-4 bg-white border border-slate-200">

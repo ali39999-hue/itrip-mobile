@@ -136,21 +136,21 @@ export default function MyTripsScreen() {
     >
       <View className="px-5 mb-4">
         <Text className="text-2xl font-bold text-ink">{t('myTrips.title')}</Text>
-        <Text className="text-xs text-sub mt-0.5">Offline Digital Travel Vault & Passes</Text>
+        <Text className="text-xs text-sub mt-0.5">{t('myTrips.subtitle')}</Text>
       </View>
 
       {/* Offline Status Notice */}
       <View className="px-5 mb-4">
         <View className="flex-row items-center justify-between rounded-2xl bg-emerald-50 border border-emerald-100 p-3.5">
-          <View className="flex-row items-center flex-1 mr-2">
+          <View className="flex-row items-center flex-1 me-2">
             <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth={2}>
               <Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </Svg>
-            <Text className="ml-2 text-xs text-emerald-800 font-medium flex-1">
+            <Text className="ms-2 text-xs text-emerald-800 font-medium flex-1">
               {t('myTrips.offlineNotice')}
             </Text>
           </View>
-          <Badge label={isOnline ? 'CLOUD SYNC' : 'ENCRYPTED VAULT'} variant="success" size="sm" />
+          <Badge label={isOnline ? t('myTrips.cloudSync') : t('myTrips.encryptedVault')} variant="success" size="sm" />
         </View>
       </View>
 
@@ -161,11 +161,11 @@ export default function MyTripsScreen() {
             <Path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </Svg>
           <TextInput
-            placeholder="Search booking ref, city, airline..."
+            placeholder={t('myTrips.searchPlaceholder')}
             placeholderTextColor={colors.sub}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            className="flex-1 ml-2 text-sm text-ink p-0"
+            className="flex-1 ms-2 text-sm text-ink p-0"
           />
           {searchQuery ? (
             <Pressable onPress={() => setSearchQuery('')}>
@@ -179,9 +179,9 @@ export default function MyTripsScreen() {
       <View className="px-5 mb-5">
         <View className="flex-row rounded-2xl bg-surface border border-slate-200 p-1">
           {[
-            { id: 'upcoming' as const, label: t('myTrips.active') || 'Upcoming' },
-            { id: 'completed' as const, label: t('myTrips.completed') || 'Completed' },
-            { id: 'all' as const, label: t('myTrips.all') || 'All Passes' },
+            { id: 'upcoming' as const, label: t('myTrips.active') },
+            { id: 'completed' as const, label: t('myTrips.completed') },
+            { id: 'all' as const, label: t('myTrips.all') },
           ].map((tab) => (
             <Pressable
               key={tab.id}
@@ -226,7 +226,7 @@ export default function MyTripsScreen() {
                       {v.airline} · {v.airlineCode}-{v.flightNumber}
                     </Text>
                   </View>
-                  <Badge label="CONFIRMED" variant="success" size="md" />
+                  <Badge label={t('myTrips.confirmed')} variant="success" size="md" />
                 </View>
 
                 {/* Route Header */}
@@ -277,7 +277,7 @@ export default function MyTripsScreen() {
                   </View>
                   <View className="items-end">
                     <Text className="text-[11px] text-sub">{t('myTrips.ticketNumber')}</Text>
-                    <Text className="text-xs font-bold text-ink">{v.passengers.length} Traveler(s)</Text>
+                    <Text className="text-xs font-bold text-ink">{t('myTrips.travelers', { count: v.passengers.length })}</Text>
                   </View>
                 </View>
 
@@ -287,8 +287,12 @@ export default function MyTripsScreen() {
                     <Text className="text-xs font-bold text-ink mb-1.5">{t('booking.passengersTitle')}</Text>
                     {v.passengers.map((p, idx) => (
                       <View key={idx} className="flex-row items-center justify-between py-1">
-                        <Text className="text-xs text-ink">{p.firstNameLatin} {p.lastNameLatin}</Text>
-                        <Text className="text-xs text-sub font-mono">{p.passportNumber}</Text>
+                        <Text className="text-xs text-ink" style={{ writingDirection: 'ltr' }}>
+                          {p.firstNameLatin} {p.lastNameLatin}
+                        </Text>
+                        <Text className="text-xs text-sub font-mono" style={{ writingDirection: 'ltr' }}>
+                          {p.passportNumber}
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -307,7 +311,7 @@ export default function MyTripsScreen() {
                     onPress={() => setExpandedRef(isExpanded ? null : v.bookingRef)}
                     className="px-3 rounded-xl border border-slate-200 bg-surface items-center justify-center"
                   >
-                    <Text className="text-xs font-bold text-sub">{isExpanded ? 'Less' : 'Details'}</Text>
+                    <Text className="text-xs font-bold text-sub">{isExpanded ? t('myTrips.less') : t('myTrips.details')}</Text>
                   </Pressable>
                 </View>
               </Card>
@@ -324,21 +328,21 @@ export default function MyTripsScreen() {
             <Card key={v.bookingRef} variant="elevated" className="border-t-4 border-t-action p-5 mb-4">
               <View className="flex-row items-center justify-between pb-3 border-b border-slate-100">
                 <View>
-                  <Text className="text-xs font-semibold text-sub">Hotel Voucher</Text>
+                  <Text className="text-xs font-semibold text-sub">{t('myTrips.hotelVoucher')}</Text>
                   <Text className="text-base font-bold text-ink mt-0.5">{v.hotelName}</Text>
                 </View>
-                <Badge label={`${v.nights} NIGHTS`} variant="warning" size="sm" />
+                <Badge label={t('myTrips.nightsCount', { count: v.nights })} variant="warning" size="sm" />
               </View>
 
               <View className="py-3">
                 <Text className="text-xs text-sub">
-                  Check-in: <Text className="text-ink font-semibold" style={{ writingDirection: 'ltr' }}>{v.checkIn.slice(0, 10)}</Text>
+                  {t('myTrips.checkin')} <Text className="text-ink font-semibold" style={{ writingDirection: 'ltr' }}>{v.checkIn.slice(0, 10)}</Text>
                 </Text>
                 <Text className="text-[10px] text-brand mb-1">
                   {formatIsoToJalali(v.checkIn.slice(0, 10), isPersian ? 'fa' : 'en')}
                 </Text>
                 <Text className="text-xs text-sub mt-1">
-                  Stay: <Text className="text-ink font-semibold">{v.roomType}</Text>
+                  {t('myTrips.stay')} <Text className="text-ink font-semibold">{v.roomType}</Text>
                 </Text>
               </View>
 
@@ -353,10 +357,15 @@ export default function MyTripsScreen() {
         </View>
       ) : null}
 
-      {/* Taxi Driver Card Modal — large Persian address, works offline */}
+      {/* Taxi Driver Card Modal — AGENTS §5.2: intentionally Persian-only.
+          This card is shown to Iranian taxi drivers who read Persian, so the
+          offline display must stay in fa regardless of the app language. */}
       <Modal visible={driverFor !== null} transparent animationType="slide">
         <View className="flex-1 bg-black/60 justify-end">
-          <View className="bg-surface rounded-t-3xl p-6">
+          <View
+            className="bg-surface rounded-t-3xl p-6"
+            style={{ paddingBottom: insets.bottom + 20 }}
+          >
             <View className="w-12 h-1 bg-slate-200 rounded-full self-center mb-4" />
 
             <Badge label="کارت مخصوص راننده تاکسی" variant="warning" size="md" className="mb-2" />
@@ -380,7 +389,7 @@ export default function MyTripsScreen() {
             </View>
 
             <Text className="text-xs text-sub text-center mb-4">
-              {t('myTrips.hotelAddress')} — بدون نیاز به اینترنت
+              {t('myTrips.driverCardHint')}
             </Text>
 
             <Button
@@ -417,7 +426,7 @@ export default function MyTripsScreen() {
             </View>
 
             <Text className="text-xs text-sub text-center mb-5">
-              High-Contrast Offline QR for Airport Scanner
+              {t('voucher.qrHint')}
             </Text>
 
             <Button

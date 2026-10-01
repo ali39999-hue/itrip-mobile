@@ -10,7 +10,15 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useAuthStore } from '@/stores/authStore';
 import { useBiometrics } from '@/hooks/useBiometrics';
-import i18n, { LANGUAGE_NAMES, type AppLanguage, SUPPORTED_LANGUAGES } from '@/i18n';
+import * as SecureStore from 'expo-secure-store';
+import i18n, {
+  applyLanguageDirection,
+  isRTL,
+  LANGUAGE_NAMES,
+  LANGUAGE_STORAGE_KEY,
+  type AppLanguage,
+  SUPPORTED_LANGUAGES,
+} from '@/i18n';
 
 const CURRENCIES = ['USD', 'IRR', 'EUR', 'AED', 'CNY', 'RUB'] as const;
 
@@ -22,7 +30,23 @@ export default function AccountScreen() {
   const [offlineSync, setOfflineSync] = useState(true);
 
   const handleLanguageChange = (lng: AppLanguage) => {
-    void i18n.changeLanguage(lng);
+    // Direction must be compared BEFORE switching so we know whether the
+    // layout flip (fa/ar <-> en/zh/ru) needs a restart prompt.
+    const directionChanged = isRTL(lng) !== isRTL(i18n.language);
+    applyLanguageDirection(lng);
+    // Persist the choice; SecureStore-backed so it survives restarts and logout.
+    SecureStore.setItemAsync(LANGUAGE_STORAGE_KEY, lng).catch(() => undefined);
+    // Wait for changeLanguage to settle so the prompt below is rendered with
+    // the NEW language's strings (bundled resources, but the switch is async).
+    void i18n.changeLanguage(lng).then(() => {
+      if (directionChanged) {
+        // RN only re-evaluates the RTL/LTR layout on the next process start.
+        // expo-updates is not installed, so guide a manual restart.
+        Alert.alert(t('account.languageRestartTitle'), t('account.languageRestartBody'), [
+          { text: t('common.confirm') },
+        ]);
+      }
+    });
   };
 
   const handleLogout = () => {
@@ -58,8 +82,8 @@ export default function AccountScreen() {
       <View className="px-5 mb-5">
         <Card variant="elevated" className="p-5">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center flex-1 mr-2">
-              <View className="w-14 h-14 rounded-2xl bg-mint items-center justify-center mr-3.5">
+            <View className="flex-row items-center flex-1 me-2">
+              <View className="w-14 h-14 rounded-2xl bg-mint items-center justify-center me-3.5">
                 <Svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke={colors.brand} strokeWidth={2}>
                   <Path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                   <Circle cx={12} cy={7} r={4} />
@@ -68,20 +92,20 @@ export default function AccountScreen() {
               <View className="flex-1">
                 <Text className="text-base font-bold text-ink" numberOfLines={1}>
                   {auth.state === 'authenticated'
-                    ? (profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : auth.phone ?? 'Verified Traveler')
+                    ? (profile?.firstName ? `${profile.firstName} ${profile.lastName || ''}`.trim() : t('account.verifiedTraveler'))
                     : t('auth.guestGreeting')}
                 </Text>
                 <Text className="text-xs text-sub mt-0.5" numberOfLines={1}>
                   {auth.state === 'authenticated'
-                    ? `ID: ${auth.userId} · ${auth.phone || ''}`
-                    : 'Log in to save bookings & access NewCash'}
+                    ? t('account.profileIdLine', { id: auth.userId, phone: auth.phone || '' })
+                    : t('account.loginToSave')}
                 </Text>
               </View>
             </View>
 
             {auth.state === 'authenticated' ? (
               <Badge
-                label={isKycApproved ? 'KYC Verified' : 'KYC Pending'}
+                label={isKycApproved ? t('account.kycVerified') : t('account.kycPending')}
                 variant={isKycApproved ? 'success' : 'warning'}
                 size="sm"
               />
@@ -99,8 +123,12 @@ export default function AccountScreen() {
             </View>
           ) : (
             <View className="mt-4 pt-3 border-t border-slate-100 flex-row justify-between items-center">
-              <Text className="text-xs text-sub">Loyalty Tier</Text>
-              <Badge label={`${profile?.loyaltyTier || 'BRONZE'} · ${profile?.loyaltyPoints || 120} pts`} variant="brand" size="sm" />
+              <Text className="text-xs text-sub">{t('account.loyaltyTier')}</Text>
+              <Badge
+                label={`${profile?.loyaltyTier || 'BRONZE'} · ${t('account.loyaltyPoints', { points: profile?.loyaltyPoints || 120 })}`}
+                variant="brand"
+                size="sm"
+              />
             </View>
           )}
         </Card>
@@ -162,16 +190,16 @@ export default function AccountScreen() {
 
       {/* Security & Settings */}
       <View className="px-5 mb-5">
-        <Text className="text-sm font-bold text-ink mb-2.5">Security & Vault Settings</Text>
+        <Text className="text-sm font-bold text-ink mb-2.5">{t('account.securitySettings')}</Text>
         <Card variant="elevated" className="p-0 overflow-hidden divide-y divide-slate-100">
           {/* Biometrics */}
           <View className="flex-row items-center justify-between p-4">
-            <View className="flex-1 pr-3">
+            <View className="flex-1 pe-3">
               <Text className="text-sm font-semibold text-ink">{t('account.biometrics')}</Text>
               <Text className="text-xs text-sub mt-0.5">
                 {hasHardware && isEnrolled
-                  ? 'Protect NewCash wallet with Keystore'
-                  : 'Not available on this device'}
+                  ? t('account.biometricsHint')
+                  : t('account.biometricsUnavailable')}
               </Text>
             </View>
             <Switch
@@ -191,9 +219,9 @@ export default function AccountScreen() {
 
           {/* Offline Sync */}
           <View className="flex-row items-center justify-between p-4">
-            <View className="flex-1 pr-3">
+            <View className="flex-1 pe-3">
               <Text className="text-sm font-semibold text-ink">{t('account.offlineMode')}</Text>
-              <Text className="text-xs text-sub mt-0.5">Pre-cache vouchers & flight barcodes</Text>
+              <Text className="text-xs text-sub mt-0.5">{t('account.offlineSyncHint')}</Text>
             </View>
             <Switch
               value={offlineSync}
@@ -211,10 +239,10 @@ export default function AccountScreen() {
           <Card variant="flat" className="p-4 bg-rose-50/60 border border-rose-100">
             <View className="flex-row items-center justify-between">
               <View>
-                <Text className="text-sm font-bold text-rose">Emergency Assistance in Iran</Text>
-                <Text className="text-xs text-rose-700/80 mt-0.5">Tourist Police: 110 · Medical: 115</Text>
+                <Text className="text-sm font-bold text-rose">{t('account.emergencyAssistance')}</Text>
+                <Text className="text-xs text-rose-700/80 mt-0.5">{t('account.emergencyNumbers')}</Text>
               </View>
-              <Badge label="24/7 Concierge" variant="danger" size="sm" />
+              <Badge label={t('account.concierge247')} variant="danger" size="sm" />
             </View>
           </Card>
         </Pressable>
